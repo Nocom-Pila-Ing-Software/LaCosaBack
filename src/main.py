@@ -1,9 +1,7 @@
 """Application main module."""
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from agenda.models.db import db
-from agenda.tags.constants import DEFAULT_TAGS
-from agenda.tags.utils import populate_tags
+from models import db
 from api import api_router
 from constants import DB_PROVIDER, PROJECT_DESCRIPTION, PROJECT_NAME
 from settings import settings
