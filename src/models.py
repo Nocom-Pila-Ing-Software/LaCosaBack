@@ -1,5 +1,4 @@
-from datetime import time
-from pony.orm import *
+from pony.orm import Database, PrimaryKey, Required, Optional, Set
 
 
 db = Database()
@@ -8,45 +7,33 @@ db = Database()
 class Game(db.Entity):
     id = PrimaryKey(int, auto=True)
     waiting_room = Required('WaitingRoom')
-    isDirectionLeft = Optional(str)
-    currentTurn = Optional(int)
+    currentTurn = Required(int, default=0)
     players = Set('Player')
     cards = Set('Card')
-    messages = Set('Message')
-
-
-class Player(db.Entity):
-    id = PrimaryKey(int, auto=True)
-    game = Required(Game)
-    username = Optional(str)
-    isQuarantined = Optional(str)
-    role = Optional(str)
-    isHost = Optional(str)
-    cards = Set('Card')
-
-
-class Message(db.Entity):
-    id = PrimaryKey(int, auto=True)
-    content = Optional(str)
-    timestamp = Optional(time)
-    game = Required(Game)
 
 
 class WaitingRoom(db.Entity):
     id = PrimaryKey(int, auto=True)
-    roomName = Optional(str)
-    maxPlayers = Optional(int)
-    password = Optional(str)
+    roomName = Required(str)
     game = Optional(Game)
+    players = Set('Player')
+
+
+class Player(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    game = Optional(Game)
+    room = Required(WaitingRoom)
+    username = Required(str)
+    role = Required(str, default="human")
+    isHost = Required(str, default="F")
+    cards = Set('Card')
 
 
 class Card(db.Entity):
     id = PrimaryKey(int, auto=True)
-    name = Optional(str)
-    type = Optional(str)
-    minPlayerNum = Optional(int)
-    isExchangeable = Optional(str)
-    description = Optional(str)
-    player = Required(Player)
-    game = Required(Game)
-
+    name = Required(str, default="Generic card name")
+    description = Required(str, default="Generic card description")
+    # The following attributes are optional because a card can belong to a Game
+    # and not a player and viceversa
+    player = Optional(Player)
+    game = Optional(Game)
