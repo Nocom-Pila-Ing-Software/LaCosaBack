@@ -7,14 +7,14 @@ db = Database()
 class Game(db.Entity):
     id = PrimaryKey(int, auto=True)
     waiting_room = Required('WaitingRoom')
-    currentTurn = Required(int, default=0)
+    current_turn = Required(int, default=0)
     players = Set('Player')
     cards = Set('Card')
 
 
 class WaitingRoom(db.Entity):
     id = PrimaryKey(int, auto=True)
-    roomName = Required(str)
+    room_name = Required(str)
     game = Optional(Game)
     players = Set('Player')
 
@@ -25,7 +25,7 @@ class Player(db.Entity):
     room = Required(WaitingRoom)
     username = Required(str)
     role = Required(str, default="human")
-    isHost = Required(str, default="F")
+    is_host = Required(bool, default=False)
     cards = Set('Card')
 
 
