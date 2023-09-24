@@ -1,6 +1,6 @@
 from main import app
 from fastapi.testclient import TestClient
-from models import Card, Game, WaitingRoom, db
+from models import Game, WaitingRoom
 from pony.orm import db_session, select
 from schemas.game import GameCreationRequest, PlayerID, GameID
 from .util import setup_test_db
