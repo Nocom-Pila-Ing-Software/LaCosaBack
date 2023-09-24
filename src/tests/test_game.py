@@ -22,7 +22,7 @@ def setup_database():
 # Use a fixture to setup the test database
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def setup_test_environment():
     setup_test_db()
     setup_database()
@@ -30,23 +30,51 @@ def setup_test_environment():
 # Define the test function
 
 
+# Mocked GameCreationRequest data for testing
+mock_creation_request = GameCreationRequest(
+    roomID=0,
+    players=[
+        PlayerID(playerID=1),
+        PlayerID(playerID=2),
+    ]
+).model_dump()
+
+
 def test_create_game_success(setup_test_environment):
-    # Mocked GameCreationRequest data for testing
-    mock_creation_request = GameCreationRequest(
-        roomID=0,
-        players=[
-            PlayerID(playerID=0),
-            PlayerID(playerID=1),
-        ]
-    ).model_dump()
     creation_response = GameID(gameID=1).model_dump()
 
     response = client.post("/game", json=mock_creation_request)
     data = response.json()
 
     with db_session:
-        game_record = select(g for g in Game if g.id == int(data["gameID"]))
-        assert game_record
+        game_record = select(g for g in Game if g.id ==
+                             int(data["gameID"])).get()
+        the_thing = select(p for p in game_record.players if p.role == "thing")
+        current_players = list(select(
+            p for p in game_record.players if p.role == "thing"
+        ))
+
+        # Game was created
+        assert game_record is not None
+
+        # Deck was created
+        assert len(game_record.cards) > 0
+
+        # Players were created
+        assert len(game_record.players) > 0
+
+        # The thing role was assigned
+        assert the_thing.exists()
+
+        # The thing has 'La Cosa' card
+        assert (
+            the_thing.get().cards
+            .select(lambda c: c.name == "La Cosa")
+            .exists()
+        )
+
+        # all players have 4 cards
+        assert all(p.cards.count() == 4 for p in current_players)
 
     assert response.status_code == 201
     assert data == creation_response
