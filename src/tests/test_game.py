@@ -6,10 +6,7 @@ from schemas.game import GameCreationRequest, PlayerID, GameID
 from .util import setup_test_db
 import pytest
 
-# Create a TestClient instance for the FastAPI app
 client = TestClient(app)
-
-# Define a fixture for setting up the test database
 
 
 def setup_database():
@@ -19,28 +16,22 @@ def setup_database():
         room.players.create(username="Player1")
         room.players.create(username="Player2")
 
-# Use a fixture to setup the test database
-
 
 @pytest.fixture(scope="module")
 def setup_test_environment():
     setup_test_db()
     setup_database()
 
-# Define the test function
-
-
-# Mocked GameCreationRequest data for testing
-mock_creation_request = GameCreationRequest(
-    roomID=0,
-    players=[
-        PlayerID(playerID=1),
-        PlayerID(playerID=2),
-    ]
-).model_dump()
-
 
 def test_create_game_success(setup_test_environment):
+    mock_creation_request = GameCreationRequest(
+        roomID=0,
+        players=[
+            PlayerID(playerID=1),
+            PlayerID(playerID=2),
+        ]
+    ).model_dump()
+
     creation_response = GameID(gameID=1).model_dump()
 
     response = client.post("/game", json=mock_creation_request)
@@ -78,3 +69,29 @@ def test_create_game_success(setup_test_environment):
 
     assert response.status_code == 201
     assert data == creation_response
+
+
+def test_invalid_room_id(setup_test_environment):
+    mock_creation_request = GameCreationRequest(
+        roomID=666,
+        players=[
+            PlayerID(playerID=1),
+            PlayerID(playerID=2),
+        ]
+    ).model_dump()
+    response = client.post("/game", json=mock_creation_request)
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Room ID doesn't exist"}
+
+
+def test_invalid_player_id(setup_test_environment):
+    mock_creation_request = GameCreationRequest(
+        roomID=0,
+        players=[
+            PlayerID(playerID=666),
+            PlayerID(playerID=2),
+        ]
+    ).model_dump()
+    response = client.post("/game", json=mock_creation_request)
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Invalid player ID"}
