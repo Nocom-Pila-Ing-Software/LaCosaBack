@@ -4,11 +4,7 @@
 from fastapi import APIRouter, status
 from schemas.game import GameCreationRequest, GameID
 from pony.orm import db_session
-from services.game import (
-    create_game_on_db, create_deck,
-    assign_thing_role, deal_cards_to_thing, deal_cards_to_players,
-    handle_errors
-)
+import services.game_creator as game_creator
 
 game_router = APIRouter()
 
@@ -16,12 +12,12 @@ game_router = APIRouter()
 @game_router.post(path="", status_code=status.HTTP_201_CREATED)
 async def create_game(creation_request: GameCreationRequest) -> GameID:
     with db_session:
-        handle_errors(creation_request)
-        game = create_game_on_db(creation_request)
-        create_deck(game)
-        the_thing = assign_thing_role(game)
-        deal_cards_to_thing(the_thing)
-        deal_cards_to_players(game)
+        game_creator.handle_errors(creation_request)
+        game = game_creator.create_game_on_db(creation_request)
+        game_creator.create_deck(game)
+        the_thing = game_creator.assign_thing_role(game)
+        game_creator.deal_cards_to_thing(the_thing)
+        game_creator.deal_cards_to_players(game)
         response = GameID(gameID=game.id)
 
     return response
