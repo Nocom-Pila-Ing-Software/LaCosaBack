@@ -10,6 +10,7 @@ class Game(db.Entity):
     current_turn = Required(int, default=0)
     players = Set('Player')
     cards = Set('Card')
+    last_played_card = Optional('Card', reverse="played_on_game")
 
 
 class WaitingRoom(db.Entity):
@@ -26,6 +27,7 @@ class Player(db.Entity):
     username = Required(str)
     role = Required(str, default="human")
     is_host = Required(bool, default=False)
+    is_alive = Required(bool, default=True)
     cards = Set('Card')
 
 
@@ -36,4 +38,7 @@ class Card(db.Entity):
     # The following attributes are optional because a card can belong to a Game
     # and not a player and viceversa
     player = Optional(Player)
-    game = Optional(Game)
+    deck = Optional(Game)
+
+    # This attribute is the counterpart of Game.last_played_card
+    played_on_game = Optional(Game, reverse="last_played_card")
