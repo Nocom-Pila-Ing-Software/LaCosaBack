@@ -1,62 +1,13 @@
 from main import app
 from fastapi.testclient import TestClient
-from models import Game, WaitingRoom, Player, Card, db
+from models import Game
 from pony.orm import db_session, select
 from schemas.game import GameCreationRequest, PlayerID, GameID, PublicPlayerInfo, CardInfo, GameStatus
 import pytest
+from .game_fixtures import db_game_creation, db_game_status
 
 client = TestClient(app)
 
-
-@pytest.fixture(scope="module")
-def db_game_creation():
-    with db_session:
-        # Create a waiting room with players for testing
-        room = WaitingRoom(id=0, room_name="Test room")
-        room.players.create(username="Player1")
-        room.players.create(username="Player2")
-
-
-@pytest.fixture(scope="module")
-def db_game_status():
-    db.drop_all_tables(with_all_data=True)
-    db.create_tables()
-
-    player1_data = {"username": "pepito",
-                    "is_host": True, "is_alive": True}
-    player2_data = {"username": "fulanito",
-                    "is_host": False, "is_alive": True}
-    player3_data = {"username": "menganito",
-                    "is_host": False, "is_alive": False}
-
-    card_data = {"name": "Lanzallamas",
-                 "description": "está que arde"}
-    game_id = 1
-    with db_session:
-        room1 = WaitingRoom(room_name="test room")
-        player1 = Player(id=1, room=room1, **player1_data)
-        player2 = Player(id=2, room=room1, **player2_data)
-        player3 = Player(id=3, room=room1, **player3_data)
-        card = Card(id=1, **card_data)
-        # Create a Game instance
-        Game(
-            id=game_id, waiting_room=room1, players=[
-                player1, player2, player3],
-            last_played_card=card
-        )
-
-    player1 = PublicPlayerInfo(playerID=1, **player1_data)
-    player2 = PublicPlayerInfo(playerID=2, **player2_data)
-    player3 = PublicPlayerInfo(playerID=3, **player3_data)
-
-    card = CardInfo(cardID=1, **card_data)
-    # Create a Game instance
-    response = GameStatus(
-        gameID=game_id, players=[
-            player1, player2, player3],
-        lastPlayedCard=card
-    )
-    return response
 
 
 def test_create_game_success(db_game_creation):
