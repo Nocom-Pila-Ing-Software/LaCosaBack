@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from schemas.player import PlayerID, PlayerName
+from schemas.player import PlayerName
 from pony.orm import db_session, commit
 from models import WaitingRoom, Player
 

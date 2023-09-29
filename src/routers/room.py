@@ -1,8 +1,12 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, status
 from schemas.player import PlayerID, PlayerName
 from pony.orm import db_session
-from models import WaitingRoom, Player
-from services.room_operations import *
+from models import WaitingRoom
+from services.room_operations import (create_player, 
+                                    player_name_valid, 
+                                    player_exists_in_database, 
+                                    waiting_room_exists, 
+                                    player_added_to_room)
 
 room_router = APIRouter()
 
