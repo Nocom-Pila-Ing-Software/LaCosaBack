@@ -7,7 +7,7 @@ db = Database()
 class Game(db.Entity):
     id = PrimaryKey(int, auto=True)
     waiting_room = Required('WaitingRoom')
-    current_turn = Required(int, default=0)
+    turn_counter = Required(int, default=0)
     players = Set('Player')
     cards = Set('Card')
     last_played_card = Optional('Card', reverse="played_on_game")

@@ -1,7 +1,6 @@
 from fastapi import HTTPException
-from pony.orm import select
 from models import Game
-from schemas.game import GameStatus, PublicPlayerInfo, CardInfo
+from schemas.game import GameStatus, PublicPlayerInfo, CardInfo, PlayerID
 
 
 def handle_errors(game: Game) -> None:
@@ -20,6 +19,12 @@ def handle_errors(game: Game) -> None:
         )
 
 
+def get_player_playing_turn(game: Game):
+    turn_counter = game.turn_counter
+    player_num = len(game.players)
+    return turn_counter % player_num
+
+
 def get_response(game: Game) -> None:
     players = []
     last_card = CardInfo(
@@ -36,9 +41,12 @@ def get_response(game: Game) -> None:
         )
         players.append(player_info)
 
+    player_playing_turn = get_player_playing_turn(game)
+
     response = GameStatus(
         gameID=game.id,
         players=players,
         lastPlayedCard=last_card,
+        playerPlayingTurn=PlayerID(playerID=player_playing_turn)
     )
     return response

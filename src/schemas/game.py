@@ -30,5 +30,6 @@ class PublicPlayerInfo(BaseModel):
 
 class GameStatus(BaseModel):
     gameID: int
+    playerPlayingTurn: PlayerID
     players: List[PublicPlayerInfo]
     lastPlayedCard: CardInfo
