@@ -42,5 +42,6 @@ async def version():
 app.include_router(api_router)
 
 # Connecting to DB and creating tables
-db.bind(provider=DB_PROVIDER, filename=settings.DB_FILEANAME, create_db=True)
-db.generate_mapping(create_tables=True)
+if __name__ == "__main__":
+    db.bind(provider=DB_PROVIDER, filename=settings.DB_FILEANAME, create_db=True)
+    db.generate_mapping(create_tables=True)
