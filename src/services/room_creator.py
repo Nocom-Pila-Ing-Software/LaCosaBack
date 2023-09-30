@@ -1,10 +1,10 @@
 from fastapi import HTTPException
-from pony.orm import select
+from pony.orm import select, commit
 from models import WaitingRoom
 from schemas.room import RoomCreationRequest
 
 
-def create_host_on_db(room: WaitingRoom) -> int:
+def create_host_on_db(room: WaitingRoom, creation_request: RoomCreationRequest) -> int:
     """
     Creates a new host for a room on the database
 
@@ -15,10 +15,11 @@ def create_host_on_db(room: WaitingRoom) -> int:
     int: The id of the new host
     """
     new_host = room.players.create(
-        username=RoomCreationRequest.hostName,
+        username=creation_request.hostName,
         is_host=True
     )
-    return new_host.id
+    commit()
+    return new_host
 
 
 def create_room_on_db(creation_request: RoomCreationRequest) -> WaitingRoom:
@@ -32,8 +33,9 @@ def create_room_on_db(creation_request: RoomCreationRequest) -> WaitingRoom:
     WaitingRoom: The created room
     """
     new_room = WaitingRoom(
-        name=creation_request.roomName
+        room_name=creation_request.roomName
     )
+    commit()
     return new_room
 
 
@@ -48,7 +50,7 @@ def valid_name(creation_request: RoomCreationRequest) -> bool:
     bool: True if the name is valid, False otherwise
     """
     return not select(
-        room for room in WaitingRoom if room.name == creation_request.roomName
+        room for room in WaitingRoom if room.room_name == creation_request.roomName
     ).exists()
 
 
@@ -64,5 +66,5 @@ def handle_errors(creation_request: RoomCreationRequest) -> None:
     """
     if not valid_name(creation_request):
         raise HTTPException(
-            status_code=404, detail="Room name already exists"
+            status_code=400, detail="Room name already exists"
         )
