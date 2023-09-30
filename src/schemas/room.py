@@ -12,3 +12,8 @@ class PlayerID(BaseModel):
 class RoomCreationRequest(BaseModel):
     roomName: str
     hostName: str
+
+
+class RoomCreationResponse(BaseModel):
+    roomID: int
+    playerID: int
