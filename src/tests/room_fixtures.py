@@ -1,7 +1,6 @@
-from models import Game, WaitingRoom, Player, Card, db
+from models import WaitingRoom, db
 from pony.orm import db_session
 import pytest
-from typing import List, Dict
 
 
 @pytest.fixture(scope="module")
