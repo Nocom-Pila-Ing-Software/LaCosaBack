@@ -1,29 +1,16 @@
 from main import app
 from fastapi.testclient import TestClient
-from models import Game, WaitingRoom
+from models import Game
 from pony.orm import db_session, select
-from schemas.game import GameCreationRequest, PlayerID, GameID
-from .util import setup_test_db
+from schemas.game import GameCreationRequest, PlayerID, GameID, PublicPlayerInfo, CardInfo, GameStatus
 import pytest
+from .game_fixtures import db_game_creation, db_game_status
 
 client = TestClient(app)
 
 
-def setup_database():
-    with db_session:
-        # Create a waiting room with players for testing
-        room = WaitingRoom(id=0, room_name="Test room")
-        room.players.create(username="Player1")
-        room.players.create(username="Player2")
 
-
-@pytest.fixture(scope="module")
-def setup_test_environment():
-    setup_test_db()
-    setup_database()
-
-
-def test_create_game_success(setup_test_environment):
+def test_create_game_success(db_game_creation):
     mock_creation_request = GameCreationRequest(
         roomID=0,
         players=[
@@ -71,7 +58,7 @@ def test_create_game_success(setup_test_environment):
     assert data == creation_response
 
 
-def test_invalid_room_id(setup_test_environment):
+def test_invalid_room_id(db_game_creation):
     mock_creation_request = GameCreationRequest(
         roomID=666,
         players=[
@@ -84,7 +71,7 @@ def test_invalid_room_id(setup_test_environment):
     assert response.json() == {"detail": "Room ID doesn't exist"}
 
 
-def test_invalid_player_id(setup_test_environment):
+def test_invalid_player_id(db_game_creation):
     mock_creation_request = GameCreationRequest(
         roomID=0,
         players=[
@@ -95,3 +82,15 @@ def test_invalid_player_id(setup_test_environment):
     response = client.post("/game", json=mock_creation_request)
     assert response.status_code == 400
     assert response.json() == {"detail": "Invalid player ID"}
+
+
+def test_get_game_status(db_game_status):
+    expected_response = db_game_status.model_dump()
+    response = client.get("/game/1")
+    assert response.status_code == 200
+    assert response.json() == expected_response
+
+
+def test_get_game_status_invalid_id():
+    response = client.get("/game/666")
+    assert response.status_code == 404
