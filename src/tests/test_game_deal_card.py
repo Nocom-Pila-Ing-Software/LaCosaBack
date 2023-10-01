@@ -41,38 +41,36 @@ def setup_test_environment():
 
 def test_draw_card_success(setup_test_environment):
     mock_draw_request = PlayerID(playerID=1).model_dump()
-    response = client.put("/game/0/next-turn", json=mock_draw_request)
+    response = client.put("/game/0/deal-card", json=mock_draw_request)
     assert response.status_code == 200
     assert response.json() == None
 
-
 def test_draw_card_invalid_game_id(setup_test_environment):
     mock_draw_request = PlayerID(playerID=1).model_dump()
-    response = client.put("/game/666/next-turn", json=mock_draw_request)
+    response = client.put("/game/666/deal-card", json=mock_draw_request)
     assert response.status_code == 404
     assert response.json() == {"detail": "Game not found"}
 
-
 def test_draw_card_invalid_player_id(setup_test_environment):
     mock_draw_request = PlayerID(playerID=666).model_dump()
-    response = client.put("/game/1/next-turn", json=mock_draw_request)
+    response = client.put("/game/1/deal-card", json=mock_draw_request)
     assert response.status_code == 404
     assert response.json() == {"detail": "Player not found"}  
 
 def test_draw_card_player_not_in_game(setup_test_environment):
     mock_draw_request = PlayerID(playerID=2).model_dump()
-    response = client.put("/game/0/next-turn", json=mock_draw_request)
+    response = client.put("/game/0/deal-card", json=mock_draw_request)
     assert response.status_code == 404
     assert response.json() == {"detail": "Player not in game"}  
 
 def test_draw_card_player_already_has_cards(setup_test_environment):
     mock_draw_request = PlayerID(playerID=2).model_dump()
-    response = client.put("/game/1/next-turn", json=mock_draw_request)
+    response = client.put("/game/1/deal-card", json=mock_draw_request)
     assert response.status_code == 400
     assert response.json() == {"detail": "Player already has a card"}
 
 def test_draw_card_no_cards_left(setup_test_environment):
     mock_draw_request = PlayerID(playerID=3).model_dump()
-    response = client.put("/game/2/next-turn", json=mock_draw_request)
+    response = client.put("/game/2/deal-card", json=mock_draw_request)
     assert response.status_code == 404
     assert response.json() == {"detail": "No cards left in deck"}

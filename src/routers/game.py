@@ -23,24 +23,9 @@ async def create_game(creation_request: GameCreationRequest) -> GameID:
 
     return response
 
-"""
-endpoint para repartir a un jugador una carta del mazo
-    El endpoint debe aceptar una solicitud PUT con la id de la partida y la ID del jugador en el cuerpo de la solicitud
-
-    Debe devolver un código de estado HTTP 404 si la partida no existe.
-
-    Debe devolver un código de estado HTTP 404 si el jugador no existe.
-
-    Debe eliminar la relación entre la carta y game
-
-    Debe asignar esa carta a la mano del jugador.
-
-    Debe devolver un código de estado HTTP 200 al entregar con éxito la carta.
-"""
-
-@game_router.put(path="/{game_id}/next-turn", status_code=status.HTTP_200_OK)
+@game_router.put(path="/{game_id}/deal-card", status_code=status.HTTP_200_OK)
 async def draw_card(game_id: int, player_id: PlayerID) -> None:
     with db_session:
-        game_draw_card.pre_conditions_draw_cards(game_id, player_id)
+        game_draw_card.check_pre_conditions_draw_cards(game_id, player_id)
         game_draw_card.draw_card(game_id, player_id)
         response = None
