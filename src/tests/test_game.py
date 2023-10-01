@@ -3,7 +3,6 @@ from fastapi.testclient import TestClient
 from models import Game, WaitingRoom
 from pony.orm import db_session, select
 from schemas.game import GameCreationRequest, PlayerID, GameID
-from .util import setup_test_db
 import pytest
 
 client = TestClient(app)
@@ -19,7 +18,6 @@ def setup_database():
 
 @pytest.fixture(scope="module")
 def setup_test_environment():
-    setup_test_db()
     setup_database()
 
 
