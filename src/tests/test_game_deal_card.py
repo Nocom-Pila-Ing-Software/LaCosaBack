@@ -13,14 +13,12 @@ def setup_test_environment():
     db.drop_all_tables(with_all_data=True)
     db.create_tables()
     with db_session:
-        #crear una waiting room con un jugador sin deck
         room = WaitingRoom(id=0, room_name="Test room")
         player = Player(id=1, username="Player1", room=room)
         room.players.add(player)
         game = Game(id=0, waiting_room=room, players=room.players)
         game.cards.create(name="Lanzallamas")
 
-        #crear una waiting room con otro jugador con una mano de 4 cartas y un deck de 40 cartas
         room = WaitingRoom(id=1, room_name="Test room")
         player = Player(id=2, username="Player2", room=room)
         room.players.add(player)
@@ -33,7 +31,6 @@ def setup_test_environment():
         for _ in range(5):
             player.cards.create(name="Carta Mano")
 
-        #crear una waiting room con otro jugador con una mano de 4 cartas y un deck de 0 cartas
         room = WaitingRoom(id=2, room_name="Test room")
         player = Player(id=3, username="Player3", room=room)
         room.players.add(player)
