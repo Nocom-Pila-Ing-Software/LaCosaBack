@@ -9,7 +9,6 @@ client=TestClient(app)
 # Fixture para configurar la base de datos
 @pytest.fixture()
 def setup_database():
-    global db
     db.drop_all_tables(with_all_data=True)
     db.create_tables()
     with db_session:
