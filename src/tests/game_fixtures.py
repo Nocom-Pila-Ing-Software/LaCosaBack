@@ -71,3 +71,27 @@ def db_game_status():
     setup_db_game_status(game_data)
     response = get_game_status_response(game_data)
     return response
+
+@pytest.fixture(scope="module")
+def db_game_creation_with_cards():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+
+    with db_session:
+        room = WaitingRoom(id=0, room_name="Test room")
+        player = Player(id=1, username="Player", room=room)
+        room.players.add(player)
+        game = Game(id=0, waiting_room=room, players=room.players)
+        for _ in range(5):
+            player.cards.create(name="Carta_test", description="Carta test")
+
+@pytest.fixture(scope="module")
+def db_game_creation_without_cards():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+
+    with db_session:
+        room = WaitingRoom(id=0, room_name="Test room")
+        player = Player(id=1, username="Player", room=room)
+        room.players.add(player)
+        game = Game(id=0, waiting_room=room, players=room.players)
