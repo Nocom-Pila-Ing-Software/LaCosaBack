@@ -1,13 +1,18 @@
 from pydantic import BaseModel
+from typing import List
+
 
 class RoomName(BaseModel):
     roomName: str
 
+
 class PlayerName(BaseModel):
     playerName: str
 
+
 class RoomID(BaseModel):
     roomID: int
+
 
 class PlayerID(BaseModel):
     playerID: int
@@ -22,6 +27,7 @@ class RoomCreationResponse(BaseModel):
     roomID: int
     playerID: int
 
+
 class RoomDataResponse(BaseModel):
     CountPlayers: int
-    Players: list[PlayerName]
+    Players: List[PlayerName]
