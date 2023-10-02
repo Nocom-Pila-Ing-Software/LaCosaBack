@@ -2,10 +2,12 @@ from main import app
 from fastapi.testclient import TestClient
 from models import Game
 from pony.orm import db_session, select
-from schemas.game import GameCreationRequest, PlayerID, GameID
-from .game_fixtures import db_game_creation, db_game_status
+from schemas.game import GameCreationRequest, PlayerID, GameID, PublicPlayerInfo, CardInfo, GameStatus, PlayCardRequest
+import pytest
+from .game_fixtures import db_game_creation, db_game_status, db_game_creation_with_cards
 
 client = TestClient(app)
+
 
 def test_create_game_success(db_game_creation):
     mock_creation_request = GameCreationRequest(
@@ -91,3 +93,92 @@ def test_get_game_status(db_game_status):
 def test_get_game_status_invalid_id():
     response = client.get("/game/666")
     assert response.status_code == 404
+
+
+def test_play_card(db_game_creation_with_cards):
+    mock_play_request = PlayCardRequest(
+        playerID=1,
+        targetPlayerID=2,
+        cardID=0
+    ).model_dump()
+
+    response = client.put("/game/5/play-card", json=mock_play_request)
+
+    assert response.status_code == 200
+    # The last played card is correct
+    assert response.json()["lastPlayedCard"] == {
+        "cardID": 0,
+        "name": "Lanzallamas",
+        "description": "Está que arde"
+    }
+    with db_session:
+        # The card was removed from the player
+        player_list = list(Game.get(id=5).players)
+        assert not player_list[0].cards.filter(id=0).exists()
+
+        # The card was added to the game
+        assert Game.get(id=5).cards.filter(id=0).exists()
+
+        # The turn counter was increased
+        assert Game.get(id=5).turn_counter == 1
+
+    # The target player is dead
+    assert response.json()["players"] == [
+        {
+            "playerID": 1,
+            "username": "Player1",
+            "is_host": True,
+            "is_alive": True
+        },
+        {
+            "playerID": 2,
+            "username": "Player2",
+            "is_host": False,
+            "is_alive": False
+        },
+        {
+            "playerID": 3,
+            "username": "Player3",
+            "is_host": False,
+            "is_alive": True
+        }
+    ]
+
+
+def test_play_card_invalid_player(db_game_creation_with_cards):
+    mock_play_request = PlayCardRequest(
+        playerID=666,
+        targetPlayerID=2,
+        cardID=0
+    ).model_dump()
+
+    response = client.put("/game/5/play-card", json=mock_play_request)
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Player not found"}
+
+
+def test_play_card_invalid_card(db_game_creation_with_cards):
+    mock_play_request = PlayCardRequest(
+        playerID=1,
+        targetPlayerID=2,
+        cardID=666
+    ).model_dump()
+
+    response = client.put("/game/5/play-card", json=mock_play_request)
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Player does not have that card"}
+
+
+def test_play_card_invalid_target(db_game_creation_with_cards):
+    mock_play_request = PlayCardRequest(
+        playerID=1,
+        targetPlayerID=666,
+        cardID=0
+    ).model_dump()
+
+    response = client.put("/game/5/play-card", json=mock_play_request)
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "Player not found"}

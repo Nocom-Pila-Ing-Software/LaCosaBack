@@ -71,3 +71,37 @@ def db_game_status():
     setup_db_game_status(game_data)
     response = get_game_status_response(game_data)
     return response
+
+
+@pytest.fixture(scope="module")
+def db_game_creation_with_cards():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+
+    with db_session:
+        # Create a waiting room
+        room = WaitingRoom(id=0, room_name="Test room")
+
+        # Create a game with players
+        game = Game(id=5, waiting_room=room)
+        player1 = Player(id=1, room=room, username="Player1", is_host=True)
+        player2 = Player(id=2, room=room, username="Player2", is_host=False)
+        player3 = Player(id=3, room=room, username="Player3", is_host=False)
+        game.players.add(player1)
+        game.players.add(player2)
+        game.players.add(player3)
+
+        # Add cards to players
+        player1.cards.create(id=0, name="Lanzallamas",
+                             description="Está que arde")
+        player1.cards.create()
+        player1.cards.create()
+        player1.cards.create()
+        player1.cards.create()
+
+        player2.cards.create()
+        player2.cards.create()
+        player2.cards.create()
+        player2.cards.create()
+
+        player3.cards.create(id=60)
