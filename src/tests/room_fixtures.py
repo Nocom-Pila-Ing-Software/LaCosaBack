@@ -9,4 +9,4 @@ def db_room_creation():
     db.create_tables()
 
     with db_session:
-        room = WaitingRoom(id=0, room_name="Test Room2")
+        WaitingRoom(id=0, room_name="Test Room2")
