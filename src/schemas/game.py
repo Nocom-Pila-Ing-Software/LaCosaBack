@@ -15,6 +15,12 @@ class GameCreationRequest(BaseModel):
     players: List[PlayerID]
 
 
+class PlayCardRequest(BaseModel):
+    playerID: int
+    targetPlayerID: int
+    cardID: int
+
+
 class CardInfo(BaseModel):
     cardID: int
     name: str
