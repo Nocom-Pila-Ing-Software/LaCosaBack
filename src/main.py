@@ -6,6 +6,7 @@ from api import api_router
 from constants import DB_PROVIDER, PROJECT_DESCRIPTION, PROJECT_NAME
 from settings import settings
 from version import __API__VERSION
+import os
 
 app = FastAPI(
     title=PROJECT_NAME,
@@ -42,6 +43,6 @@ async def version():
 app.include_router(api_router)
 
 # Connecting to DB and creating tables
-if __name__ == '__main__':
+if os.getenv("ENV") == "dev":
     db.bind(provider=DB_PROVIDER, filename=settings.DB_FILEANAME, create_db=True)
     db.generate_mapping(create_tables=True)
