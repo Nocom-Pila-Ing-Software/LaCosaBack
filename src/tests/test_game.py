@@ -2,13 +2,10 @@ from main import app
 from fastapi.testclient import TestClient
 from models import Game
 from pony.orm import db_session, select
-from schemas.game import GameCreationRequest, PlayerID, GameID, PublicPlayerInfo, CardInfo, GameStatus
-import pytest
+from schemas.game import GameCreationRequest, PlayerID, GameID
 from .game_fixtures import db_game_creation, db_game_status
 
 client = TestClient(app)
-
-
 
 def test_create_game_success(db_game_creation):
     mock_creation_request = GameCreationRequest(
