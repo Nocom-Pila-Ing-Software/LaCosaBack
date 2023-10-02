@@ -2,10 +2,11 @@
 """
 
 from fastapi import APIRouter, status
-from schemas.game import GameCreationRequest, GameID, GameStatus
+from schemas.game import GameCreationRequest, GameID, GameStatus, PlayCardRequest
 from pony.orm import db_session
 import services.game_creator as game_creator
 import services.game_status as game_status
+import services.game_actions as game_actions
 from models import Game
 
 game_router = APIRouter()
@@ -30,6 +31,17 @@ async def get_game_info(game_id) -> GameStatus:
     with db_session:
         game = Game.get(id=game_id)
         game_status.handle_errors(game)
+        response = game_status.get_response(game)
+
+    return response
+
+
+@game_router.put(path="/{game_id}/play-card", status_code=status.HTTP_200_OK)
+async def play_card(play_request: PlayCardRequest, game_id: int) -> GameStatus:
+    with db_session:
+        game_actions.handle_errors(play_request, game_id)
+        game_actions.play_card(play_request, game_id)
+        game = Game.get(id=game_id)
         response = game_status.get_response(game)
 
     return response
