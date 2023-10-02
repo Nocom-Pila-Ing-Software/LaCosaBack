@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from models import Game, Player, Card
 from schemas.game import PlayCardRequest
-from .card_effects import effect_lanzallamas
+from .card_effects import apply_lanzallamas_effect
 from pony.orm import db_session
 
 
@@ -14,17 +14,16 @@ def play_card(play_request: PlayCardRequest, game_id: int) -> None:
     game_id (int): The id of the game to validate
     """
     if Card.get(id=play_request.cardID).name == "Lanzallamas":
-        effect_lanzallamas(play_request.targetPlayerID)
+        apply_lanzallamas_effect(play_request.targetPlayerID)
 
-    with db_session:
-        game = Game.get(id=game_id)
-        player = Player.get(id=play_request.playerID)
-        card = Card.get(id=play_request.cardID)
+    game = Game.get(id=game_id)
+    player = Player.get(id=play_request.playerID)
+    card = Card.get(id=play_request.cardID)
 
-        player.cards.remove(card)
-        game.cards.add(card)
-        game.last_played_card = card
-        game.turn_counter += 1
+    player.cards.remove(card)
+    game.cards.add(card)
+    game.last_played_card = card
+    game.turn_counter += 1
 
 
 def get_game(game_id: int):
