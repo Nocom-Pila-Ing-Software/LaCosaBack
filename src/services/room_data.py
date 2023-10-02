@@ -1,9 +1,6 @@
 from fastapi import HTTPException, status
-from pony.orm import select
 from models import WaitingRoom
-from schemas.room import RoomName, RoomID, PlayerName
-from pony.orm import db_session
-
+from schemas.room import RoomID, PlayerName
 
 def get_number_of_players_in_room(room_id : RoomID) -> int:
     """
@@ -44,7 +41,8 @@ def check_waiting_room_exists(room_ID: int) -> None:
         room_ID (int): The ID of the room to verify.
 
     Raises:
-        HTTPException: If the room does not exist, raise an HTTP exception with a status code of 404.
+        HTTPException: If the room does not exist, 
+        raise an HTTP exception with a status code of 404.
     """
     if WaitingRoom.get(id=room_ID) is None:
         raise HTTPException(

@@ -29,7 +29,6 @@ async def create_room(creation_request: RoomCreationRequest) -> RoomCreationResp
 async def get_room_info(room_id : int) -> RoomDataResponse:
     with db_session:
         room_data.check_waiting_room_exists(room_id)
-        print(room_id)
         number_players = room_data.get_number_of_players_in_room(room_id)
         players_names_room = room_data.get_players_names_in_room(room_id)
         response = RoomDataResponse(
