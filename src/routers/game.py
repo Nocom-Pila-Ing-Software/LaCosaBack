@@ -53,3 +53,12 @@ async def play_card(play_request: PlayCardRequest, game_id: int) -> GameStatus:
         response = game_status.get_response(game)
 
     return response
+
+@game_router.get(path="/player/{player_id}", status_code=status.HTTP_200_OK)
+async def get_player_info(player_id) -> GameStatus:
+    with db_session:
+        game = Game.get(id=player_id)
+        game_status.handle_errors(game)
+        response = game_status.get_player_response(game)
+
+    return response
