@@ -1,8 +1,10 @@
 from fastapi import HTTPException
 from schemas.player import CardData, PlayerID, PlayerResponse, CardID
 from models import Player, Card, db
+from typing import List
 
-def check_player_exists(player_id : PlayerID) -> None:
+
+def check_player_exists(player_id: PlayerID) -> None:
     """
     Checks if a player exists on the database
 
@@ -19,7 +21,8 @@ def check_player_exists(player_id : PlayerID) -> None:
             status_code=404, detail="Player ID doesn't exist"
         )
 
-def check_card_exists(card_id : CardID) -> None:
+
+def check_card_exists(card_id: CardID) -> None:
     """
     Checks if a card exists on the database
 
@@ -35,8 +38,9 @@ def check_card_exists(card_id : CardID) -> None:
         raise HTTPException(
             status_code=404, detail="Card ID doesn't exist"
         )
-        
-def get_list_hand_player(player_id : PlayerID) -> list[CardData]:
+
+
+def get_list_hand_player(player_id: PlayerID) -> List[CardData]:
     """
     Get the list of cards of a player
 
@@ -59,10 +63,11 @@ def get_list_hand_player(player_id : PlayerID) -> list[CardData]:
 
     return list_hand
 
+
 def get_card_data(card) -> CardData:
     """
     Get the data of a card
-    
+
     Args:
     card (Card): The card to get the data from
 
@@ -77,7 +82,8 @@ def get_card_data(card) -> CardData:
         description=card.description
     )
 
-def get_player_info(player_id : PlayerID) -> PlayerResponse:
+
+def get_player_info(player_id: PlayerID) -> PlayerResponse:
     """
     Get the info of a player
 
@@ -89,7 +95,7 @@ def get_player_info(player_id : PlayerID) -> PlayerResponse:
     """
 
     player = Player.get(id=player_id)
-    
+
     check_player_exists(player_id)
 
     return PlayerResponse(
