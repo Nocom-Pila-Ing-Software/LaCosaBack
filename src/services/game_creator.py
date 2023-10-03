@@ -95,22 +95,6 @@ def is_room_valid(creation_request: GameCreationRequest) -> bool:
     return WaitingRoom.get(id=creation_request.roomID) is not None
 
 
-def are_players_valid(creation_request: GameCreationRequest) -> bool:
-    """
-    Checks if every player in the creation_request exists in database
-
-    Args:
-    creation_request (GameCreationRequest): Input data to validate
-
-    Returns:
-    bool: True if all players exist, False otherwise
-    """
-    for player in creation_request.players:
-        if Player.get(id=player.playerID) is None:
-            return False
-
-    return True
-
 
 def handle_errors(creation_request: GameCreationRequest) -> None:
     """
@@ -127,5 +111,3 @@ def handle_errors(creation_request: GameCreationRequest) -> None:
         raise HTTPException(
             status_code=404, detail="Room ID doesn't exist"
         )
-    elif not are_players_valid(creation_request):
-        raise HTTPException(status_code=400, detail="Invalid player ID")

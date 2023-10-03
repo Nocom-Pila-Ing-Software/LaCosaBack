@@ -31,3 +31,4 @@ class RoomCreationResponse(BaseModel):
 class RoomDataResponse(BaseModel):
     CountPlayers: int
     Players: List[PlayerName]
+    hasStarted: bool

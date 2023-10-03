@@ -53,3 +53,8 @@ def check_waiting_room_exists(room_ID: int) -> None:
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Room not found"
         )
+
+
+def has_room_started(room_id: int):
+    room = WaitingRoom[room_id]
+    return room.game is not None

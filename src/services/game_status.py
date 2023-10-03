@@ -27,11 +27,13 @@ def get_player_playing_turn(game: Game):
 
 def get_response(game: Game) -> None:
     players = []
-    last_card = CardInfo(
-        cardID=game.last_played_card.id,
-        name=game.last_played_card.name,
-        description=game.last_played_card.description,
-    )
+    last_card = CardInfo(cardID=-1, name="", description="")
+    if game.last_played_card:
+        last_card = CardInfo(
+            cardID=game.last_played_card.id,
+            name=game.last_played_card.name,
+            description=game.last_played_card.description,
+        )
     for player in game.players.sort_by(lambda x: x.id):
         player_info = PublicPlayerInfo(
             playerID=player.id,

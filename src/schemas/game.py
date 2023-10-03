@@ -12,7 +12,6 @@ class GameID(BaseModel):
 
 class GameCreationRequest(BaseModel):
     roomID: int
-    players: List[PlayerID]
 
 
 class PlayCardRequest(BaseModel):

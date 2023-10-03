@@ -7,6 +7,7 @@ import pytest
 
 client = TestClient(app)
 
+
 @pytest.fixture(scope="module")
 def db_room_creation():
     db.drop_all_tables(with_all_data=True)
@@ -17,6 +18,7 @@ def db_room_creation():
             player = Player(id=i, username=f"Player{i}", room=room)
             room.players.add(player)
 
+
 def test_get_room_data_success(db_room_creation):
     mock_room_data = RoomDataResponse(
         CountPlayers=3,
@@ -24,9 +26,10 @@ def test_get_room_data_success(db_room_creation):
             PlayerName(playerName="Player0"),
             PlayerName(playerName="Player1"),
             PlayerName(playerName="Player2"),
-        ]
+        ],
+        hasStarted=False
     ).model_dump()
-    
+
     response = client.get("/room/0")
     data = response.json()
 
@@ -34,6 +37,7 @@ def test_get_room_data_success(db_room_creation):
 
     assert response.status_code == 200
     assert data == mock_room_data
+
 
 def test_get_room_data_room_not_found(db_room_creation):
     mock_error = {

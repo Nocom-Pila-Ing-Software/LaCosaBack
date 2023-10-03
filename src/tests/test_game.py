@@ -70,19 +70,6 @@ def test_invalid_room_id(db_game_creation):
     assert response.json() == {"detail": "Room ID doesn't exist"}
 
 
-def test_invalid_player_id(db_game_creation):
-    mock_creation_request = GameCreationRequest(
-        roomID=0,
-        players=[
-            PlayerID(playerID=666),
-            PlayerID(playerID=2),
-        ]
-    ).model_dump()
-    response = client.post("/game", json=mock_creation_request)
-    assert response.status_code == 400
-    assert response.json() == {"detail": "Invalid player ID"}
-
-
 def test_get_game_status(db_game_status):
     expected_response = db_game_status.model_dump()
     response = client.get("/game/1")

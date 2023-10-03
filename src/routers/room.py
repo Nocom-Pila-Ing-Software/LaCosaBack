@@ -34,9 +34,11 @@ async def get_room_info(room_id: int) -> RoomDataResponse:
         room_data.check_waiting_room_exists(room_id)
         number_players = room_data.get_number_of_players_in_room(room_id)
         players_names_room = room_data.get_players_names_in_room(room_id)
+        has_room_started = room_data.has_room_started(room_id)
         response = RoomDataResponse(
             CountPlayers=number_players,
-            Players=players_names_room
+            Players=players_names_room,
+            hasStarted=has_room_started
         )
 
     return response
