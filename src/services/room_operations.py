@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from schemas.player import PlayerName
-from pony.orm import db_session, commit
+from pony.orm import db_session, commit, select
 from models import WaitingRoom, Player
 
 def create_player(player_name: PlayerName, room_ID: int) -> Player:
@@ -18,6 +18,8 @@ def create_player(player_name: PlayerName, room_ID: int) -> Player:
     commit()
 
     return player
+
+
 
 def check_valid_player_name(player_name: PlayerName) -> None:
     """
@@ -82,4 +84,64 @@ def is_player_added_to_room(player: Player, room: WaitingRoom) -> None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Player not added to room"
+        )
+
+"""
+class WaitingRoom(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    room_name = Required(str)
+    game = Optional(Game)
+    players = Set('Player')
+
+
+class Player(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    game = Optional(Game)
+    room = Required(WaitingRoom)
+    username = Required(str)
+    role = Required(str, default="human")
+    is_host = Required(bool, default=False)
+    is_alive = Required(bool, default=True)
+    cards = Set('Card')
+
+    @room_router.post("/{roomID}/players", response_model=PlayerID, status_code=status.HTTP_200_OK)
+async def add_player_to_waiting_room(request_data: PlayerName, roomID: int) -> PlayerID:
+    with db_session:
+        player_name = request_data.playerName
+        room_ops.check_valid_player_name(player_name)
+        room_ops.check_waiting_room_exists(roomID)
+        room_ops.check_player_name_is_unique(player_name, roomID)
+"""
+
+def check_player_name_is_unique(player_name: PlayerName, room_ID: int) -> None:
+    """
+    Verify if the player's name is unique in the room.
+
+    Args:
+        player_name (PlayerName): The player's name.
+        room_ID (int): The ID of the room in which to verify the player's name.
+
+    Raises:
+        HTTPException: If the player's name is not unique, raise an HTTP exception with a status code of 400.
+    """
+    if select(p for p in Player if p.username == player_name and p.room.id == room_ID).get() is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Player name already exists in room"
+        )
+
+def check_game_started(room_ID: int) -> None:
+    """
+    Verify if the game has started.
+
+    Args:
+        room_ID (int): The ID of the room in which to verify if the game has started.
+
+    Raises:
+        HTTPException: If the game has started, raise an HTTP exception with a status code of 400.
+    """
+    if WaitingRoom.get(id=room_ID).game is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Game has already started"
         )

@@ -16,7 +16,7 @@ def test_create_room_success(db_room_creation):
 
     creation_response = RoomCreationResponse(
         roomID=1,
-        playerID=1
+        playerID=2
     ).model_dump()
 
     response = client.post("/room", json=mock_creation_request)

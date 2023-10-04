@@ -3,7 +3,6 @@ from models import WaitingRoom
 from schemas.room import RoomID, PlayerName
 from typing import List
 
-
 def get_number_of_players_in_room(room_id: RoomID) -> int:
     """
     Gets the number of players in a room
@@ -54,7 +53,57 @@ def check_waiting_room_exists(room_ID: int) -> None:
             detail="Room not found"
         )
 
+"""
+class WaitingRoom(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    room_name = Required(str)
+    game = Optional(Game)
+    players = Set('Player')
+
+
+class Player(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    game = Optional(Game)
+    room = Required(WaitingRoom)
+    username = Required(str)
+    role = Required(str, default="human")
+    is_host = Required(bool, default=False)
+    is_alive = Required(bool, default=True)
+    cards = Set('Card')
+"""
 
 def has_room_started(room_id: int):
+    """
+    Check if the room has started.
+
+    Args:
+        room_id (int): The ID of the room to verify.
+    
+    Returns:
+        bool: True if the room has started, False otherwise.
+    """    
+
     room = WaitingRoom[room_id]
     return room.game is not None
+
+def check_host_exists(room_ID: int) -> None:
+    """
+    Verify if the host exists.
+
+    Args:
+        room_ID (int): The ID of the room to verify.
+
+    Raises:
+        HTTPException: If the host does not exist,
+        raise an HTTP exception with a status code of 404.
+    """
+    room = WaitingRoom[room_ID]
+    host = room.players.select(lambda p: p.is_host).first()
+    if host is None:
+        room.delete()
+
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Host not found"
+        )
+    

@@ -27,29 +27,29 @@ async def create_game(creation_request: GameCreationRequest) -> GameID:
     return response
 
 
-@game_router.put(path="/{game_id}/deal-card", status_code=status.HTTP_200_OK)
-async def draw_card(game_id: int, player_id: PlayerID) -> None:
+@game_router.put(path="/{room_id}/deal-card", status_code=status.HTTP_200_OK)
+async def draw_card(room_id: int, player_id: PlayerID) -> None:
     with db_session:
-        game_draw_card.check_pre_conditions_draw_cards(game_id, player_id)
-        game_draw_card.draw_card(game_id, player_id)
+        game_draw_card.check_pre_conditions_draw_cards(room_id, player_id)
+        game_draw_card.draw_card(room_id, player_id)
 
 
-@game_router.get(path="/{game_id}", status_code=status.HTTP_200_OK)
-async def get_game_info(game_id) -> GameStatus:
+@game_router.get(path="/{room_id}", status_code=status.HTTP_200_OK)
+async def get_game_info(room_id) -> GameStatus:
     with db_session:
-        game = Game.get(id=game_id)
+        game = Game.get(id=room_id)
         game_status.handle_errors(game)
         response = game_status.get_response(game)
 
     return response
 
 
-@game_router.put(path="/{game_id}/play-card", status_code=status.HTTP_200_OK)
-async def play_card(play_request: PlayCardRequest, game_id: int) -> GameStatus:
+@game_router.put(path="/{room_id}/play-card", status_code=status.HTTP_200_OK)
+async def play_card(play_request: PlayCardRequest, room_id: int) -> GameStatus:
     with db_session:
-        game_actions.handle_errors(play_request, game_id)
-        game_actions.play_card(play_request, game_id)
-        game = Game.get(id=game_id)
+        game_actions.handle_errors(play_request, room_id)
+        game_actions.play_card(play_request, room_id)
+        game = Game.get(id=room_id)
         response = game_status.get_response(game)
 
     return response
