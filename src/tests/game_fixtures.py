@@ -52,7 +52,7 @@ def get_game_status_response(game_data: Dict) -> GameStatus:
     response = GameStatus(
         gameID=game_data["game_id"], players=schema_players,
         lastPlayedCard=card,
-        playerPlayingTurn=PlayerID(playerID=0)
+        playerPlayingTurn=PlayerID(playerID=1)
     )
     return response
 
@@ -128,6 +128,6 @@ def db_game_creation_without_cards():
 
     with db_session:
         room = WaitingRoom(id=0, room_name="Test room")
-        player = Player(id=1, username="Player", room=room)
+        player = Player(id=1, username="Player", room=room, is_host=True)
         room.players.add(player)
         game = Game(id=0, waiting_room=room, players=room.players)

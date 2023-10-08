@@ -86,33 +86,6 @@ def is_player_added_to_room(player: Player, room: WaitingRoom) -> None:
             detail="Player not added to room"
         )
 
-"""
-class WaitingRoom(db.Entity):
-    id = PrimaryKey(int, auto=True)
-    room_name = Required(str)
-    game = Optional(Game)
-    players = Set('Player')
-
-
-class Player(db.Entity):
-    id = PrimaryKey(int, auto=True)
-    game = Optional(Game)
-    room = Required(WaitingRoom)
-    username = Required(str)
-    role = Required(str, default="human")
-    is_host = Required(bool, default=False)
-    is_alive = Required(bool, default=True)
-    cards = Set('Card')
-
-    @room_router.post("/{roomID}/players", response_model=PlayerID, status_code=status.HTTP_200_OK)
-async def add_player_to_waiting_room(request_data: PlayerName, roomID: int) -> PlayerID:
-    with db_session:
-        player_name = request_data.playerName
-        room_ops.check_valid_player_name(player_name)
-        room_ops.check_waiting_room_exists(roomID)
-        room_ops.check_player_name_is_unique(player_name, roomID)
-"""
-
 def check_player_name_is_unique(player_name: PlayerName, room_ID: int) -> None:
     """
     Verify if the player's name is unique in the room.
@@ -145,3 +118,13 @@ def check_game_started(room_ID: int) -> None:
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Game has already started"
         )
+    
+def delete_room(room_ID: int) -> None:
+    """
+    Delete a room from the database.
+
+    Args:
+        room_ID (int): The ID of the room to delete.
+    """
+    WaitingRoom[room_ID].delete()
+    commit()

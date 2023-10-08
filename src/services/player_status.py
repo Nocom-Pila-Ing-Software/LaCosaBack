@@ -103,3 +103,21 @@ def get_player_info(player_id: PlayerID) -> PlayerResponse:
         role=player.role,
         is_alive=player.is_alive
     )
+
+def delete_player(player_id: PlayerID) -> None:
+    """
+    Delete a player from the database
+
+    Args:
+    player_id (PlayerID): Input data to validate
+
+    Raises:
+    HTTPException(status_code=404): If the player ID doesn't exist in database
+    """
+
+    check_player_exists(player_id)
+
+    player = Player.get(id=player_id)
+
+    db.delete(player)
+    db.commit()

@@ -7,8 +7,9 @@ from schemas.room import RoomCreationRequest, RoomCreationResponse, RoomDataResp
 from pony.orm import db_session
 import services.room_creator as room_creator
 import services.room_data as room_data
-from schemas.player import PlayerName, PlayerID
 import services.room_operations as room_ops
+import services.player_status as player_stat
+from schemas.player import PlayerName, PlayerID
 from models import WaitingRoom
 
 room_router = APIRouter()
@@ -32,7 +33,6 @@ async def create_room(creation_request: RoomCreationRequest) -> RoomCreationResp
 async def get_room_info(room_id: int) -> RoomDataResponse:
     with db_session:
         room_data.check_waiting_room_exists(room_id)
-        room_data.check_host_exists(room_id)
         number_players = room_data.get_number_of_players_in_room(room_id)
         players_names_room = room_data.get_players_names_in_room(room_id)
         has_room_started = room_data.has_room_started(room_id)
@@ -44,13 +44,13 @@ async def get_room_info(room_id: int) -> RoomDataResponse:
 
     return response
 
-
 @room_router.post("/{room_id}/players", response_model=PlayerID, status_code=status.HTTP_200_OK)
 async def add_player_to_waiting_room(request_data: PlayerName, room_id: int) -> PlayerID:
     with db_session:
         player_name = request_data.playerName
         room_ops.check_valid_player_name(player_name)
         room_ops.check_waiting_room_exists(room_id)
+        room_data.check_host_exists(room_id)
         room_ops.check_player_name_is_unique(player_name, room_id)
         room_ops.check_game_started(room_id)
         room = WaitingRoom.get(id=room_id)

@@ -107,7 +107,7 @@ def test_play_card(db_game_creation_with_cards):
         assert Game.get(id=5).cards.filter(id=0).exists()
 
         # The turn counter was increased
-        assert Game.get(id=5).turn_counter == 1
+        assert Game.get(id=5).turn_counter == 2
 
     # The target player is dead
     assert response.json()["players"] == [
