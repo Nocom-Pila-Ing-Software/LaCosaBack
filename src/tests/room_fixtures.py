@@ -2,25 +2,6 @@ from models import WaitingRoom, Player, db
 from pony.orm import db_session
 import pytest
 
-"""
-class WaitingRoom(db.Entity):
-    id = PrimaryKey(int, auto=True)
-    room_name = Required(str)
-    game = Optional(Game)
-    players = Set('Player')
-
-
-class Player(db.Entity):
-    id = PrimaryKey(int, auto=True)
-    game = Optional(Game)
-    room = Required(WaitingRoom)
-    username = Required(str)
-    role = Required(str, default="human")
-    is_host = Required(bool, default=False)
-    is_alive = Required(bool, default=True)
-    cards = Set('Card')
-"""
-
 @pytest.fixture()
 def db_room_creation():
     db.drop_all_tables(with_all_data=True)
