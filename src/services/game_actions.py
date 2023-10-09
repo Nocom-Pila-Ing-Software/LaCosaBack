@@ -32,6 +32,7 @@ def modify_player_position(player, game):
     for p in game.players:
         if p.position > player.position:
             p.position -= 1    
+    player.position = 0
 
 def get_next_player(game, player):
     next_player = game.players.select(lambda p: p.position == player.position + 1).first()
