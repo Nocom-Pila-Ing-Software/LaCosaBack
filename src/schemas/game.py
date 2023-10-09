@@ -37,4 +37,5 @@ class GameStatus(BaseModel):
     gameID: int
     playerPlayingTurn: PlayerID
     players: List[PublicPlayerInfo]
+    deadPlayers: List[PublicPlayerInfo]
     lastPlayedCard: CardInfo

@@ -49,7 +49,9 @@ def get_game_status_response(game_data: Dict) -> GameStatus:
     card = CardInfo(cardID=1, **game_data["card"])
     # Create a Game instance
     response = GameStatus(
-        gameID=game_data["game_id"], players=schema_players,
+        gameID=game_data["game_id"], 
+        players=schema_players,
+        deadPlayers=[],
         lastPlayedCard=card,
         playerPlayingTurn = PlayerID(playerID = 1)
     )

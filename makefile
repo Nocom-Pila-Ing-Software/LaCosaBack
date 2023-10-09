@@ -2,6 +2,7 @@
 
 run:
 	( \
+      rm -rf src/db.sqlite; \
        . venv/bin/activate; \
        export ENV=dev           ; \
        cd src                   ; \

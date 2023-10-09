@@ -124,6 +124,15 @@ def test_play_card(db_game_creation_with_cards):
         }
     ]
 
+    assert response.json()["deadPlayers"] == [
+        {
+            "playerID": 2,
+            "username": "Player2",
+            "is_host": False,
+            "is_alive": False
+        }
+    ]
+
 
 def test_play_card_invalid_player(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
