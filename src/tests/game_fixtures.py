@@ -20,8 +20,7 @@ def db_game_creation():
 def get_player_data() -> List[Dict]:
     player_data = [
         {"username": "pepito", "is_host": True, "is_alive": True},
-        {"username": "fulanito", "is_host": False, "is_alive": True},
-        {"username": "menganito", "is_host": False, "is_alive": False}
+        {"username": "fulanito", "is_host": False, "is_alive": True}
     ]
     return player_data
 

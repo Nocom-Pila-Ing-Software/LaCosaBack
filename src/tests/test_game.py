@@ -111,12 +111,6 @@ def test_play_card(db_game_creation_with_cards):
     assert response.json()["players"] == [
         
         {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": False
-        },
-        {
             "playerID": 1,
             "username": "Player1",
             "is_host": True,

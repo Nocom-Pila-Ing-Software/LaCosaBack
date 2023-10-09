@@ -27,16 +27,16 @@ def get_response(game: Game) -> None:
             name=game.last_played_card.name,
             description=game.last_played_card.description,
         )
-    
-    # ordenar por player.position de menor a mayor
+
     for player in game.players.order_by(Player.position):
-        player_info = PublicPlayerInfo(
-            playerID=player.id,
-            username=player.username,
-            is_host=player.is_host,
-            is_alive=player.is_alive
-        )
-        players.append(player_info)
+        if player.is_alive:
+            player_info = PublicPlayerInfo(
+                playerID=player.id,
+                username=player.username,
+                is_host=player.is_host,
+                is_alive=player.is_alive
+            )
+            players.append(player_info)
 
 
     response = GameStatus(
