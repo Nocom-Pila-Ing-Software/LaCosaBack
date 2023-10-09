@@ -17,7 +17,7 @@ def play_card(play_request: PlayCardRequest, game_id: int) -> None:
 
     if Card.get(id=play_request.cardID).name == "Lanzallamas":
         apply_lanzallamas_effect(play_request.targetPlayerID)
-        modify_player_position(Player.get(id=play_request.playerID), game)
+        modify_player_position(get_player(play_request.targetPlayerID), game)
 
     player = Player.get(id=play_request.playerID)
     card = Card.get(id=play_request.cardID)

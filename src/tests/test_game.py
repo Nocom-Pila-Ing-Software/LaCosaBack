@@ -109,17 +109,18 @@ def test_play_card(db_game_creation_with_cards):
 
     # The target player is dead
     assert response.json()["players"] == [
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
+        
         {
             "playerID": 2,
             "username": "Player2",
             "is_host": False,
             "is_alive": False
+        },
+        {
+            "playerID": 1,
+            "username": "Player1",
+            "is_host": True,
+            "is_alive": True
         },
         {
             "playerID": 3,
