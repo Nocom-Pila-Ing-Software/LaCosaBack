@@ -27,10 +27,8 @@ def test_add_player_to_waiting_room_invalid(db_room_creation):
 
     assert response.status_code == 404
 
-    print(response.json())
     with db_session:
         player = Player.get(id=2)
-        print(player)
         assert player is None
 
 

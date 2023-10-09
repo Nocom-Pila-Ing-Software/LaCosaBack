@@ -74,7 +74,6 @@ def test_get_game_status(db_game_status):
     expected_response = db_game_status.model_dump()
     response = client.get("/game/1")
     assert response.status_code == 200
-    print(response.json())
     assert response.json() == expected_response
 
 
