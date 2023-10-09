@@ -3,7 +3,7 @@ from schemas.player import PlayerName
 from pony.orm import db_session, commit, select
 from models import WaitingRoom, Player
 
-def create_player(player_name: PlayerName, room_ID: int) -> Player:
+def create_player(player_name: PlayerName, room: WaitingRoom) -> Player:
     """
     Create a new player and add them to the database.
 
@@ -14,7 +14,12 @@ def create_player(player_name: PlayerName, room_ID: int) -> Player:
     Returns:
         Player: The created player.
     """
-    player = Player(username=player_name, room=room_ID)
+
+    #count players in room ERROR
+    player_count = len(room.players)
+    room_ID = room.id
+
+    player = Player(username=player_name, room=room_ID, position=player_count+1)
     commit()
 
     return player

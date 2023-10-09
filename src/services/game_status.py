@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from models import Game
+from models import Game, Player
 from schemas.game import GameStatus, PublicPlayerInfo, CardInfo, PlayerID
 
 
@@ -18,13 +18,6 @@ def handle_errors(game: Game) -> None:
             status_code=404, detail="Game ID doesn't exist"
         )
 
-
-def get_player_playing_turn(game: Game):
-    turn_counter = game.turn_counter
-    player_num = len(game.players)
-    return turn_counter % player_num
-
-
 def get_response(game: Game) -> None:
     players = []
     last_card = CardInfo(cardID=-1, name="", description="")
@@ -34,7 +27,9 @@ def get_response(game: Game) -> None:
             name=game.last_played_card.name,
             description=game.last_played_card.description,
         )
-    for player in game.players.sort_by(lambda x: x.id):
+    
+    # ordenar por player.position de menor a mayor
+    for player in game.players.order_by(Player.position):
         player_info = PublicPlayerInfo(
             playerID=player.id,
             username=player.username,
@@ -43,12 +38,11 @@ def get_response(game: Game) -> None:
         )
         players.append(player_info)
 
-    player_playing_turn = get_player_playing_turn(game)
 
     response = GameStatus(
         gameID=game.id,
         players=players,
         lastPlayedCard=last_card,
-        playerPlayingTurn=PlayerID(playerID=player_playing_turn)
+        playerPlayingTurn=PlayerID(playerID=game.current_player)
     )
     return response

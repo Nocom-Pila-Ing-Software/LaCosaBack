@@ -16,13 +16,13 @@ def setup_test_environment():
         room = WaitingRoom(id=0, room_name="Test room")
         player = Player(id=1, username="Player1", room=room)
         room.players.add(player)
-        game = Game(id=0, waiting_room=room, players=room.players)
+        game = Game(id=0, waiting_room=room, players=room.players, current_player=1)
         game.cards.create(name="Lanzallamas")
 
         room = WaitingRoom(id=1, room_name="Test room")
         player = Player(id=2, username="Player2", room=room)
         room.players.add(player)
-        game = Game(id=1, waiting_room=room, players=room.players)
+        game = Game(id=1, waiting_room=room, players=room.players, current_player=2)
         for i in range(40):
             if i % 2 == 0:
                 game.cards.create(name="Lanzallamas")
@@ -34,7 +34,7 @@ def setup_test_environment():
         room = WaitingRoom(id=2, room_name="Test room")
         player = Player(id=3, username="Player3", room=room)
         room.players.add(player)
-        game = Game(id=2, waiting_room=room, players=room.players)
+        game = Game(id=2, waiting_room=room, players=room.players, current_player=3)
 
 def test_draw_card_success(setup_test_environment):
     mock_draw_request = PlayerID(playerID=1).model_dump()

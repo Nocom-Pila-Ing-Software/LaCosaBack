@@ -13,18 +13,31 @@ def play_card(play_request: PlayCardRequest, game_id: int) -> None:
     play_request (PlayCardRequest): Input data to validate
     game_id (int): The id of the game to validate
     """
+    game = Game.get(id=game_id)
+
     if Card.get(id=play_request.cardID).name == "Lanzallamas":
         apply_lanzallamas_effect(play_request.targetPlayerID)
+        modify_player_position(Player.get(id=play_request.playerID), game)
 
-    game = Game.get(id=game_id)
     player = Player.get(id=play_request.playerID)
     card = Card.get(id=play_request.cardID)
 
     player.cards.remove(card)
     game.cards.add(card)
     game.last_played_card = card
-    game.turn_counter += 1
 
+    game.current_player = get_next_player(game, player)
+
+def modify_player_position(player, game):
+    for p in game.players:
+        if p.position > player.position:
+            p.position -= 1    
+
+def get_next_player(game, player):
+    next_player = game.players.select(lambda p: p.position == player.position + 1).first()
+    if next_player is None:
+        next_player = game.players.select(lambda p: p.position == 1).first()
+    return next_player.id
 
 def get_game(game_id: int):
     game = Game.get(id=game_id)

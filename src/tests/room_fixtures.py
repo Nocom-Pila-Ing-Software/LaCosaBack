@@ -9,7 +9,7 @@ def db_room_creation():
 
     with db_session:
         room = WaitingRoom(id=0, room_name="Test Room2")
-        room.players.create(id=1, username="Test_player1", is_host=True)
+        room.players.create(id=1, username="Test_player1", is_host=True, position=1)
 
 @pytest.fixture(scope="module")
 def db_room_creation_with_players():

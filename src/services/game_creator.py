@@ -63,7 +63,6 @@ def deal_cards_to_players(game: Game) -> None:
         for _ in range(4):
             player.cards.create(name="Carta Mano")
 
-
 def create_game_on_db(creation_request: GameCreationRequest) -> Game:
     """
     Creates a new Game instance in the database
@@ -77,7 +76,8 @@ def create_game_on_db(creation_request: GameCreationRequest) -> Game:
     room = WaitingRoom[creation_request.roomID]
     game = Game(
         waiting_room=room,
-        players=room.players
+        players=room.players,
+        current_player = room.players.select(lambda p: p.position == 1).first().id
     )
     return game
 

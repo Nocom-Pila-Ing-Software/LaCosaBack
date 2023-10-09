@@ -11,7 +11,7 @@ run:
 test:
 	( \
        . venv/bin/activate; \
-       pytest; \
+       pytest -s; \
     )
 
 install:

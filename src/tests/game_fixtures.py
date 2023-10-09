@@ -13,8 +13,8 @@ def db_game_creation():
     with db_session:
         # Create a waiting room with players for testing
         room = WaitingRoom(id=0, room_name="Test room")
-        room.players.create(username="Player1")
-        room.players.create(username="Player2")
+        room.players.create(username="Player1", is_host=True, position=1)
+        room.players.create(username="Player2", is_host=False, position=2)
 
 
 def get_player_data() -> List[Dict]:
@@ -38,7 +38,7 @@ def setup_db_game_status(game_data: Dict) -> None:
     # Create a Game instance
     Game(
         id=game_data["game_id"], waiting_room=room1, players=db_players,
-        last_played_card=card
+        last_played_card=card, current_player = 1
     )
 
 
@@ -52,7 +52,7 @@ def get_game_status_response(game_data: Dict) -> GameStatus:
     response = GameStatus(
         gameID=game_data["game_id"], players=schema_players,
         lastPlayedCard=card,
-        playerPlayingTurn=PlayerID(playerID=1)
+        playerPlayingTurn = PlayerID(playerID = 1)
     )
     return response
 
@@ -81,15 +81,12 @@ def db_game_creation_with_cards():
     with db_session:
         # Create a waiting room
         room = WaitingRoom(id=0, room_name="Test room")
+        player1 = room.players.create(id=1, username="Player1", is_host=True, position=1)
+        player2 = room.players.create(id=2, username="Player2", is_host=False, position=2)
+        player3 = room.players.create(id=3, username="Player3", is_host=False, position=3)
 
         # Create a game with players
-        game = Game(id=5, waiting_room=room)
-        player1 = Player(id=1, room=room, username="Player1", is_host=True)
-        player2 = Player(id=2, room=room, username="Player2", is_host=False)
-        player3 = Player(id=3, room=room, username="Player3", is_host=False)
-        game.players.add(player1)
-        game.players.add(player2)
-        game.players.add(player3)
+        game = Game(id=5, waiting_room=room, current_player=1, players=room.players)
 
         # Add cards to players
         player1.cards.create(id=0, name="Lanzallamas",
@@ -116,7 +113,7 @@ def db_game_creation_with_cards_player_data():
         room = WaitingRoom(id=0, room_name="Test room")
         player = Player(id=1, username="Player", room=room)
         room.players.add(player)
-        game = Game(id=0, waiting_room=room, players=room.players)
+        game = Game(id=0, waiting_room=room, players=room.players, current_player = 1)
         for _ in range(5):
             player.cards.create(name="Carta_test", description="Carta test")
 
@@ -128,6 +125,6 @@ def db_game_creation_without_cards():
 
     with db_session:
         room = WaitingRoom(id=0, room_name="Test room")
-        player = Player(id=1, username="Player", room=room, is_host=True)
+        player = Player(id=1, username="Player", room=room, is_host=True, position=1)
         room.players.add(player)
-        game = Game(id=0, waiting_room=room, players=room.players)
+        Game(id=0, waiting_room=room, players=room.players, current_player = 1)

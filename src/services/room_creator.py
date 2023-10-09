@@ -16,7 +16,8 @@ def create_host_on_db(room: WaitingRoom, creation_request: RoomCreationRequest) 
     """
     new_host = room.players.create(
         username=creation_request.hostName,
-        is_host=True
+        is_host=True,
+        position=1
     )
     commit()
     return new_host
