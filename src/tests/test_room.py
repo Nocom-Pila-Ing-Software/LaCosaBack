@@ -2,7 +2,7 @@ from main import app
 from fastapi.testclient import TestClient
 from models import WaitingRoom
 from pony.orm import db_session, select
-from schemas.room import RoomCreationRequest, RoomCreationResponse
+from room.schemas import RoomCreationRequest, RoomCreationResponse
 from .room_fixtures import db_room_creation
 
 client = TestClient(app)

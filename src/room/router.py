@@ -3,12 +3,11 @@ Defines 'room' endpoints
 """
 
 from fastapi import APIRouter, status
-from schemas.room import RoomCreationRequest, RoomCreationResponse, RoomDataResponse
+from room.schemas import RoomCreationRequest, RoomCreationResponse, RoomDataResponse
 from pony.orm import db_session
-import services.room_creator as room_creator
-import services.room_data as room_data
-import services.room_operations as room_ops
-import services.player_status as player_stat
+import room.utils.room_creator as room_creator
+import room.utils.room_data as room_data
+import room.utils.room_operations as room_ops
 from schemas.player import PlayerName, PlayerID
 from models import WaitingRoom
 
@@ -43,6 +42,7 @@ async def get_room_info(room_id: int) -> RoomDataResponse:
         )
 
     return response
+
 
 @room_router.post("/{room_id}/players", response_model=PlayerID, status_code=status.HTTP_200_OK)
 async def add_player_to_waiting_room(request_data: PlayerName, room_id: int) -> PlayerID:

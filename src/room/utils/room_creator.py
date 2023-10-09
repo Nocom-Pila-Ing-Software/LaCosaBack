@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from pony.orm import select, commit
 from models import WaitingRoom
-from schemas.room import RoomCreationRequest
+from room.schemas import RoomCreationRequest
 
 
 def create_host_on_db(room: WaitingRoom, creation_request: RoomCreationRequest) -> int:

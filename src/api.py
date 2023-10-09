@@ -3,7 +3,7 @@ If you create a new router add it here."""
 
 from fastapi import APIRouter
 from game.router import game_router
-from routers.room import room_router
+from room.router import room_router
 from routers.player import player_router
 
 api_router = APIRouter()
