@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
-from schemas.player import PlayerResponse
+from player.schemas import PlayerResponse
 from pony.orm import db_session
-import services.player_status as player_stat
+import player.utils.player_status as player_stat
 
 player_router = APIRouter()
 

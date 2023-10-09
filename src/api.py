@@ -4,7 +4,7 @@ If you create a new router add it here."""
 from fastapi import APIRouter
 from game.router import game_router
 from room.router import room_router
-from routers.player import player_router
+from player.router import player_router
 
 api_router = APIRouter()
 api_router.include_router(game_router, prefix="/game", tags=["game"])

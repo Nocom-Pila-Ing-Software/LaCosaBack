@@ -8,7 +8,7 @@ from pony.orm import db_session
 import room.utils.room_creator as room_creator
 import room.utils.room_data as room_data
 import room.utils.room_operations as room_ops
-from schemas.player import PlayerName, PlayerID
+from player.schemas import PlayerName, PlayerID
 from models import WaitingRoom
 
 room_router = APIRouter()

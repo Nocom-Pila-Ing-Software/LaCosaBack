@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from schemas.player import CardData, PlayerID, PlayerResponse, CardID
+from player.schemas import CardData, PlayerID, PlayerResponse, CardID
 from models import Player, Card, db
 from typing import List
 
