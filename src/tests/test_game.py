@@ -2,7 +2,7 @@ from main import app
 from fastapi.testclient import TestClient
 from models import Game
 from pony.orm import db_session, select
-from schemas.game import GameCreationRequest, PlayerID, GameID, PublicPlayerInfo, CardInfo, GameStatus, PlayCardRequest
+from game.schemas import GameCreationRequest, PlayerID, GameID, PublicPlayerInfo, CardInfo, GameStatus, PlayCardRequest
 import pytest
 from .game_fixtures import db_game_creation, db_game_status, db_game_creation_with_cards
 

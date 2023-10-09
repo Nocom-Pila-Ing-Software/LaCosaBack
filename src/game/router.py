@@ -2,12 +2,12 @@
 """
 
 from fastapi import APIRouter, status
-from schemas.game import GameCreationRequest, GameID, PlayerID, GameStatus, PlayCardRequest
+from game.schemas import GameCreationRequest, GameID, PlayerID, GameStatus, PlayCardRequest
 from pony.orm import db_session
-import services.game_creator as game_creator
-import services.game_draw_card as game_draw_card
-import services.game_status as game_status
-import services.game_actions as game_actions
+import game.utils.game_creator as game_creator
+import game.utils.game_draw_card as game_draw_card
+import game.utils.game_status as game_status
+import game.utils.game_actions as game_actions
 from models import Game
 
 game_router = APIRouter()

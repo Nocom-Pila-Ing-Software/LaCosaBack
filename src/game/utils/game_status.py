@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from models import Game, Player
-from schemas.game import GameStatus, PublicPlayerInfo, CardInfo, PlayerID
+from game.schemas import GameStatus, PublicPlayerInfo, CardInfo, PlayerID
 
 
 def handle_errors(game: Game) -> None:
