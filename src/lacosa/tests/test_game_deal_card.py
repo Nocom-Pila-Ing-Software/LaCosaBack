@@ -2,7 +2,7 @@ from main import app
 from fastapi.testclient import TestClient
 from models import Game, WaitingRoom, Player, db
 from pony.orm import db_session
-from game.schemas import PlayerID
+from lacosa.game.schemas import PlayerID
 import pytest
 
 client = TestClient(app)
