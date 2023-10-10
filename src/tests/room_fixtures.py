@@ -20,4 +20,3 @@ def db_room_creation_with_players():
         room.players.create(id=1, username="Test_player", is_host=True)
         room.players.create(id=2, username="Test_player2", is_host=False)
         room.players.create(id=3, username="Test_player3", is_host=False)
-    yield
