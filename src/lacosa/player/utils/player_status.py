@@ -1,5 +1,6 @@
 from fastapi import HTTPException
-from lacosa.player.schemas import CardData, PlayerID, PlayerResponse, CardID
+from lacosa.player.schemas import PlayerResponse
+from schemas.schemas import PlayerID, CardID, CardInfo
 from models import Player, Card, db
 from typing import List
 
@@ -40,7 +41,7 @@ def check_card_exists(card_id: CardID) -> None:
         )
 
 
-def get_list_hand_player(player_id: PlayerID) -> List[CardData]:
+def get_list_hand_player(player_id: PlayerID) -> List[CardInfo]:
     """
     Get the list of cards of a player
 
@@ -48,7 +49,7 @@ def get_list_hand_player(player_id: PlayerID) -> List[CardData]:
     player_id (PlayerID): Input data to validate
 
     Returns:
-    list[CardData]: The list of cards of the player
+    list[CardInfo]: The list of cards of the player
     """
 
     player = Player.get(id=player_id)
@@ -59,12 +60,12 @@ def get_list_hand_player(player_id: PlayerID) -> List[CardData]:
     for card in player.cards:
         list_hand.append(get_card_data(card))
 
-    list_hand.sort(key=lambda x: x.id)
+    list_hand.sort(key=lambda x: x.cardID)
 
     return list_hand
 
 
-def get_card_data(card) -> CardData:
+def get_card_data(card) -> CardInfo:
     """
     Get the data of a card
 
@@ -72,12 +73,12 @@ def get_card_data(card) -> CardData:
     card (Card): The card to get the data from
 
     Returns:
-    CardData: The data of the card
+    CardInfo: The data of the card
     """
 
     check_card_exists(card.id)
-    return CardData(
-        id=card.id,
+    return CardInfo(
+        cardID=card.id,
         name=card.name,
         description=card.description
     )

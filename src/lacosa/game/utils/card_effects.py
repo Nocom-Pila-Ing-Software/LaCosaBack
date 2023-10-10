@@ -1,5 +1,4 @@
-from models import Game, Player, Card
-from ..schemas import PlayCardRequest
+from models import Player
 from pony.orm import db_session
 
 

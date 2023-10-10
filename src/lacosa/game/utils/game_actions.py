@@ -49,7 +49,6 @@ def get_game(game_id: int):
         )
     return game
 
-
 def get_player(player_id: int):
     player = Player.get(id=player_id)
     if not player:

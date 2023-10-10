@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from pony.orm import select 
 from models import Game, Player
-from ..schemas import PlayerID
+from schemas.schemas import PlayerID
 from fastapi import HTTPException, status
 import random
 
@@ -21,6 +21,7 @@ def find_game(game_id: int) -> Game:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
     return game
 
+
 def find_player(player_id: PlayerID) -> Player:
     """
     Find a player by ID
@@ -37,6 +38,7 @@ def find_player(player_id: PlayerID) -> Player:
     if player is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Player not found")
     return player
+
 
 def draw_card(game_id: int, player_id: PlayerID) -> None:
     """
@@ -56,7 +58,8 @@ def draw_card(game_id: int, player_id: PlayerID) -> None:
     game.cards.remove(card)
     player.cards.add(card)
 
-def check_pre_conditions_draw_cards(game_id: int, player_id: PlayerID) -> None:
+
+def handle_errors(game_id: int, player_id: PlayerID) -> None:
     """
     Check if the pre-conditions for drawing a card are met
 

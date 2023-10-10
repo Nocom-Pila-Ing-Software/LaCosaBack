@@ -2,7 +2,8 @@ from main import app
 from fastapi.testclient import TestClient
 from models import Game
 from pony.orm import db_session, select
-from lacosa.game.schemas import GameCreationRequest, PlayerID, GameID, PublicPlayerInfo, CardInfo, GameStatus, PlayCardRequest
+from schemas.schemas import PlayerID, GameID, CardInfo
+from lacosa.game.schemas import GameCreationRequest, PublicPlayerInfo, GameStatus, PlayCardRequest
 import pytest
 from .game_fixtures import db_game_creation, db_game_status, db_game_creation_with_cards
 
@@ -92,6 +93,8 @@ def test_play_card(db_game_creation_with_cards):
     response = client.put("/game/5/play-card", json=mock_play_request)
 
     assert response.status_code == 200
+
+    response = client.get("/game/5")
     # The last played card is correct
     assert response.json()["lastPlayedCard"] == {
         "cardID": 0,

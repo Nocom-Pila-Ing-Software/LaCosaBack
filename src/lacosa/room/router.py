@@ -8,7 +8,7 @@ from lacosa.room.schemas import RoomCreationRequest, RoomCreationResponse, RoomD
 import lacosa.room.utils.room_creator as room_creator
 import lacosa.room.utils.room_data as room_data
 import lacosa.room.utils.room_operations as room_ops
-from lacosa.player.schemas import PlayerName, PlayerID
+from schemas.schemas import PlayerName, PlayerID
 from models import WaitingRoom
 
 room_router = APIRouter()
@@ -48,16 +48,11 @@ async def get_room_info(room_id: int) -> RoomDataResponse:
 async def add_player_to_waiting_room(request_data: PlayerName, room_id: int) -> PlayerID:
     with db_session:
         player_name = request_data.playerName
-        room_ops.check_valid_player_name(player_name)
-        room_ops.check_waiting_room_exists(room_id)
-        room_data.check_host_exists(room_id)
-        room_ops.check_player_name_is_unique(player_name, room_id)
-        room_ops.check_game_started(room_id)
+
+        room_ops.handle_errors(player_name, room_id)
         room = WaitingRoom.get(id=room_id)
         player = room_ops.create_player(player_name, room)
-        room_ops.check_player_exists_in_database(player)
-        room.players.add(player)
-        room_ops.is_player_added_to_room(player, room)
+        room_ops.add_player_to_room(player, room)
 
         response = PlayerID(playerID=player.id)
 

@@ -1,9 +1,10 @@
 from fastapi import HTTPException
 from pony.orm import select
 import random
-from models import WaitingRoom, Game, Player
+from models import WaitingRoom, Game
 from ..schemas import GameCreationRequest
-
+from schemas.schemas import PlayerID
+from .game_draw_card import draw_card
 
 def create_deck(game: Game) -> None:
     """
@@ -19,49 +20,44 @@ def create_deck(game: Game) -> None:
             game.cards.create(name="Carta Mazo")
 
 
-def assign_thing_role(game: Game) -> Player:
+def assign_roles(game: Game) -> None:
     """
-    Assign "thing" role to a random player within a game
+    Assign "thing" role to a random player within a game and assings "human" role to the rest
 
     Args:
     game (Game): The game object to assign roles in
 
     Returns:
-    Player: The player that was assigned the "thing" role
     """
     players_in_game = list(select(p for p in game.players))
 
     the_thing = random.choice(players_in_game)
     the_thing.role = "thing"
-    return the_thing
+
+    for player in players_in_game:
+        if player != the_thing:
+            player.role = "human"
 
 
-def deal_cards_to_thing(the_thing: Player) -> None:
+def deal_cards(game: Game) -> None:
     """
-    Deal cards to the "thing" player
-
-    Args:
-    the_thing (Player): The player to deal cards to
-    """
-    the_thing.cards.create(name="La Cosa")
-    for _ in range(3):
-        the_thing.cards.create(name="Carta Mano")
-
-
-def deal_cards_to_players(game: Game) -> None:
-    """
-    Deal cards to all "human" players within a game
+    Deal "The Thing" and 3 random cards to the "thing" player and 
+    4 cards to the rest of the players
 
     Args:
     game (Game): The game object to deal cards in
     """
-    human_players = list(
-        select(p for p in game.players if p.role == "human")
-    )
+    players_in_game = list(game.players)
 
-    for player in human_players:
-        for _ in range(4):
-            player.cards.create(name="Carta Mano")
+    for player in players_in_game:
+        if player.role == "thing":
+            player.cards.create(name="La Cosa")
+            for _ in range(3):
+                draw_card(int(game.id), PlayerID(playerID=player.id))
+        else:
+            for _ in range(4):
+                draw_card(int(game.id), PlayerID(playerID=player.id))
+
 
 def create_game_on_db(creation_request: GameCreationRequest) -> Game:
     """

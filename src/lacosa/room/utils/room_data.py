@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from models import WaitingRoom
-from ..schemas import RoomID, PlayerName
+from schemas.schemas import PlayerName, RoomID
 from typing import List
 
 def get_number_of_players_in_room(room_id: RoomID) -> int:

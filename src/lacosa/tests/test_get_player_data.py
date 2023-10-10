@@ -14,31 +14,31 @@ def test_get_player_sucesfully(db_game_creation_with_cards_player_data):
         assert response.json() == {
             "hand": sorted([
                 {
-                    "id": 1,
+                    "cardID": 1,
                     "name": "Carta_test",
                     "description": "Carta test"
                 },
                 {
-                    "id": 2,
+                    "cardID": 2,
                     "name": "Carta_test",
                     "description": "Carta test"
                 },
                 {
-                    "id": 3,
+                    "cardID": 3,
                     "name": "Carta_test",
                     "description": "Carta test"
                 },
                 {
-                    "id": 4,
+                    "cardID": 4,
                     "name": "Carta_test",
                     "description": "Carta test"
                 },
                 {
-                    "id": 5,
+                    "cardID": 5,
                     "name": "Carta_test",
                     "description": "Carta test"
                 }
-            ], key=lambda x: x["id"]),
+            ], key=lambda x: x["cardID"]),
             "role": "human",
             "is_alive": True
         }

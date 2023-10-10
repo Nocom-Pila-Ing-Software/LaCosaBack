@@ -1,22 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-
-
-class RoomName(BaseModel):
-    roomName: str
-
-
-class PlayerName(BaseModel):
-    playerName: str
-
-
-class RoomID(BaseModel):
-    roomID: int
-
-
-class PlayerID(BaseModel):
-    playerID: int
-
+from schemas.schemas import PlayerName
 
 class RoomCreationRequest(BaseModel):
     roomName: str

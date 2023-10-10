@@ -1,14 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-
-
-class PlayerID(BaseModel):
-    playerID: int
-
-
-class GameID(BaseModel):
-    gameID: int
-
+from schemas.schemas import PlayerID, CardInfo
 
 class GameCreationRequest(BaseModel):
     roomID: int
@@ -18,12 +10,6 @@ class PlayCardRequest(BaseModel):
     playerID: int
     targetPlayerID: int
     cardID: int
-
-
-class CardInfo(BaseModel):
-    cardID: int
-    name: str
-    description: str
 
 
 class PublicPlayerInfo(BaseModel):
