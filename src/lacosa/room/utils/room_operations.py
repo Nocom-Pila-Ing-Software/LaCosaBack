@@ -1,7 +1,8 @@
 from fastapi import HTTPException, status
-from player.schemas import PlayerName
+from lacosa.player.schemas import PlayerName
 from pony.orm import db_session, commit, select
 from models import WaitingRoom, Player
+
 
 def create_player(player_name: PlayerName, room: WaitingRoom) -> Player:
     """
@@ -15,15 +16,15 @@ def create_player(player_name: PlayerName, room: WaitingRoom) -> Player:
         Player: The created player.
     """
 
-    #count players in room ERROR
+    # count players in room ERROR
     player_count = len(room.players)
     room_ID = room.id
 
-    player = Player(username=player_name, room=room_ID, position=player_count+1)
+    player = Player(username=player_name, room=room_ID,
+                    position=player_count+1)
     commit()
 
     return player
-
 
 
 def check_valid_player_name(player_name: PlayerName) -> None:
@@ -42,6 +43,7 @@ def check_valid_player_name(player_name: PlayerName) -> None:
             detail="Player name cannot be empty"
         )
 
+
 def check_player_exists_in_database(player: Player) -> None:
     """
     Verify if the player has been successfully created in the database.
@@ -58,6 +60,7 @@ def check_player_exists_in_database(player: Player) -> None:
             detail="Player not created"
         )
 
+
 def check_waiting_room_exists(room_ID: int) -> None:
     """
     Verify if the room exists.
@@ -73,6 +76,7 @@ def check_waiting_room_exists(room_ID: int) -> None:
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Room not found"
         )
+
 
 def is_player_added_to_room(player: Player, room: WaitingRoom) -> None:
     """
@@ -91,6 +95,7 @@ def is_player_added_to_room(player: Player, room: WaitingRoom) -> None:
             detail="Player not added to room"
         )
 
+
 def check_player_name_is_unique(player_name: PlayerName, room_ID: int) -> None:
     """
     Verify if the player's name is unique in the room.
@@ -108,6 +113,7 @@ def check_player_name_is_unique(player_name: PlayerName, room_ID: int) -> None:
             detail="Player name already exists in room"
         )
 
+
 def check_game_started(room_ID: int) -> None:
     """
     Verify if the game has started.
@@ -123,7 +129,8 @@ def check_game_started(room_ID: int) -> None:
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Game has already started"
         )
-    
+
+
 def delete_room(room_ID: int) -> None:
     """
     Delete a room from the database.

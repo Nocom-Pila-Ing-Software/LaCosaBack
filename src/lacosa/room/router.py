@@ -3,12 +3,12 @@ Defines 'room' endpoints
 """
 
 from fastapi import APIRouter, status
-from room.schemas import RoomCreationRequest, RoomCreationResponse, RoomDataResponse
 from pony.orm import db_session
-import room.utils.room_creator as room_creator
-import room.utils.room_data as room_data
-import room.utils.room_operations as room_ops
-from player.schemas import PlayerName, PlayerID
+from lacosa.room.schemas import RoomCreationRequest, RoomCreationResponse, RoomDataResponse
+import lacosa.room.utils.room_creator as room_creator
+import lacosa.room.utils.room_data as room_data
+import lacosa.room.utils.room_operations as room_ops
+from lacosa.player.schemas import PlayerName, PlayerID
 from models import WaitingRoom
 
 room_router = APIRouter()

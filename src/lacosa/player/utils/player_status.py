@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from player.schemas import CardData, PlayerID, PlayerResponse, CardID
+from lacosa.player.schemas import CardData, PlayerID, PlayerResponse, CardID
 from models import Player, Card, db
 from typing import List
 
@@ -103,6 +103,7 @@ def get_player_info(player_id: PlayerID) -> PlayerResponse:
         role=player.role,
         is_alive=player.is_alive
     )
+
 
 def delete_player(player_id: PlayerID) -> None:
     """

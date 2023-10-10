@@ -2,12 +2,12 @@
 """
 
 from fastapi import APIRouter, status
-from game.schemas import GameCreationRequest, GameID, PlayerID, GameStatus, PlayCardRequest
 from pony.orm import db_session
-import game.utils.game_creator as game_creator
-import game.utils.game_draw_card as game_draw_card
-import game.utils.game_status as game_status
-import game.utils.game_actions as game_actions
+from lacosa.game.schemas import GameCreationRequest, GameID, PlayerID, GameStatus, PlayCardRequest
+import lacosa.game.utils.game_creator as game_creator
+import lacosa.game.utils.game_draw_card as game_draw_card
+import lacosa.game.utils.game_status as game_status
+import lacosa.game.utils.game_actions as game_actions
 from models import Game
 
 game_router = APIRouter()

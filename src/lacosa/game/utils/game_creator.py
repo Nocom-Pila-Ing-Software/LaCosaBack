@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from pony.orm import select
 import random
 from models import WaitingRoom, Game, Player
-from game.schemas import GameCreationRequest
+from ..schemas import GameCreationRequest
 
 
 def create_deck(game: Game) -> None:

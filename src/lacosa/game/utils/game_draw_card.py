@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from pony.orm import select 
 from models import Game, Player
-from game.schemas import PlayerID
+from ..schemas import PlayerID
 from fastapi import HTTPException, status
 import random
 
