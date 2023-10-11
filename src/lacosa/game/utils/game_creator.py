@@ -2,9 +2,9 @@ from fastapi import HTTPException
 import random
 from pony.orm import select
 from ..schemas import GameCreationRequest
-from schemas.schemas import PlayerID, GameID
-from .game_draw_card import draw_card
+from schemas.schemas import GameID
 from models import WaitingRoom, Game
+from .deck import Deck
 
 
 class GameCreator:
@@ -85,37 +85,3 @@ class GameCreator:
         for player in players_in_game:
             if player != the_thing:
                 player.role = "human"
-
-
-class Deck:
-    def create_deck(self, game: Game) -> None:
-        """
-        Create a deck of cards for the given game
-
-        Args:
-            game (Game): The game object to add the deck to
-        """
-        for i in range(40):
-            if i % 2 == 0:
-                game.cards.create(name="Lanzallamas")
-            else:
-                game.cards.create(name="Carta Mazo")
-
-    def deal_cards(self, game: Game) -> None:
-        """
-        Deal "The Thing" and 3 random cards to the "thing" player and
-        4 cards to the rest of the players
-
-        Args:
-            game (Game): The game object to deal cards in
-        """
-        players_in_game = list(game.players)
-
-        for player in players_in_game:
-            if player.role == "thing":
-                player.cards.create(name="La Cosa")
-                for _ in range(3):
-                    draw_card(int(game.id), PlayerID(playerID=player.id))
-            else:
-                for _ in range(4):
-                    draw_card(int(game.id), PlayerID(playerID=player.id))

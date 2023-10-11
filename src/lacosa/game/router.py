@@ -6,7 +6,7 @@ from pony.orm import db_session
 from lacosa.game.schemas import GameCreationRequest, GameStatus, PlayCardRequest
 from schemas.schemas import PlayerID, GameID
 from lacosa.game.utils.game_creator import GameCreator
-import lacosa.game.utils.game_draw_card as game_draw_card
+from .utils.deck import Deck
 from lacosa.game.utils.game_status import GameStatusHandler
 from lacosa.game.utils.game_actions import CardHandler
 
@@ -26,7 +26,7 @@ async def create_game(creation_request: GameCreationRequest) -> GameID:
 @game_router.put(path="/{room_id}/deal-card", status_code=status.HTTP_200_OK)
 async def draw_card(room_id: int, player_id: PlayerID) -> None:
     with db_session:
-        game_draw_card.draw_card(room_id, player_id)
+        Deck.draw_card(room_id, player_id.playerID)
 
 
 @game_router.get(path="/{room_id}", status_code=status.HTTP_200_OK)
