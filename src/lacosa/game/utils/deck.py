@@ -1,6 +1,6 @@
 from models import Game, Player
 import random
-import lacosa.game.utils.utils as utils
+import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
 
 

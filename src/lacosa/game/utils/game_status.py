@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from models import Game, Player
 from ..schemas import GameStatus, PublicPlayerInfo
 from schemas.schemas import PlayerID, CardInfo
-import lacosa.game.utils.utils as utils
+import lacosa.utils as utils
 
 
 class GameStatusHandler:

@@ -5,7 +5,7 @@ from ..schemas import GameCreationRequest
 from schemas.schemas import GameID
 from models import WaitingRoom, Game
 from .deck import Deck
-import lacosa.game.utils.utils as utils
+import lacosa.utils as utils
 
 
 class GameCreator:
