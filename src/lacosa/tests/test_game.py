@@ -112,7 +112,7 @@ def test_play_card(db_game_creation_with_cards):
 
     # The target player is dead
     assert response.json()["players"] == [
-        
+
         {
             "playerID": 1,
             "username": "Player1",
@@ -160,7 +160,7 @@ def test_play_card_invalid_card(db_game_creation_with_cards):
     response = client.put("/game/5/play-card", json=mock_play_request)
 
     assert response.status_code == 400
-    assert response.json() == {"detail": "Player does not have that card"}
+    assert response.json() == {"detail": "Card not found"}
 
 
 def test_play_card_invalid_target(db_game_creation_with_cards):

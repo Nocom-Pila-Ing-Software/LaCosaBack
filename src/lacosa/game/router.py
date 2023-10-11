@@ -8,8 +8,7 @@ from schemas.schemas import PlayerID, GameID
 from lacosa.game.utils.game_creator import GameCreator
 import lacosa.game.utils.game_draw_card as game_draw_card
 from lacosa.game.utils.game_status import GameStatusHandler
-import lacosa.game.utils.game_actions as game_actions
-from models import Game
+from lacosa.game.utils.game_actions import CardHandler
 
 game_router = APIRouter()
 
@@ -42,7 +41,5 @@ async def get_game_info(room_id) -> GameStatus:
 @game_router.put(path="/{room_id}/play-card", status_code=status.HTTP_200_OK)
 async def play_card(play_request: PlayCardRequest, room_id: int) -> None:
     with db_session:
-        game_actions.handle_errors(play_request, room_id)
-        game_actions.play_card(play_request, room_id)
-        game = Game.get(id=room_id)
-        # game_status.handle_errors(game)
+        card_handler = CardHandler(play_request, room_id)
+        card_handler.play_card()

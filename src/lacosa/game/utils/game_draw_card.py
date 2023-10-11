@@ -15,7 +15,7 @@ def draw_card(game_id: int, player_id: PlayerID) -> None:
     """
 
     game = utils.find_game(game_id)
-    player = utils.find_player(player_id)
+    player = utils.find_player(player_id.playerID)
 
     _handle_errors(game, player)
 
