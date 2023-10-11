@@ -1,6 +1,14 @@
 from pony.orm import select
-from models import Game, Player, Card
+from models import Game, Player, Card, WaitingRoom
 from fastapi import HTTPException, status
+
+
+def find_room(room_id: int) -> Game:
+    room = select(r for r in WaitingRoom if r.id == room_id).get()
+    if room is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Room not found")
+    return room
 
 
 def find_game(game_id: int) -> Game:

@@ -68,7 +68,7 @@ def test_invalid_room_id(db_game_creation):
     ).model_dump()
     response = client.post("/game", json=mock_creation_request)
     assert response.status_code == 404
-    assert response.json() == {"detail": "Room ID doesn't exist"}
+    assert response.json() == {"detail": "Room not found"}
 
 
 def test_get_game_status(db_game_status):
@@ -108,7 +108,6 @@ def test_play_card(db_game_creation_with_cards):
 
         # The card was added to the game
         assert Game.get(id=5).cards.filter(id=0).exists()
-
 
     # The target player is dead
     assert response.json()["players"] == [
