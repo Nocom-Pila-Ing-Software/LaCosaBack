@@ -2,27 +2,12 @@ from fastapi import HTTPException
 from models import Game, Player
 from ..schemas import GameStatus, PublicPlayerInfo
 from schemas.schemas import PlayerID, CardInfo
+import lacosa.game.utils.utils as utils
 
 
 class GameStatusHandler:
     def __init__(self, room_id):
-        self.game = Game.get(id=room_id)
-        self._handle_errors()
-
-    def _handle_errors(self) -> None:
-        """
-        Checks for errors in creation_request and raises HTTPException if needed
-
-        Args:
-        creation_request (GameCreationRequest): Input data to validate
-
-        Raises:
-        HTTPException(status_code=404): If the room ID doesn't exist in database
-        """
-        if self.game is None:
-            raise HTTPException(
-                status_code=404, detail="Game ID doesn't exist"
-            )
+        self.game = utils.find_game(room_id)
 
     def get_response(self) -> None:
         players = []
