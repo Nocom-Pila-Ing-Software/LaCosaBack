@@ -5,7 +5,7 @@ from fastapi import APIRouter, status
 from pony.orm import db_session
 from lacosa.game.schemas import GameCreationRequest, GameStatus, PlayCardRequest
 from schemas.schemas import PlayerID, GameID
-import lacosa.game.utils.game_creator as game_creator
+from lacosa.game.utils.game_creator import GameCreator
 import lacosa.game.utils.game_draw_card as game_draw_card
 import lacosa.game.utils.game_status as game_status
 import lacosa.game.utils.game_actions as game_actions
@@ -17,12 +17,9 @@ game_router = APIRouter()
 @game_router.post(path="", status_code=status.HTTP_201_CREATED)
 async def create_game(creation_request: GameCreationRequest) -> GameID:
     with db_session:
-        game_creator.handle_errors(creation_request)
-        game = game_creator.create_game_on_db(creation_request)
-        game_creator.create_deck(game)
-        game_creator.assign_roles(game)
-        game_creator.deal_cards(game)
-        response = GameID(gameID=game.id)
+        game_creator = GameCreator(creation_request)
+        game_creator.create()
+        response = game_creator.get_response()
 
     return response
 
