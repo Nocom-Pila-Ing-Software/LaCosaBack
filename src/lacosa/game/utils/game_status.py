@@ -4,56 +4,60 @@ from ..schemas import GameStatus, PublicPlayerInfo
 from schemas.schemas import PlayerID, CardInfo
 
 
-def handle_errors(game: Game) -> None:
-    """
-    Checks for errors in creation_request and raises HTTPException if needed
+class GameStatusHandler:
+    def __init__(self, room_id):
+        self.game = Game.get(id=room_id)
+        self._handle_errors()
 
-    Args:
-    creation_request (GameCreationRequest): Input data to validate
+    def _handle_errors(self) -> None:
+        """
+        Checks for errors in creation_request and raises HTTPException if needed
 
-    Raises:
-    HTTPException(status_code=404): If the room ID doesn't exist in database
-    """
-    if game is None:
-        raise HTTPException(
-            status_code=404, detail="Game ID doesn't exist"
-        )
+        Args:
+        creation_request (GameCreationRequest): Input data to validate
 
-def get_response(game: Game) -> None:
-    players = []
-    dead_players = []
-    last_card = CardInfo(cardID=-1, name="", description="")
-    if game.last_played_card:
-        last_card = CardInfo(
-            cardID=game.last_played_card.id,
-            name=game.last_played_card.name,
-            description=game.last_played_card.description,
-        )
-
-    for player in game.players.order_by(Player.position):
-        if player.is_alive:
-            player_info = PublicPlayerInfo(
-                playerID=player.id,
-                username=player.username,
-                is_host=player.is_host,
-                is_alive=player.is_alive
+        Raises:
+        HTTPException(status_code=404): If the room ID doesn't exist in database
+        """
+        if self.game is None:
+            raise HTTPException(
+                status_code=404, detail="Game ID doesn't exist"
             )
-            players.append(player_info)
-        else :
-            player_info = PublicPlayerInfo(
-                playerID=player.id,
-                username=player.username,
-                is_host=player.is_host,
-                is_alive=player.is_alive
+
+    def get_response(self) -> None:
+        players = []
+        dead_players = []
+        last_card = CardInfo(cardID=-1, name="", description="")
+        if self.game.last_played_card:
+            last_card = CardInfo(
+                cardID=self.game.last_played_card.id,
+                name=self.game.last_played_card.name,
+                description=self.game.last_played_card.description,
             )
-            dead_players.append(player_info)
 
+        for player in self.game.players.order_by(Player.position):
+            if player.is_alive:
+                player_info = PublicPlayerInfo(
+                    playerID=player.id,
+                    username=player.username,
+                    is_host=player.is_host,
+                    is_alive=player.is_alive
+                )
+                players.append(player_info)
+            else:
+                player_info = PublicPlayerInfo(
+                    playerID=player.id,
+                    username=player.username,
+                    is_host=player.is_host,
+                    is_alive=player.is_alive
+                )
+                dead_players.append(player_info)
 
-    response = GameStatus(
-        gameID=game.id,
-        players=players,
-        deadPlayers=dead_players,
-        lastPlayedCard=last_card,
-        playerPlayingTurn=PlayerID(playerID=game.current_player)
-    )
-    return response
+        response = GameStatus(
+            gameID=self.game.id,
+            players=players,
+            deadPlayers=dead_players,
+            lastPlayedCard=last_card,
+            playerPlayingTurn=PlayerID(playerID=self.game.current_player)
+        )
+        return response
