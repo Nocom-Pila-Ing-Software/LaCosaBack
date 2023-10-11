@@ -1,7 +1,7 @@
 from models import Game, Player
-from fastapi import HTTPException, status
 import random
 import lacosa.game.utils.utils as utils
+import lacosa.game.utils.exceptions as exceptions
 
 
 class Deck:
@@ -69,15 +69,6 @@ class Deck:
         game_id (int): The ID of the game to draw a card from
         player_id (PlayerID): The ID of the player to assign the card to
         """
-        if player not in game.players:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Player not in game")
-
-        # FIXME: player can have 5 cards
-        if player.cards.count() > 4:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Player already has a card")
-
-        if not game.cards:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="No cards left in deck")
+        exceptions.validate_player_in_game(game, player)
+        exceptions.validate_ammount_of_cards(player)
+        exceptions.validate_deck_not_empty(game)

@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from ..schemas import PlayCardRequest
 from .card_effects import apply_lanzallamas_effect
 import lacosa.game.utils.utils as utils
+import lacosa.game.utils.exceptions as exceptions
 
 
 class CardHandler:
@@ -38,30 +39,6 @@ class CardHandler:
                 lambda p: p.position == 1).first()
         return next_player.id
 
-    @staticmethod
-    def validate_player_in_game(player, game):
-        if player.game != game:
-            raise HTTPException(
-                status_code=400,
-                detail="Player is not in this game"
-            )
-
-    @staticmethod
-    def validate_player_has_card(player, card_id):
-        if not player.cards.filter(id=card_id).exists():
-            raise HTTPException(
-                status_code=400,
-                detail="Player does not have that card"
-            )
-
-    @staticmethod
-    def validate_player_alive(player):
-        if not player.is_alive:
-            raise HTTPException(
-                status_code=400,
-                detail="Player is dead"
-            )
-
     def handle_errors(self) -> None:
         """
         Checks for errors in play_request and raises HTTPException if needed
@@ -75,7 +52,7 @@ class CardHandler:
         HTTPException(status_code=404): If the game is not found
         """
 
-        self.validate_player_in_game(self.player, self.game)
-        self.validate_player_in_game(self.target_player, self.game)
-        self.validate_player_has_card(self.player, self.card.id)
-        self.validate_player_alive(self.target_player)
+        exceptions.validate_player_in_game(self.game, self.player)
+        exceptions.validate_player_in_game(self.game, self.target_player)
+        exceptions.validate_player_has_card(self.player, self.card.id)
+        exceptions.validate_player_alive(self.target_player)
