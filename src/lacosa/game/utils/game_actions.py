@@ -22,23 +22,15 @@ class CardHandler:
         """
 
         if self.card.name == "Lanzallamas":
-            apply_lanzallamas_effect(self.target_player)
-            self.modify_player_position(self.target_player, self.game)
+            apply_lanzallamas_effect(self.target_player, self.game)
 
         self.player.cards.remove(self.card)
         self.game.cards.add(self.card)
         self.game.last_played_card = self.card
 
-        self.game.current_player = self.get_next_player()
+        self.game.current_player = self.get_next_player_id()
 
-    @staticmethod
-    def modify_player_position(player, game):
-        for p in game.players:
-            if p.position > player.position:
-                p.position -= 1
-        player.position = 0
-
-    def get_next_player(self):
+    def get_next_player_id(self):
         next_player = self.game.players.select(
             lambda p: p.position == self.player.position + 1).first()
         if next_player is None:
