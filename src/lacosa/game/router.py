@@ -27,7 +27,6 @@ async def create_game(creation_request: GameCreationRequest) -> GameID:
 @game_router.put(path="/{room_id}/deal-card", status_code=status.HTTP_200_OK)
 async def draw_card(room_id: int, player_id: PlayerID) -> None:
     with db_session:
-        game_draw_card.handle_errors(room_id, player_id)
         game_draw_card.draw_card(room_id, player_id)
 
 
@@ -46,4 +45,4 @@ async def play_card(play_request: PlayCardRequest, room_id: int) -> None:
         game_actions.handle_errors(play_request, room_id)
         game_actions.play_card(play_request, room_id)
         game = Game.get(id=room_id)
-        #game_status.handle_errors(game)
+        # game_status.handle_errors(game)
