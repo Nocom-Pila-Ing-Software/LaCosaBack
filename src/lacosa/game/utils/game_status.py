@@ -4,7 +4,7 @@ from ..schemas import GameStatus, PublicPlayerInfo
 from schemas.schemas import PlayerID, CardInfo
 from ...room.utils.room_operations import delete_room
 import lacosa.utils as utils
-from time import sleep
+
 
 class GameStatusHandler:
     def __init__(self, room_id):
@@ -47,18 +47,16 @@ class GameStatusHandler:
             deadPlayers=dead_players,
             lastPlayedCard=last_card,
             playerPlayingTurn=PlayerID(playerID=self.game.current_player),
-            isGameOver = is_one_alive_players
+            isGameOver=is_one_alive_players
         )
         return response
 
-
     def is_game_over(self, response: GameStatus) -> None:
         if response.isGameOver:
-            sleep(30)
             # Delete deck
             for card in self.game.cards:
                 card.delete()
-            
+
             # Delet hands
             for player in self.game.players:
                 for card in player.cards:
