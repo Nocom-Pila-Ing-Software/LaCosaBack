@@ -25,3 +25,4 @@ class GameStatus(BaseModel):
     players: List[PublicPlayerInfo]
     deadPlayers: List[PublicPlayerInfo]
     lastPlayedCard: CardInfo
+    isGameOver: bool

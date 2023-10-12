@@ -54,7 +54,8 @@ def get_game_status_response(game_data: Dict) -> GameStatus:
         players=schema_players,
         deadPlayers=[],
         lastPlayedCard=card,
-        playerPlayingTurn = PlayerID(playerID = 1)
+        playerPlayingTurn = PlayerID(playerID = 1),
+        isGameOver = False
     )
     return response
 
@@ -75,7 +76,7 @@ def db_game_status():
     return response
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def db_game_creation_with_cards():
     db.drop_all_tables(with_all_data=True)
     db.create_tables()
@@ -90,8 +91,18 @@ def db_game_creation_with_cards():
         # Create a game with players
         game = Game(id=5, waiting_room=room, current_player=1, players=room.players)
 
+        # añadir player a game
+        game.players.add(player1)
+        game.players.add(player2)
+        game.players.add(player3)
+
+        # crear cartas para el juego
+        game.cards.create()
+        game.cards.create()
+        game.cards.create()
+
         # Add cards to players
-        player1.cards.create(id=0, name="Lanzallamas",
+        player1.cards.create(id=4, name="Lanzallamas",
                              description="Está que arde")
         player1.cards.create()
         player1.cards.create()
@@ -103,8 +114,9 @@ def db_game_creation_with_cards():
         player2.cards.create()
         player2.cards.create()
 
-        player3.cards.create(id=60)
-
+        player3.cards.create(id=60, name="Lanzallamas",
+                            description="Está que arde")
+    
 
 @pytest.fixture(scope="module")
 def db_game_creation_with_cards_player_data():

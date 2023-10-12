@@ -1,6 +1,6 @@
 from main import app
 from fastapi.testclient import TestClient
-from models import Game
+from models import Game, WaitingRoom, Player, Card
 from pony.orm import db_session, select
 from schemas.schemas import PlayerID, GameID, CardInfo
 from lacosa.game.schemas import GameCreationRequest, PublicPlayerInfo, GameStatus, PlayCardRequest
@@ -87,7 +87,7 @@ def test_play_card(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
         playerID=1,
         targetPlayerID=2,
-        cardID=0
+        cardID=4
     ).model_dump()
 
     response = client.put("/game/5/play-card", json=mock_play_request)
@@ -97,7 +97,7 @@ def test_play_card(db_game_creation_with_cards):
     response = client.get("/game/5")
     # The last played card is correct
     assert response.json()["lastPlayedCard"] == {
-        "cardID": 0,
+        "cardID": 4,
         "name": "Lanzallamas",
         "description": "Está que arde"
     }
@@ -107,7 +107,7 @@ def test_play_card(db_game_creation_with_cards):
         assert not player_list[0].cards.filter(id=0).exists()
 
         # The card was added to the game
-        assert Game.get(id=5).cards.filter(id=0).exists()
+        assert Game.get(id=5).cards.filter(id=4).exists()
 
     # The target player is dead
     assert response.json()["players"] == [
@@ -173,3 +173,42 @@ def test_play_card_invalid_target(db_game_creation_with_cards):
 
     assert response.status_code == 400
     assert response.json() == {"detail": "Player not found"}
+
+# no se actualiza la base de datos por cada modulo
+def test_game_is_over(db_game_creation_with_cards):
+    mock_play_request = PlayCardRequest(
+        playerID=1,
+        targetPlayerID=2,
+        cardID=4
+    ).model_dump()
+
+    response = client.put("/game/5/play-card", json=mock_play_request)
+
+    assert response.status_code == 200
+    response = client.get("/game/5")
+
+    assert response.json()["isGameOver"] == False
+
+
+    mock_play_request = PlayCardRequest(
+        playerID=3,
+        targetPlayerID=1,
+        cardID=60
+    ).model_dump()
+
+    response = client.put("/game/5/play-card", json=mock_play_request)
+
+    assert response.status_code == 200
+
+    response = client.get("/game/5")
+    assert response.json()["isGameOver"] == True
+
+    with db_session:
+        assert not Game.exists(id=5)
+        #verificar si se borro room
+        assert not WaitingRoom.exists(id=0)
+        assert not Player.exists(id=1)
+        assert not Player.exists(id=2)
+        assert not Player.exists(id=3)
+        assert not Card.exists(id=4)
+        assert not Card.exists(id=60)

@@ -34,7 +34,8 @@ async def get_game_info(room_id) -> GameStatus:
     with db_session:
         status_handler = GameStatusHandler(room_id)
         response = status_handler.get_response()
-
+        status_handler.is_game_over(response)
+        
     return response
 
 

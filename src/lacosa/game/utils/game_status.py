@@ -1,9 +1,10 @@
 from fastapi import HTTPException
-from models import Game, Player
+from models import Game, Player, WaitingRoom, Card
 from ..schemas import GameStatus, PublicPlayerInfo
 from schemas.schemas import PlayerID, CardInfo
+from ...room.utils.room_operations import delete_room
 import lacosa.utils as utils
-
+from time import sleep
 
 class GameStatusHandler:
     def __init__(self, room_id):
@@ -38,11 +39,29 @@ class GameStatusHandler:
                 )
                 dead_players.append(player_info)
 
+        is_one_alive_players = len(players) == 1
+
         response = GameStatus(
             gameID=self.game.id,
             players=players,
             deadPlayers=dead_players,
             lastPlayedCard=last_card,
-            playerPlayingTurn=PlayerID(playerID=self.game.current_player)
+            playerPlayingTurn=PlayerID(playerID=self.game.current_player),
+            isGameOver = is_one_alive_players
         )
         return response
+
+
+    def is_game_over(self, response: GameStatus) -> None:
+        if response.isGameOver:
+            sleep(30)
+            # Delete deck
+            for card in self.game.cards:
+                card.delete()
+            
+            # Delet hands
+            for player in self.game.players:
+                for card in player.cards:
+                    card.delete()
+
+            delete_room(self.game.waiting_room.id)
