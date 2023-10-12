@@ -2,9 +2,9 @@
 If you create a new router add it here."""
 
 from fastapi import APIRouter
-from routers.game import game_router
-from routers.room import room_router
-from routers.player import player_router
+from lacosa.game.router import game_router
+from lacosa.room.router import room_router
+from lacosa.player.router import player_router
 
 api_router = APIRouter()
 api_router.include_router(game_router, prefix="/game", tags=["game"])

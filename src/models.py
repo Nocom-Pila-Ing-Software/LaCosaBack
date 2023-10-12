@@ -16,7 +16,7 @@ class Game(db.Entity):
 class WaitingRoom(db.Entity):
     id = PrimaryKey(int, auto=True)
     room_name = Required(str)
-    game = Optional(Game)
+    game = Optional(Game, cascade_delete=True)
     players = Set('Player')
 
 
