@@ -2,7 +2,8 @@
 
 run:
 	( \
-       source venv/bin/activate; \
+      rm -rf src/db.sqlite; \
+       . venv/bin/activate; \
        export ENV=dev           ; \
        cd src                   ; \
        uvicorn main:app --reload; \
@@ -10,13 +11,13 @@ run:
 
 test:
 	( \
-       source venv/bin/activate; \
-       pytest; \
+       . venv/bin/activate; \
+       pytest -s; \
     )
 
 install:
 	( \
        python3 -m venv venv; \
-       source venv/bin/activate; \
+       . venv/bin/activate; \
        pip install -r requirements.txt; \
     )

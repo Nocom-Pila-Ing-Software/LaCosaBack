@@ -7,16 +7,16 @@ db = Database()
 class Game(db.Entity):
     id = PrimaryKey(int, auto=True)
     waiting_room = Required('WaitingRoom')
-    turn_counter = Required(int, default=0)
     players = Set('Player')
     cards = Set('Card')
     last_played_card = Optional('Card', reverse="played_on_game")
+    current_player = Required(int)
 
 
 class WaitingRoom(db.Entity):
     id = PrimaryKey(int, auto=True)
     room_name = Required(str)
-    game = Optional(Game)
+    game = Optional(Game, cascade_delete=True)
     players = Set('Player')
 
 
@@ -29,6 +29,7 @@ class Player(db.Entity):
     is_host = Required(bool, default=False)
     is_alive = Required(bool, default=True)
     cards = Set('Card')
+    position = Optional(int)
 
 
 class Card(db.Entity):
