@@ -3,15 +3,15 @@ from models import Game, Player, Card, WaitingRoom
 from fastapi import HTTPException, status
 
 
-def find_room(room_id: int) -> Game:
+def find_room(room_id: int, failure_status=status.HTTP_404_NOT_FOUND) -> Game:
     room = select(r for r in WaitingRoom if r.id == room_id).get()
     if room is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Room not found")
+            status_code=failure_status, detail="Room not found")
     return room
 
 
-def find_game(game_id: int) -> Game:
+def find_game(game_id: int, failure_status=status.HTTP_404_NOT_FOUND) -> Game:
     """
     Find a game by ID
 
@@ -25,11 +25,11 @@ def find_game(game_id: int) -> Game:
     game = select(g for g in Game if g.id == game_id).get()
     if game is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
+            status_code=failure_status, detail="Game not found")
     return game
 
 
-def find_player(player_id: int) -> Player:
+def find_player(player_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Player:
     """
     Find a player by ID
 
@@ -44,11 +44,11 @@ def find_player(player_id: int) -> Player:
     player = select(p for p in Player if p.id == player_id).get()
     if player is None:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Player not found")
+            status_code=failure_status, detail="Player not found")
     return player
 
 
-def find_card(card_id: int) -> Player:
+def find_card(card_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Player:
     """
     Find a player by ID
 
@@ -63,5 +63,5 @@ def find_card(card_id: int) -> Player:
     card = select(c for c in Card if c.id == card_id).get()
     if card is None:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Card not found")
+            status_code=failure_status, detail="Card not found")
     return card
