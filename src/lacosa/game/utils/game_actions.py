@@ -2,9 +2,10 @@ from ..schemas import PlayCardRequest
 from .card_effects import apply_lanzallamas_effect
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
+from lacosa.interfaces import ActionInterface
 
 
-class CardHandler:
+class CardPlayer(ActionInterface):
     def __init__(self, play_request: PlayCardRequest, game_id: int):
         self.game = utils.find_game(game_id)
         self.player = utils.find_player(play_request.playerID)
@@ -12,7 +13,7 @@ class CardHandler:
         self.card = utils.find_card(play_request.cardID)
         self.handle_errors()
 
-    def play_card(self) -> None:
+    def execute_action(self) -> None:
         """
         Plays a card on the game
 

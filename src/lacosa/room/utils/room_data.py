@@ -2,9 +2,10 @@ from lacosa.schemas import PlayerName
 from lacosa.room.schemas import RoomDataResponse
 from typing import List
 import lacosa.utils as utils
+from lacosa.interfaces import ResponseInterface
 
 
-class RoomStatusHandler:
+class RoomStatusHandler(ResponseInterface):
     def __init__(self, room_id: int):
         self.room_id = room_id
         self.room = utils.find_room(room_id)

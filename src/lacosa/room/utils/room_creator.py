@@ -2,9 +2,10 @@ from pony.orm import commit
 from models import WaitingRoom, Player
 from ..schemas import RoomCreationRequest, RoomCreationResponse
 import lacosa.room.utils.exceptions as exceptions
+from lacosa.interfaces import ResponseInterface, CreatorInterface
 
 
-class RoomCreator:
+class RoomCreator(ResponseInterface, CreatorInterface):
     def __init__(self, creation_request: RoomCreationRequest):
         self.host_name = creation_request.hostName
         self.room_name = creation_request.roomName

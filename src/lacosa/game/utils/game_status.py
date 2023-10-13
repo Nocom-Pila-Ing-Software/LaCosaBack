@@ -3,12 +3,14 @@ from ..schemas import GameStatus, PublicPlayerInfo
 from lacosa.schemas import PlayerID, CardInfo
 from ...room.utils.room_operations import delete_room
 import lacosa.utils as utils
+from lacosa.interfaces import ResponseInterface
 
 
-class GameStatusHandler:
+class GameStatusHandler(ResponseInterface):
     def __init__(self, room_id):
         self.game = utils.find_game(room_id)
 
+    # TODO: refactor this
     def get_response(self) -> None:
         players = []
         dead_players = []

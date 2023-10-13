@@ -3,9 +3,10 @@ from pony.orm import commit
 from models import Player
 import lacosa.utils as utils
 import lacosa.room.utils.exceptions as exceptions
+from lacosa.interfaces import ResponseInterface, CreatorInterface
 
 
-class PlayerCreator:
+class PlayerCreator(ResponseInterface, CreatorInterface):
     def __init__(self, player_name_payload: PlayerName, room_id: int):
         self.player_name = player_name_payload.playerName
         self.room = utils.find_room(room_id)
