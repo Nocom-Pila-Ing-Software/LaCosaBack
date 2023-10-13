@@ -7,9 +7,8 @@ from pony.orm import db_session
 from lacosa.room.schemas import RoomCreationRequest, RoomCreationResponse, RoomDataResponse
 from lacosa.room.utils.room_creator import RoomCreator
 from lacosa.room.utils.room_data import RoomStatusHandler
-import lacosa.room.utils.room_operations as room_ops
+from lacosa.room.utils.room_operations import PlayerCreator
 from schemas.schemas import PlayerName, PlayerID
-from models import WaitingRoom
 
 room_router = APIRouter()
 
@@ -36,13 +35,8 @@ async def get_room_info(room_id: int) -> RoomDataResponse:
 @room_router.post("/{room_id}/players", response_model=PlayerID, status_code=status.HTTP_200_OK)
 async def add_player_to_waiting_room(request_data: PlayerName, room_id: int) -> PlayerID:
     with db_session:
-        player_name = request_data.playerName
-
-        room_ops.handle_errors(player_name, room_id)
-        room = WaitingRoom.get(id=room_id)
-        player = room_ops.create_player(player_name, room)
-        room_ops.add_player_to_room(player, room)
-
-        response = PlayerID(playerID=player.id)
+        game_creator = PlayerCreator(request_data, room_id)
+        game_creator.create()
+        response = game_creator.get_response()
 
         return response
