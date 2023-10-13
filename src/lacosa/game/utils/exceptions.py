@@ -25,7 +25,6 @@ def validate_player_in_game(game: Game, player: Player):
 
 
 def validate_ammount_of_cards(player: Player):
-    # FIXME: player can have 5 cards
     if player.cards.count() > 4:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Player already has a card")
