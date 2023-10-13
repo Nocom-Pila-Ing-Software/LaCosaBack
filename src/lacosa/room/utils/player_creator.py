@@ -10,7 +10,7 @@ class PlayerCreator:
         self.player_name = player_name_payload.playerName
         self.room = utils.find_room(room_id)
         self.player: Player
-        self.handle_errors()
+        self._handle_errors()
 
     def create(self) -> Player:
         """
@@ -52,13 +52,3 @@ class PlayerCreator:
         exceptions.check_valid_player_name(self.player_name)
         exceptions.check_player_name_is_unique(self.player_name, self.room)
         exceptions.check_game_started(self.room)
-
-    def delete_room(self) -> None:
-        """
-        Delete a room from the database.
-
-        Args:
-            room_ID (int): The ID of the room to delete.
-        """
-        self.room.delete()
-        commit()
