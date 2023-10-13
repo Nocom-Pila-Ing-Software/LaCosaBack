@@ -35,7 +35,7 @@ async def get_game_info(room_id) -> GameStatus:
         status_handler = GameStatusHandler(room_id)
         response = status_handler.get_response()
         # FIXME: this is a bit ugly
-        status_handler.is_game_over(response)
+        status_handler.delete_if_game_over(response)
 
     return response
 
