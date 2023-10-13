@@ -4,6 +4,7 @@ from pony.orm import db_session, commit, select
 from models import WaitingRoom, Player
 import lacosa.room.utils.room_data as room_data
 
+
 def handle_errors(player_name: PlayerName, room_ID: int) -> None:
     """
     Handle the errors that may occur when adding a player to a room.
@@ -17,9 +18,9 @@ def handle_errors(player_name: PlayerName, room_ID: int) -> None:
     """
     check_valid_player_name(player_name)
     check_waiting_room_exists(room_ID)
-    room_data.check_host_exists(room_ID)
     check_player_name_is_unique(player_name, room_ID)
     check_game_started(room_ID)
+
 
 def create_player(player_name: PlayerName, room: WaitingRoom) -> Player:
     """
@@ -43,6 +44,7 @@ def create_player(player_name: PlayerName, room: WaitingRoom) -> Player:
 
     return player
 
+
 def add_player_to_room(player: Player, room: WaitingRoom) -> None:
     """
     Add a player to a room.
@@ -54,6 +56,7 @@ def add_player_to_room(player: Player, room: WaitingRoom) -> None:
     check_player_exists_in_database(player)
     room.players.add(player)
     is_player_added_to_room(player, room)
+
 
 def check_valid_player_name(player_name: PlayerName) -> None:
     """
