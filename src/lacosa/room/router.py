@@ -7,7 +7,7 @@ from pony.orm import db_session
 from lacosa.room.schemas import RoomCreationRequest, RoomCreationResponse, RoomDataResponse
 from lacosa.room.utils.room_creator import RoomCreator
 from lacosa.room.utils.room_data import RoomStatusHandler
-from lacosa.room.utils.room_operations import PlayerCreator
+from lacosa.room.utils.player_creator import PlayerCreator
 from schemas.schemas import PlayerName, PlayerID
 
 room_router = APIRouter()
