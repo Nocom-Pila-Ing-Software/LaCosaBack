@@ -1,5 +1,5 @@
 from pony.orm import select
-from models import WaitingRoom, Player
+from models import WaitingRoom
 from fastapi import HTTPException, status
 
 

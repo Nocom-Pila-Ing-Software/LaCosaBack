@@ -1,4 +1,3 @@
-from fastapi import HTTPException, status
 from lacosa.schemas import PlayerName
 from lacosa.room.schemas import RoomDataResponse
 from typing import List

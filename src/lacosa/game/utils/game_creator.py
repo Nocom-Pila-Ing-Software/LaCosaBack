@@ -1,9 +1,8 @@
-from fastapi import HTTPException
 import random
 from pony.orm import select
 from ..schemas import GameCreationRequest
 from lacosa.schemas import GameID
-from models import WaitingRoom, Game
+from models import Game
 from .deck import Deck
 import lacosa.utils as utils
 

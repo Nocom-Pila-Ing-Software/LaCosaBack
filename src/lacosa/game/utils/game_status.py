@@ -1,5 +1,4 @@
-from fastapi import HTTPException
-from models import Game, Player, WaitingRoom, Card
+from models import Player
 from ..schemas import GameStatus, PublicPlayerInfo
 from lacosa.schemas import PlayerID, CardInfo
 from ...room.utils.room_operations import delete_room

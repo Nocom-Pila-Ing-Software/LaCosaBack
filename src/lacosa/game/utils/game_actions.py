@@ -1,4 +1,3 @@
-from fastapi import HTTPException
 from ..schemas import PlayCardRequest
 from .card_effects import apply_lanzallamas_effect
 import lacosa.utils as utils
