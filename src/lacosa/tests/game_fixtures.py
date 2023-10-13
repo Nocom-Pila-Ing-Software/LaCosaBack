@@ -1,7 +1,7 @@
 from models import Game, WaitingRoom, Player, Card, db
 from pony.orm import db_session
 from lacosa.game.schemas import PublicPlayerInfo, GameStatus
-from schemas.schemas import PlayerID, CardInfo
+from lacosa.schemas import PlayerID, CardInfo
 import pytest
 from typing import List, Dict
 

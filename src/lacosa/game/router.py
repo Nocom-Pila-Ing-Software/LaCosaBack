@@ -4,7 +4,7 @@
 from fastapi import APIRouter, status
 from pony.orm import db_session
 from lacosa.game.schemas import GameCreationRequest, GameStatus, PlayCardRequest
-from schemas.schemas import PlayerID, GameID
+from lacosa.schemas import PlayerID, GameID
 from lacosa.game.utils.game_creator import GameCreator
 from .utils.deck import Deck
 from lacosa.game.utils.game_status import GameStatusHandler

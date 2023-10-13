@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from schemas.schemas import PlayerName
+from lacosa.schemas import PlayerName
 from lacosa.room.schemas import RoomDataResponse
 from typing import List
 import lacosa.utils as utils

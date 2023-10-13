@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-from schemas.schemas import CardInfo
+from lacosa.schemas import CardInfo
 
 class PlayerResponse(BaseModel):
     hand: List[CardInfo]

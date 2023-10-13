@@ -2,7 +2,7 @@ from main import app
 from fastapi.testclient import TestClient
 from models import Game, WaitingRoom, Player, Card
 from pony.orm import db_session, select
-from schemas.schemas import PlayerID, GameID, CardInfo
+from lacosa.schemas import PlayerID, GameID, CardInfo
 from lacosa.game.schemas import GameCreationRequest, PublicPlayerInfo, GameStatus, PlayCardRequest
 import pytest
 from .game_fixtures import db_game_creation, db_game_status, db_game_creation_with_cards

@@ -1,6 +1,6 @@
 from fastapi import status
 from lacosa.player.schemas import PlayerResponse
-from schemas.schemas import PlayerID, CardInfo
+from lacosa.schemas import PlayerID, CardInfo
 from models import Player
 from typing import List
 import lacosa.utils as utils

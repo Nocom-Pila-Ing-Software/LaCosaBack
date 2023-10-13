@@ -1,4 +1,4 @@
-from schemas.schemas import PlayerName, PlayerID
+from lacosa.schemas import PlayerName, PlayerID
 from pony.orm import commit
 from models import Player
 import lacosa.utils as utils
