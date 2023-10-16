@@ -4,11 +4,11 @@
 from fastapi import APIRouter, status
 from pony.orm import db_session
 from lacosa.game.schemas import GameCreationRequest, GameStatus, PlayCardRequest
-from schemas.schemas import PlayerID, GameID
+from lacosa.schemas import PlayerID, GameID
 from lacosa.game.utils.game_creator import GameCreator
 from .utils.deck import Deck
 from lacosa.game.utils.game_status import GameStatusHandler
-from lacosa.game.utils.game_actions import CardHandler
+from lacosa.game.utils.game_actions import CardPlayer
 
 game_router = APIRouter()
 
@@ -34,13 +34,14 @@ async def get_game_info(room_id) -> GameStatus:
     with db_session:
         status_handler = GameStatusHandler(room_id)
         response = status_handler.get_response()
-        status_handler.is_game_over(response)
-        
+        # FIXME: this is a bit ugly
+        status_handler.delete_if_game_over(response)
+
     return response
 
 
 @game_router.put(path="/{room_id}/play-card", status_code=status.HTTP_200_OK)
 async def play_card(play_request: PlayCardRequest, room_id: int) -> None:
     with db_session:
-        card_handler = CardHandler(play_request, room_id)
-        card_handler.play_card()
+        card_handler = CardPlayer(play_request, room_id)
+        card_handler.execute_action()

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-from schemas.schemas import PlayerName
+from lacosa.schemas import PlayerName
 
 class RoomCreationRequest(BaseModel):
     roomName: str

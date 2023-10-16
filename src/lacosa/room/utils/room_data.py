@@ -1,88 +1,40 @@
-from fastapi import HTTPException, status
-from models import WaitingRoom
-from schemas.schemas import PlayerName, RoomID
+from lacosa.schemas import PlayerName
+from lacosa.room.schemas import RoomDataResponse
 from typing import List
-
-def get_number_of_players_in_room(room_id: RoomID) -> int:
-    """
-    Gets the number of players in a room
-
-    Args:
-    room_id (int): The id of the room
-
-    Returns:
-    int: The number of players in the room
-    """
-
-    room = WaitingRoom[room_id]
-    return len(room.players)
+import lacosa.utils as utils
+from lacosa.interfaces import ResponseInterface
 
 
-def get_players_names_in_room(room_id: RoomID) -> List[PlayerName]:
-    """
-    Gets the names of the players in a room
+class RoomStatusHandler(ResponseInterface):
+    def __init__(self, room_id: int):
+        self.room_id = room_id
+        self.room = utils.find_room(room_id)
 
-    Args:
-    room_id (int): The id of the room
+    def get_response(self):
+        """
+        Returns a RoomDataResponse object with the number of players in the room,
+        the player names and if the room has started.
+        """
+        number_players = self._get_number_of_players_in_room()
+        players_names_room = self._get_players_names_in_room()
+        has_room_started = self._has_room_started()
 
-    Returns:
-    list[PlayerName]: The names of the players in the room
-    """
-
-    room = WaitingRoom[room_id]
-    players_names = []
-    for player in room.players:
-        players_names.append(PlayerName(playerName=player.username))
-    return players_names
-
-
-def check_waiting_room_exists(room_ID: int) -> None:
-    """
-    Verify if the room exists.
-
-    Args:
-        room_ID (int): The ID of the room to verify.
-
-    Raises:
-        HTTPException: If the room does not exist,
-        raise an HTTP exception with a status code of 404.
-    """
-    if WaitingRoom.get(id=room_ID) is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Room not found"
+        response = RoomDataResponse(
+            CountPlayers=number_players,
+            Players=players_names_room,
+            hasStarted=has_room_started
         )
 
-def has_room_started(room_id: int):
-    """
-    Check if the room has started.
+        return response
 
-    Args:
-        room_id (int): The ID of the room to verify.
-    
-    Returns:
-        bool: True if the room has started, False otherwise.
-    """    
+    def _get_number_of_players_in_room(self) -> int:
+        return len(self.room.players)
 
-    room = WaitingRoom[room_id]
-    return room.game is not None
+    def _get_players_names_in_room(self) -> List[PlayerName]:
+        players_names = [
+            PlayerName(playerName=player.username) for player in self.room.players
+        ]
+        return players_names
 
-def check_host_exists(room_ID: int) -> None:
-    """
-    Verify if the host exists.
-
-    Args:
-        room_ID (int): The ID of the room to verify.
-
-    Raises:
-        HTTPException: If the host does not exist,
-        raise an HTTP exception with a status code of 404.
-    """
-    room = WaitingRoom[room_ID]
-    host = room.players.select(lambda p: p.is_host).first()
-    if host is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Host not found"
-        )
-    
+    def _has_room_started(self):
+        return self.room.game is not None

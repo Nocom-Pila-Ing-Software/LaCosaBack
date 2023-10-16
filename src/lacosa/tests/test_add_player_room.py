@@ -2,7 +2,7 @@ from main import app
 from fastapi.testclient import TestClient
 from models import WaitingRoom, Player
 from pony.orm import db_session
-from schemas.schemas import PlayerID
+from lacosa.schemas import PlayerID
 from lacosa.room.schemas import RoomCreationRequest, RoomCreationResponse
 from .room_fixtures import db_room_creation_with_players, db_room_creation
 from .game_fixtures import  db_game_creation_without_cards

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-from schemas.schemas import PlayerID, CardInfo
+from lacosa.schemas import PlayerID, CardInfo
 
 class GameCreationRequest(BaseModel):
     roomID: int

@@ -1,14 +1,14 @@
-from fastapi import HTTPException
 import random
 from pony.orm import select
 from ..schemas import GameCreationRequest
-from schemas.schemas import GameID
-from models import WaitingRoom, Game
+from lacosa.schemas import GameID
+from models import Game
 from .deck import Deck
 import lacosa.utils as utils
+from lacosa.interfaces import ResponseInterface, CreatorInterface
 
 
-class GameCreator:
+class GameCreator(ResponseInterface, CreatorInterface):
     def __init__(self, creation_request):
         self.creation_request = creation_request
         self.deck_strategy = Deck()

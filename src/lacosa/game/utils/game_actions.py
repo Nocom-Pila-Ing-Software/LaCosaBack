@@ -1,11 +1,11 @@
-from fastapi import HTTPException
 from ..schemas import PlayCardRequest
-from .card_effects import apply_lanzallamas_effect
+from .card_effects import get_card_effect_function
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
+from lacosa.interfaces import ActionInterface
 
 
-class CardHandler:
+class CardPlayer(ActionInterface):
     def __init__(self, play_request: PlayCardRequest, game_id: int):
         self.game = utils.find_game(game_id)
         self.player = utils.find_player(play_request.playerID)
@@ -13,7 +13,7 @@ class CardHandler:
         self.card = utils.find_card(play_request.cardID)
         self.handle_errors()
 
-    def play_card(self) -> None:
+    def execute_action(self) -> None:
         """
         Plays a card on the game
 
@@ -22,8 +22,8 @@ class CardHandler:
         game_id (int): The id of the game to validate
         """
 
-        if self.card.name == "Lanzallamas":
-            apply_lanzallamas_effect(self.target_player, self.game)
+        effect_func = get_card_effect_function(self.card.name)
+        effect_func(self.target_player, self.game)
 
         self.player.cards.remove(self.card)
         self.game.cards.add(self.card)

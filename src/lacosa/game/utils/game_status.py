@@ -1,63 +1,71 @@
-from fastapi import HTTPException
-from models import Game, Player, WaitingRoom, Card
+from models import Player
 from ..schemas import GameStatus, PublicPlayerInfo
-from schemas.schemas import PlayerID, CardInfo
+from lacosa.schemas import PlayerID, CardInfo
 from ...room.utils.room_operations import delete_room
 import lacosa.utils as utils
+from lacosa.interfaces import ResponseInterface
 
 
-class GameStatusHandler:
+class GameStatusHandler(ResponseInterface):
     def __init__(self, room_id):
         self.game = utils.find_game(room_id)
+        self.players, self.dead_players = self._get_player_info()
+        self.last_card = self._get_last_card_info()
+        self.is_game_over = self._is_game_over()
 
-    def get_response(self) -> None:
-        players = []
-        dead_players = []
-        last_card = CardInfo(cardID=-1, name="", description="")
-        if self.game.last_played_card:
-            last_card = CardInfo(
-                cardID=self.game.last_played_card.id,
-                name=self.game.last_played_card.name,
-                description=self.game.last_played_card.description,
-            )
-
-        for player in self.game.players.order_by(Player.position):
-            if player.is_alive:
-                player_info = PublicPlayerInfo(
-                    playerID=player.id,
-                    username=player.username,
-                    is_host=player.is_host,
-                    is_alive=player.is_alive
-                )
-                players.append(player_info)
-            else:
-                player_info = PublicPlayerInfo(
-                    playerID=player.id,
-                    username=player.username,
-                    is_host=player.is_host,
-                    is_alive=player.is_alive
-                )
-                dead_players.append(player_info)
-
-        is_one_alive_players = len(players) == 1
-
+    def get_response(self) -> GameStatus:
         response = GameStatus(
             gameID=self.game.id,
-            players=players,
-            deadPlayers=dead_players,
-            lastPlayedCard=last_card,
+            players=self.players,
+            deadPlayers=self.dead_players,
+            lastPlayedCard=self.last_card,
             playerPlayingTurn=PlayerID(playerID=self.game.current_player),
-            isGameOver=is_one_alive_players
+            isGameOver=self.is_game_over
         )
         return response
 
-    def is_game_over(self, response: GameStatus) -> None:
+    def _is_game_over(self):
+        return len(self.players) == 1
+
+    def _get_player_schema(self, player):
+        return PublicPlayerInfo(
+            playerID=player.id,
+            username=player.username,
+            is_host=player.is_host,
+            is_alive=player.is_alive
+        )
+
+    def _get_player_info(self):
+        players = self.game.players.order_by(Player.position)
+        alive_players = [
+            self._get_player_schema(player) for player in players if player.is_alive
+        ]
+        dead_players = [
+            self._get_player_schema(player) for player in players if not player.is_alive
+        ]
+
+        return alive_players, dead_players
+
+    def _get_last_card_info(self):
+        card_info = {"cardID": -1, "name": "", "description": ""}
+
+        last_played_card = self.game.last_played_card
+        if last_played_card:
+            card_info = {
+                "cardID": last_played_card.id,
+                "name": last_played_card.name,
+                "description": last_played_card.description
+            }
+
+        return CardInfo(**card_info)
+
+    def delete_if_game_over(self, response: GameStatus) -> None:
         if response.isGameOver:
             # Delete deck
             for card in self.game.cards:
                 card.delete()
 
-            # Delet hands
+            # Delete hands
             for player in self.game.players:
                 for card in player.cards:
                     card.delete()
