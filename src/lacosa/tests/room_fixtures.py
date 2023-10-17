@@ -9,9 +9,10 @@ def db_room_creation():
     db.create_tables()
 
     with db_session:
-        room = WaitingRoom(id=0, name="Test Room2")
+        room = WaitingRoom(id=0, name="Test Room2", max_players=6, min_players=3)
         room.players.create(id=1, username="Test_player1",
                             is_host=True, position=1)
+
 
 
 @pytest.fixture()

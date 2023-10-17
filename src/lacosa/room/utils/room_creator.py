@@ -9,6 +9,8 @@ class RoomCreator(ResponseInterface, CreatorInterface):
     def __init__(self, creation_request: RoomCreationRequest):
         self.host_name = creation_request.hostName
         self.room_name = creation_request.roomName
+        self.max_players = creation_request.maxPlayers
+        self.min_players = creation_request.minPlayers
         self.room: WaitingRoom
         self.host: Player
 
@@ -21,7 +23,9 @@ class RoomCreator(ResponseInterface, CreatorInterface):
     def get_response(self):
         response = RoomCreationResponse(
             roomID=self.room.id,
-            playerID=self.host.id
+            playerID=self.host.id,
+            maxPlayers=self.max_players,
+            minPlayers=self.min_players
         )
         return response
 
@@ -54,7 +58,9 @@ class RoomCreator(ResponseInterface, CreatorInterface):
         WaitingRoom: The created room
         """
         new_room = WaitingRoom(
-            name=self.room_name
+            name=self.room_name,
+            max_players=self.max_players,
+            min_players=self.min_players
         )
         commit()
         return new_room

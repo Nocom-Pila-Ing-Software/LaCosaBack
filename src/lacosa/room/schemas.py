@@ -6,6 +6,8 @@ from lacosa.schemas import PlayerName
 class RoomCreationRequest(BaseModel):
     roomName: str
     hostName: str
+    minPlayers: int
+    maxPlayers: int
 
 
 class RoomCreationResponse(BaseModel):
