@@ -54,7 +54,7 @@ class RoomCreator(ResponseInterface, CreatorInterface):
         WaitingRoom: The created room
         """
         new_room = WaitingRoom(
-            room_name=self.room_name
+            name=self.room_name
         )
         commit()
         return new_room

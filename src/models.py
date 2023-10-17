@@ -15,9 +15,11 @@ class Game(db.Entity):
 
 class WaitingRoom(db.Entity):
     id = PrimaryKey(int, auto=True)
-    room_name = Required(str)
+    name = Required(str)
     game = Optional(Game, cascade_delete=True)
     players = Set('Player')
+    min_players = Required(int, default=2)
+    max_players = Required(int, default=8)
 
 
 class Player(db.Entity):
