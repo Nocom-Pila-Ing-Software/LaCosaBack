@@ -1,7 +1,7 @@
 """Defines 'game' endpoints
 """
 
-from fastapi import APIRouter, status, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, status
 from pony.orm import db_session
 from lacosa.game.schemas import GameCreationRequest, GameStatus, PlayCardRequest
 from lacosa.schemas import PlayerID, GameID
@@ -41,8 +41,7 @@ async def get_game_info(room_id) -> GameStatus:
 
 
 @game_router.put(path="/{room_id}/play-card", status_code=status.HTTP_200_OK)
-async def play_card(play_request: PlayCardRequest, room_id: int, websocket: WebSocket) -> None:
+async def play_card(play_request: PlayCardRequest, room_id: int) -> None:
     with db_session:
-        card_handler = CardPlayer(play_request, room_id, websocket)
-        await card_handler.execute_action(websocket)
-    pass
+        card_handler = CardPlayer(play_request, room_id)
+        card_handler.execute_action()
