@@ -22,7 +22,9 @@ class RoomStatusHandler(ResponseInterface):
         response = RoomDataResponse(
             CountPlayers=number_players,
             Players=players_names_room,
-            hasStarted=has_room_started
+            hasStarted=has_room_started,
+            maxPlayers=self.room.max_players,
+            minPlayers=self.room.min_players,
         )
 
         return response

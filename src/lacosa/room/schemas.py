@@ -19,6 +19,8 @@ class RoomDataResponse(BaseModel):
     CountPlayers: int
     Players: List[PlayerName]
     hasStarted: bool
+    minPlayers: int
+    maxPlayers: int
 
 
 class RoomListing(BaseModel):
