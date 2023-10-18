@@ -16,6 +16,9 @@ def db_game_creation():
         room = WaitingRoom(id=0, room_name="Test room")
         room.players.create(username="Player1", is_host=True, position=1)
         room.players.create(username="Player2", is_host=False, position=2)
+        room.players.create(username="Player3", is_host=False, position=3)
+        room.players.create(username="Player4", is_host=False, position=4)
+        room.players.create(username="Player5", is_host=False, position=5)
 
 
 def get_player_data() -> List[Dict]:

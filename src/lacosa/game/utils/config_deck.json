@@ -1,0 +1,158 @@
+{
+    "cards": {
+        "¡infectado!": {
+            "amount": {
+                "1": 0,
+                "4": 8,
+                "6": 10,
+                "7": 12,
+                "8": 13,
+                "9": 15,
+                "10": 17,
+                "11": 20
+            },
+            "description": ""
+        },
+        "Lanzallamas": {
+            "amount": {
+                "1": 0,
+                "4": 2,
+                "6": 3,
+                "8": 4,
+                "11": 5
+            },
+            "description": ""
+        },
+        "Análisis": {
+            "amount": {
+                "1": 0,
+                "4": 0
+            },
+            "description": ""
+        },
+        "Hacha": {
+            "amount": {
+                "1": 0,
+                "4": 0
+            },
+            "description": ""
+        },
+        "Sospecha": {
+            "amount": {
+                "1": 0,
+                "4": 0
+            },
+            "description": ""
+        },
+        "Whisky": {
+            "amount": {
+                "1": 0,
+                "4": 0
+            },
+            "description": ""
+        },
+        "Determinación": {
+            "amount": {
+                "1": 0,
+                "4": 0
+            },
+            "description": ""
+        },
+        "Vigila tus espaldas": {
+            "amount": {
+                "1": 0,
+                "4": 1,
+                "9": 2
+            },
+            "description": ""
+        },
+        "Cambio de lugar": {
+            "amount": {
+                "1": 0,
+                "4": 2,
+                "7": 3,
+                "9": 4,
+                "11": 5
+            },
+            "description": ""
+        },
+        "¡Más vale que corras!": {
+            "amount": {
+                "1": 0,
+                "4": 2,
+                "7": 3,
+                "9": 4,
+                "11": 5
+            },
+            "description": ""
+        },
+        "Seducción": {
+            "amount": {
+                "1": 0,
+                "4": 2,
+                "6": 3,
+                "7": 4,
+                "8": 5,
+                "10": 6,
+                "11": 7
+            },
+            "description": ""
+        },
+        "Aterrador": {
+            "amount": {
+                "1": 0,
+                "4": 0
+            },
+            "description": ""
+        },
+        "Aquí estoy bien": {
+            "amount": {
+                "1": 0,
+                "4": 1,
+                "6": 2,
+                "11": 3
+            },
+            "description": ""
+        },
+        "¡No, gracias!": {
+            "amount": {
+                "1": 0,
+                "4": 1,
+                "6": 2,
+                "8": 3,
+                "11": 4
+            },
+            "description": ""
+        },
+        "¡Fallaste!": {
+            "amount": {
+                "1": 0,
+                "4": 0
+            },
+            "description": ""
+        },
+        "¡Nada de barbacoas!": {
+            "amount": {
+                "1": 0,
+                "4": 1,
+                "6": 2,
+                "11": 3
+            },
+            "description": ""
+        },
+        "Cuarentena": {
+            "amount": {
+                "1": 0,
+                "4": 0
+            },
+            "description": ""
+        },
+        "Puerta atrancada": {
+            "amount": {
+                "1": 0,
+                "4": 0
+            },
+            "description": ""
+        }
+    }
+}

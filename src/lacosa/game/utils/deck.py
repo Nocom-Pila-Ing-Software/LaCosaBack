@@ -2,7 +2,8 @@ from models import Game, Player
 import random
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
-
+import json
+from pathlib import Path
 
 class Deck:
     @classmethod
@@ -13,11 +14,20 @@ class Deck:
         Args:
             game (Game): The game object to add the deck to
         """
-        for i in range(40):
-            if i % 2 == 0:
-                game.cards.create(name="Lanzallamas")
-            else:
-                game.cards.create(name="Carta Mazo")
+        player_count = game.players.count()
+        config_path = Path(__file__).resolve().parent.parent / 'utils' / 'config_deck.json'
+
+        with open(config_path) as config_file:
+            config = json.load(config_file)
+
+        for card_name, card_data in config["cards"].items():
+            current_player_count = player_count
+            for current_player_count in range(player_count, 0, -1):
+                card_amount = card_data["amount"].get(str(current_player_count))
+                if card_amount is not None:
+                    for _ in range(int(card_amount)):
+                        game.cards.create(name=card_name)
+                    break
 
     @classmethod
     def deal_cards(cls, game: Game) -> None:
