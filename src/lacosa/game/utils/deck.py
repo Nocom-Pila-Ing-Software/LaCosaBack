@@ -24,9 +24,10 @@ class Deck:
             current_player_count = player_count
             for current_player_count in range(player_count, 0, -1):
                 card_amount = card_data["amount"].get(str(current_player_count))
+                card_description = card_data["description"]
                 if card_amount is not None:
                     for _ in range(int(card_amount)):
-                        game.cards.create(name=card_name)
+                        game.cards.create(name=card_name, description=card_description)
                     break
 
     @classmethod
@@ -42,7 +43,7 @@ class Deck:
 
         for player in players_in_game:
             if player.role == "thing":
-                player.cards.create(name="La Cosa")
+                player.cards.create(name="La Cosa", description="Eres La Cosa, infecta o destruye a los Humanos, no puedes descartarla.")
                 for _ in range(3):
                     cls.draw_card(int(game.id), player.id)
             else:
