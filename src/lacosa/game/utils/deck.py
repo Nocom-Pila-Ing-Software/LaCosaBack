@@ -23,9 +23,10 @@ class Deck:
         for card_name, card_data in config["cards"].items():
             card_amount = card_data["amount_per_player"].get(str(player_count))
             card_description = card_data["description"]
+            card_type = card_data["type"]
             
             for _ in range(int(card_amount)):
-                game.cards.create(name=card_name, description=card_description)
+                game.cards.create(name=card_name, description=card_description, type=card_type)
 
     @classmethod
     def deal_cards(cls, game: Game) -> None:
