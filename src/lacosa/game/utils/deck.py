@@ -21,14 +21,11 @@ class Deck:
             config = json.load(config_file)
 
         for card_name, card_data in config["cards"].items():
-            current_player_count = player_count
-            for current_player_count in range(player_count, 0, -1):
-                card_amount = card_data["amount"].get(str(current_player_count))
-                card_description = card_data["description"]
-                if card_amount is not None:
-                    for _ in range(int(card_amount)):
-                        game.cards.create(name=card_name, description=card_description)
-                    break
+            card_amount = card_data["amount_per_player"].get(str(player_count))
+            card_description = card_data["description"]
+            
+            for _ in range(int(card_amount)):
+                game.cards.create(name=card_name, description=card_description)
 
     @classmethod
     def deal_cards(cls, game: Game) -> None:
