@@ -1,7 +1,7 @@
 {
     "cards": {
         "¡infectado!": {
-            "amount": {
+            "amount_per_player": {
                 "4": 8,
                 "5": 8,
                 "6": 10,
@@ -15,7 +15,7 @@
             "description": "Si eres humano, no puedes pasar esta carta a otros jugadores, solo 'La Cosa' puede pasártela. Si lo hace, te conviertes en infectado y puedes darle otras cartas '¡Infectado!' solo a 'La Cosa'. Debes mantener al menos 1 carta '¡Infectado!' en tu mano en todo momento y nunca puedes descartarla ni intercambiarla, incluso si el efecto de una carta te lo solicita."
         },
         "Lanzallamas": {
-            "amount": {
+            "amount_per_player": {
                 "4": 2,
                 "5": 2,
                 "6": 3,
@@ -29,7 +29,7 @@
             "description": "Elimina un jugador adyacente."
         },
         "Análisis": {
-            "amount": {
+            "amount_per_player": {
                 "4": 0,
                 "5": 0,
                 "6": 0,
@@ -43,7 +43,7 @@
             "description": "Obliga a un jugador adyacente a mostrarte todas sus cartas."
         },
         "Hacha": {
-            "amount": {
+            "amount_per_player": {
                 "4": 0,
                 "5": 0,
                 "6": 0,
@@ -57,7 +57,7 @@
             "description": "Puede usarse para retirar una carta 'Puerta atrancada' o 'Cuarentena' de un jugador adyacente o de ti mismo."
         },
         "Sospecha": {
-            "amount": {
+            "amount_per_player": {
                 "4": 0,
                 "5": 0,
                 "6": 0,
@@ -71,7 +71,7 @@
             "description": "Toma 1 carta aleatoria de un jugador adyacente, mirala y devuélvesela."
         },
         "Whisky": {
-            "amount": {
+            "amount_per_player": {
                 "4": 0,
                 "5": 0,
                 "6": 0,
@@ -85,7 +85,7 @@
             "description": "Enséñales todas tus cartas a los demás jugadores."
         },
         "Determinación": {
-            "amount": {
+            "amount_per_player": {
                 "4": 0,
                 "5": 0,
                 "6": 0,
@@ -99,7 +99,7 @@
             "description": "Roba 3 cartas ¡Aléjate!, quédate con 1 en la mano y descarta el resto. A continuación, juega o descarta 1 carta. Puedes jugar otra carta “Determinación” en el mismo turno. Si hay cartas de ¡Pánico! en la parte superior del mazo, debes descartarlas sin mirarlas, hasta que haya 3 cartas ¡Aléjate! que puedas robar para resolver el efecto."
         },
         "Vigila tus espaldas": {
-            "amount": {
+            "amount_per_player": {
                 "4": 1,
                 "5": 1,
                 "6": 1,
@@ -113,7 +113,7 @@
             "description": "Invierte el orden de juego. Esto afecta tanto al orden de turnos como a los intercambios de cartas."
         },
         "Cambio de lugar": {
-            "amount": {
+            "amount_per_player": {
                 "4": 2,
                 "5": 2,
                 "6": 2,
@@ -127,7 +127,7 @@
             "description": "Cámbiate de sitio físicamente con un jugador adyacente, Llévate tu mano de cartas al cambiar de lugar. A continuación, intercambia 1 carta con el siguiente jugador desde tu nueva ubicación y termina tu turno. El siguiente turno comienza con el jugador con el que hayas realizado el intercambio."
         },
         "¡Más vale que corras!": {
-            "amount": {
+            "amount_per_player": {
                 "4": 2,
                 "5": 2,
                 "6": 2,
@@ -141,7 +141,7 @@
             "description": "Cámbiate de sitio físicamente con cualquier jugador que no esté bajo los efectos de “Cuarentena”, ignorando cualquier carta “Puerta atrancada” que haya en la mesa. Llévate tu mano de cartas al cambiar de lugar. A continuación, intercambia 1 carta con el siguiente jugador desde tu nueva ubicación y termina tu turno. El siguiente turno comienza con el jugador con el que hayas realizado el intercambio."
         },
         "Seducción": {
-            "amount": {
+            "amount_per_player": {
                 "4": 2,
                 "5": 2,
                 "6": 3,
@@ -155,7 +155,7 @@
             "description": "Permite intercambiar una carta con cualquier jugador que no esté en Cuarentena y luego terminar tu turno."
         },
         "Aterrador": {
-            "amount": {
+            "amount_per_player": {
                 "4": 0,
                 "5": 0,
                 "6": 0,
@@ -169,7 +169,7 @@
             "description": "Solo puedes jugar esta carta como respuesta a un ofrecimiento de intercambio de cartas. Te permite negarte a un intercambio de cartas solicitado por un jugador o por el efecto de una carta. Puedes mirar la carta que te has negado a coger y devolvérsela a su dueño."
         },
         "Aquí estoy bien": {
-            "amount": {
+            "amount_per_player": {
                 "4": 1,
                 "5": 1,
                 "6": 2,
@@ -183,7 +183,7 @@
             "description": "Solo puedes jugar esta carta como respuesta a una carta '¡Cambio de lugar!' o '¡Más vale que corras!' para cancelar su efecto."
         },
         "¡No, gracias!": {
-            "amount": {
+            "amount_per_player": {
                 "4": 1,
                 "5": 1,
                 "6": 2,
@@ -197,7 +197,7 @@
             "description": "Niegate a un intercambio de cartas solicitado por un jugador o por el efecto de una carta."
         },
         "¡Fallaste!": {
-            "amount": {
+            "amount_per_player": {
                 "4": 0,
                 "5": 0,
                 "6": 0,
@@ -211,7 +211,7 @@
             "description": "Puedes jugar esta carta como respuesta a un ofrecimiento de intercambio de cartas para negarte, y además, el siguiente jugador en el orden de juego debe realizar el intercambio en lugar de ti. Si el siguiente jugador recibe una carta '¡Infectado!' durante el intercambio, no se infecta, pero sabe que recibió una carta de La Cosa o de un jugador infectado. Si hay obstáculos como 'Puerta atrancada' o 'Cuarentena', no se produce ningún intercambio, y el siguiente turno lo juega el jugador siguiente al que inició el intercambio."
         },
         "¡Nada de barbacoas!": {
-            "amount": {
+            "amount_per_player": {
                 "4": 1,
                 "5": 1,
                 "6": 2,
@@ -225,7 +225,7 @@
             "description": "Esta carta se juega como respuesta a una carta 'Lanzallamas' para evitar ser eliminado de la partida"
         },
         "Cuarentena": {
-            "amount": {
+            "amount_per_player": {
                 "4": 0,
                 "5": 0,
                 "6": 0,
@@ -239,7 +239,7 @@
             "description": "Puedes jugar esta carta sobre un jugador adyacente. Durante las dos siguientes rondas, el jugador 'en Cuarentena' debe robar, intercambiar y descartar cartas mostrándolas siempre a los demás jugadores. Además, no puede eliminar jugadores ni ser objetivo de cartas que permitan un cambio de lugar, a menos que la carta especifique lo contrario."
         },
         "Puerta atrancada": {
-            "amount": {
+            "amount_per_player": {
                 "4": 0,
                 "5": 0,
                 "6": 0,
