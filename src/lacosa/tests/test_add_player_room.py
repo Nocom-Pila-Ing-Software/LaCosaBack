@@ -78,12 +78,12 @@ def test_add_player_to_waiting_room_already_exists(db_room_creation_with_players
     with db_session:
         player = Player.get(id=1)
         assert player is not None
-        assert player.username == "Test_player"   
+        assert player.username == "Test_player"
 
 def test_add_player_to_waiting_room_game_started(db_game_creation_without_cards):
     response = client.post("/room/0/players", json={"playerName": "Test_player"})
 
-    assert response.status_code == 400
+    assert response.status_code == 403
 
     with db_session:
         player = Player.get(id=2)
