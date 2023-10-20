@@ -15,11 +15,13 @@ class Deck:
             game (Game): The game object to add the deck to
         """
         player_count = game.players.count()
+        max(4, min(12, player_count))
+
         config_path = Path(__file__).resolve().parent.parent / 'utils' / 'config_deck.json'
 
         with open(config_path) as config_file:
             config = json.load(config_file)
-
+        
         for card_name, card_data in config["cards"].items():
             card_amount = card_data["amount_per_player"].get(str(player_count))
             card_description = card_data["description"]
