@@ -16,6 +16,16 @@ from lacosa.schemas import PlayerName, PlayerID
 room_router = APIRouter()
 
 
+@room_router.get(path="/rooms", status_code=status.HTTP_200_OK)
+async def get_room_listing() -> RoomListingList:
+    """Returns a list of rooms with a summary of their data"""
+    with db_session:
+        listing_handler = RoomListHandler()
+        response = listing_handler.get_response()
+
+    return response
+
+
 @room_router.get(path="/{room_id}", status_code=status.HTTP_200_OK,
                  responses=error_responses["404"])
 async def get_room_info(room_id: int) -> RoomDataResponse:
@@ -23,16 +33,6 @@ async def get_room_info(room_id: int) -> RoomDataResponse:
     with db_session:
         status_handler = RoomStatusHandler(room_id)
         response = status_handler.get_response()
-
-    return response
-
-
-@room_router.get(path="/rooms", status_code=status.HTTP_200_OK)
-async def get_room_listing() -> RoomListingList:
-    """Returns a list of rooms with a summary of their data"""
-    with db_session:
-        listing_handler = RoomListHandler()
-        response = listing_handler.get_response()
 
     return response
 
@@ -47,7 +47,6 @@ async def create_room(creation_request: RoomCreationRequest) -> RoomCreationResp
         response = game_creator.get_response()
 
     return response
-
 
 
 @room_router.post("/{room_id}/player", response_model=PlayerID, status_code=status.HTTP_200_OK,

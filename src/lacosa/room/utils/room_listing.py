@@ -18,9 +18,9 @@ class RoomListHandler(ResponseInterface):
         room_schema = RoomListing(
             id=room.id,
             name=room.name,
-            player_amount=player_num,
-            min_players=room.min_players,
-            max_players=room.max_players,
+            playerAmount=player_num,
+            minPlayers=room.min_players,
+            maxPlayers=room.max_players,
         )
         return room_schema
 
