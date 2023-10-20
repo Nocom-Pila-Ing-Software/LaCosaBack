@@ -11,7 +11,9 @@ client = TestClient(app)
 def test_create_room_success(db_room_creation):
     mock_creation_request = RoomCreationRequest(
         roomName="Test Room",
-        hostName="Test Host"
+        hostName="Test Host",
+        maxPlayers=8,
+        minPlayers=2
     ).model_dump()
 
     creation_response = RoomCreationResponse(
@@ -43,7 +45,9 @@ def test_create_room_success(db_room_creation):
 def test_create_room_duplicate_name(db_room_creation):
     mock_creation_request = RoomCreationRequest(
         roomName="Test Room2",
-        hostName="Test Host"
+        hostName="Test Host",
+        maxPlayers=8,
+        minPlayers=2
     ).model_dump()
 
     response = client.post("/room", json=mock_creation_request)

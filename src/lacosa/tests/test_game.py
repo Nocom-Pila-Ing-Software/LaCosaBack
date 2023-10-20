@@ -187,7 +187,7 @@ def test_game_is_over(db_game_creation_with_cards):
     assert response.status_code == 200
     response = client.get("/game/5")
 
-    assert response.json()["isGameOver"] == False
+    assert response.json()["result"]["isGameOver"] == False
 
 
     mock_play_request = PlayCardRequest(
@@ -201,7 +201,7 @@ def test_game_is_over(db_game_creation_with_cards):
     assert response.status_code == 200
 
     response = client.get("/game/5")
-    assert response.json()["isGameOver"] == True
+    assert response.json()["result"]["isGameOver"] == True
 
     with db_session:
         assert not Game.exists(id=5)
