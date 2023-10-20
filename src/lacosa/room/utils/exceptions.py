@@ -11,7 +11,7 @@ def validate_unique_room_name(room_name: str) -> None:
     creation_request (RoomCreationRequest): Input data to validate
     """
     room_name_exists = select(
-        room for room in WaitingRoom if room.room_name == room_name
+        room for room in WaitingRoom if room.name == room_name
     ).exists()
 
     if room_name_exists:

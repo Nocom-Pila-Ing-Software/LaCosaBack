@@ -1,5 +1,5 @@
 from ..schemas import PlayCardRequest
-from .card_effects import get_card_effect_function
+from .card_effects import get_card_effect_function, CardEffectFunc
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
 from lacosa.interfaces import ActionInterface
@@ -22,7 +22,7 @@ class CardPlayer(ActionInterface):
         game_id (int): The id of the game to validate
         """
 
-        effect_func = get_card_effect_function(self.card.name)
+        effect_func: CardEffectFunc = get_card_effect_function(self.card.name)
         effect_func(self.target_player, self.game)
 
         self.player.cards.remove(self.card)

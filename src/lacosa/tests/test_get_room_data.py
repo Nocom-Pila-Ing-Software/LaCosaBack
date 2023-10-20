@@ -17,7 +17,9 @@ def test_get_room_data_success(db_room_creation_with_players):
             PlayerName(playerName="Test_player2"),
             PlayerName(playerName="Test_player3"),
         ],
-        hasStarted=False
+        hasStarted=False,
+        maxPlayers=8,
+        minPlayers=2,
     ).model_dump()
 
     response = client.get("/room/0")
