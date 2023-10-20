@@ -15,7 +15,7 @@ class Deck:
             game (Game): The game object to add the deck to
         """
         player_count = game.players.count()
-        max(4, min(12, player_count))
+        player_count = max(4, min(12, player_count))
 
         config_path = Path(__file__).resolve().parent.parent / 'utils' / 'config_deck.json'
 
