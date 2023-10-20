@@ -1,6 +1,20 @@
+from enum import Enum
 from pydantic import BaseModel
 from typing import List
-from lacosa.schemas import PlayerID, CardInfo
+from lacosa.schemas import CardInfo
+
+
+class Actions(str, Enum):
+    draw = "draw"
+    action = "action"
+    defense = "defense"
+    trade = "trade"
+
+
+class EventTypes(str, Enum):
+    action = "action"
+    trade = "trade"
+
 
 class GameCreationRequest(BaseModel):
     roomID: int
@@ -15,14 +29,30 @@ class PlayCardRequest(BaseModel):
 class PublicPlayerInfo(BaseModel):
     playerID: int
     username: str
-    is_host: bool
-    is_alive: bool
+    isAlive: bool
+
+
+class GameEvent(BaseModel):
+    eventID: int
+    type: EventTypes
+    player: PublicPlayerInfo
+    targetPlayer: PublicPlayerInfo | None
+    card: CardInfo
+    defenseCard: CardInfo | None
+    isCompleted: bool
+    isSuccessful: bool
+
+
+class GameResult(BaseModel):
+    isGameOver: bool
+    humansWin: bool
+    winners: List[PublicPlayerInfo]
 
 
 class GameStatus(BaseModel):
-    gameID: int
-    playerPlayingTurn: PlayerID
+    currentPlayer: int
+    currentAction: Actions
     players: List[PublicPlayerInfo]
-    deadPlayers: List[PublicPlayerInfo]
     lastPlayedCard: CardInfo
-    isGameOver: bool
+    result: GameResult
+    events: List[GameEvent]
