@@ -76,4 +76,4 @@ class GameStatusHandler(ResponseInterface):
                 for card in player.cards:
                     card.delete()
 
-            delete_room(self.game.waiting_room.id)
+            delete_room(self.game.waiting_room)
