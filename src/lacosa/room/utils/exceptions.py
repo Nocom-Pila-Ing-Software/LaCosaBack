@@ -3,15 +3,12 @@ from models import WaitingRoom
 from fastapi import HTTPException, status
 
 
-def validate_unique_room_name(room_name: str) -> bool:
+def validate_unique_room_name(room_name: str) -> None:
     """
     Checks if the name of the room is valid
 
     Args:
     creation_request (RoomCreationRequest): Input data to validate
-
-    Returns:
-    bool: True if the name is valid, False otherwise
     """
     room_name_exists = select(
         room for room in WaitingRoom if room.room_name == room_name
@@ -75,6 +72,21 @@ def check_game_started(room: WaitingRoom) -> None:
     """
     if room.game is not None:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail="Game has already started"
+        )
+
+
+def validate_player_in_room(player_id: int, room: WaitingRoom) -> None:
+    """
+    Checks if the name of the room is valid
+
+    Args:
+    creation_request (RoomCreationRequest): Input data to validate
+    """
+    player_in_room = room.players.filter(lambda p: p.id == player_id).exists()
+
+    if not player_in_room:
+        raise HTTPException(
+            status_code=400, detail="Player not in room"
         )
