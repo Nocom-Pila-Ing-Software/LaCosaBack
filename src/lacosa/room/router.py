@@ -1,7 +1,6 @@
 """
 Defines 'room' endpoints
 """
-
 from fastapi import APIRouter, status
 from pony.orm import db_session
 from lacosa.room.schemas import RoomCreationRequest, RoomCreationResponse, RoomDataResponse, RoomListingList
@@ -9,6 +8,7 @@ from lacosa.room.utils.room_creator import RoomCreator
 from lacosa.room.utils.room_data import RoomStatusHandler
 from lacosa.room.utils.room_listing import RoomListHandler
 from lacosa.room.utils.player_creator import PlayerCreator
+from lacosa.room.utils.player_remover import PlayerRemover
 from lacosa.schemas import PlayerName, PlayerID
 
 room_router = APIRouter()
@@ -50,3 +50,10 @@ async def add_player_to_waiting_room(request_data: PlayerName, room_id: int) -> 
         response = game_creator.get_response()
 
         return response
+
+
+@room_router.delete("/{room_id}/player", status_code=status.HTTP_200_OK)
+async def remove_player_from_room(request_data: PlayerID, room_id: int) -> None:
+    with db_session:
+        game_creator = PlayerRemover(request_data, room_id)
+        game_creator.execute_action()
