@@ -20,7 +20,8 @@ async def get_room_listing() -> RoomListingList:
         pass
 
 
-@room_router.get(path="/{room_id}", status_code=status.HTTP_200_OK)
+@room_router.get(path="/{room_id}", status_code=status.HTTP_200_OK,
+                 responses={status.HTTP_404_NOT_FOUND: {"description": "Room not found"}})
 async def get_room_info(room_id: int) -> RoomDataResponse:
     """Returns the room data"""
     with db_session:
@@ -30,7 +31,8 @@ async def get_room_info(room_id: int) -> RoomDataResponse:
     return response
 
 
-@room_router.post(path="", status_code=status.HTTP_201_CREATED)
+@room_router.post(path="", status_code=status.HTTP_201_CREATED,
+                  responses={status.HTTP_400_BAD_REQUEST: {"description": "Invalid request"}})
 async def create_room(creation_request: RoomCreationRequest) -> RoomCreationResponse:
     """Creates a new room and returns the room id and the player id
 
@@ -44,19 +46,23 @@ async def create_room(creation_request: RoomCreationRequest) -> RoomCreationResp
     return response
 
 
-@room_router.post("/{room_id}/player", response_model=PlayerID, status_code=status.HTTP_200_OK)
-async def add_player_to_waiting_room(request_data: RoomAddPlayerRequest) -> PlayerID:
+@room_router.post("/{room_id}/player", response_model=PlayerID, status_code=status.HTTP_200_OK,
+                  responses={status.HTTP_404_NOT_FOUND: {"description": "Room not found"},
+                             status.HTTP_400_BAD_REQUEST: {"description": "Invalid request"}})
+async def add_player_to_waiting_room(request_data: RoomAddPlayerRequest, room_id: int) -> PlayerID:
     """Adds a player to the waiting room and returns the player id"""
     with db_session:
-        player_creator = PlayerCreator(request_data)
+        player_creator = PlayerCreator(request_data, room_id)
         player_creator.create()
         response = player_creator.get_response()
 
         return response
 
 
-@room_router.delete("/{room_id}/leave", status_code=status.HTTP_200_OK)
-async def leave_room(player_id: int) -> None:
+@room_router.delete("/{room_id}/player", status_code=status.HTTP_200_OK,
+                    responses={status.HTTP_404_NOT_FOUND: {"description": "Room not found"},
+                               status.HTTP_400_BAD_REQUEST: {"description": "Invalid request"}})
+async def leave_room(player_id: PlayerID) -> None:
     """Removes a player from a waiting room
 
     If the player is the host, the room is deleted

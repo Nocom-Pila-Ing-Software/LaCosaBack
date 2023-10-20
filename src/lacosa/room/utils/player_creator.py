@@ -1,4 +1,3 @@
-from lacosa.room.schemas import RoomAddPlayerRequest
 from lacosa.schemas import PlayerName, PlayerID
 from pony.orm import commit
 from models import Player
@@ -8,9 +7,9 @@ from lacosa.interfaces import ResponseInterface, CreatorInterface
 
 
 class PlayerCreator(ResponseInterface, CreatorInterface):
-    def __init__(self, request_data: RoomAddPlayerRequest):
-        self.player_name = PlayerName(username=request_data.username)
-        self.room = utils.find_room(request_data.roomID)
+    def __init__(self, player_name_payload: PlayerName, room_id: int):
+        self.player_name = player_name_payload.playerName
+        self.room = utils.find_room(room_id)
         self.player: Player
         self._handle_errors()
 

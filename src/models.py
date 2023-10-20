@@ -29,23 +29,22 @@ class Game(db.Entity):
     id = PrimaryKey(int, auto=True)
     waiting_room = Required('WaitingRoom')
     players = Set('Player')
-    cards = Set('Card', cascade_delete=True)
+    cards = Set('Card')
     last_played_card = Optional('Card', reverse="played_on_game")
     current_player = Required(int)
     current_action = Required(str, default="draw")
     is_game_over = Required(bool, default=False)
     is_human_winner = Required(bool, default=False)
-    events = Set(Event, cascade_delete=True)
+    events = Set(Event)
 
 
 class WaitingRoom(db.Entity):
     id = PrimaryKey(int, auto=True)
     name = Required(str)
     game = Optional(Game, cascade_delete=True)
-    players = Set('Player', cascade_delete=True)
+    players = Set('Player')
     min_players = Required(int, default=2)
     max_players = Required(int, default=8)
-    password = Optional(str)
 
 
 class Player(db.Entity):
@@ -60,8 +59,8 @@ class Player(db.Entity):
     position = Optional(int)
 
     # I dont know if this is the best way to do this
-    events = Set(Event, cascade_delete=True)
-    events_target = Set(Event, reverse="target_player", cascade_delete=True)
+    events = Set(Event)
+    events_target = Set(Event, reverse="target_player")
 
 
 class Card(db.Entity):
@@ -78,5 +77,5 @@ class Card(db.Entity):
     type = Required(CardTypes, default="action")
 
     # I dont know if this is the best way to do this
-    events = Set(Event, cascade_delete=True)
-    events_defense = Set(Event, reverse="defense_card", cascade_delete=True)
+    events = Set(Event)
+    events_defense = Set(Event, reverse="defense_card")

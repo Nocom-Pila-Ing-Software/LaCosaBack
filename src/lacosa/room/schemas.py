@@ -5,16 +5,13 @@ from lacosa.schemas import PlayerName
 
 class RoomCreationRequest(BaseModel):
     roomName: str
-    username: str
+    hostName: str
     minPlayers: int
     maxPlayers: int
-    password: str | None
 
 
 class RoomAddPlayerRequest(BaseModel):
-    username: str
-    roomID: int
-    password: str | None
+    playerName: str
 
 
 class RoomCreationResponse(BaseModel):

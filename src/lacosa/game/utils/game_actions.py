@@ -38,9 +38,6 @@ class CardPlayer(ActionInterface):
             next_player = self.game.players.select(
                 lambda p: p.position == 1).first()
         return next_player.id
-    
-    def next_turn(self):
-        self.game.current_player = self.get_next_player_id()
 
     def handle_errors(self) -> None:
         """
