@@ -4,9 +4,10 @@ Defines 'room' endpoints
 
 from fastapi import APIRouter, status
 from pony.orm import db_session
-from lacosa.room.schemas import RoomCreationRequest, RoomCreationResponse, RoomDataResponse
+from lacosa.room.schemas import RoomCreationRequest, RoomCreationResponse, RoomDataResponse, RoomListingList
 from lacosa.room.utils.room_creator import RoomCreator
 from lacosa.room.utils.room_data import RoomStatusHandler
+from lacosa.room.utils.room_listing import RoomListHandler
 from lacosa.room.utils.player_creator import PlayerCreator
 from lacosa.schemas import PlayerName, PlayerID
 
@@ -23,6 +24,14 @@ async def create_room(creation_request: RoomCreationRequest) -> RoomCreationResp
     return response
 
 
+@room_router.get(path="/rooms", status_code=status.HTTP_200_OK)
+async def get_room_listing() -> RoomListingList:
+    with db_session:
+        listing_handler = RoomListHandler()
+        response = listing_handler.get_response()
+
+    return response
+
 @room_router.get(path="/{room_id}", status_code=status.HTTP_200_OK)
 async def get_room_info(room_id: int) -> RoomDataResponse:
     with db_session:
@@ -30,6 +39,7 @@ async def get_room_info(room_id: int) -> RoomDataResponse:
         response = status_handler.get_response()
 
     return response
+
 
 
 @room_router.post("/{room_id}/players", response_model=PlayerID, status_code=status.HTTP_200_OK)

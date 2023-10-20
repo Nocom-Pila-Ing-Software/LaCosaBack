@@ -13,13 +13,13 @@ def setup_test_environment():
     db.drop_all_tables(with_all_data=True)
     db.create_tables()
     with db_session:
-        room = WaitingRoom(id=0, room_name="Test room")
+        room = WaitingRoom(id=0, name="Test room")
         player = Player(id=1, username="Player1", room=room)
         room.players.add(player)
         game = Game(id=0, waiting_room=room, players=room.players, current_player=1)
         game.cards.create(name="Lanzallamas")
 
-        room = WaitingRoom(id=1, room_name="Test room")
+        room = WaitingRoom(id=1, name="Test room")
         player = Player(id=2, username="Player2", room=room)
         room.players.add(player)
         game = Game(id=1, waiting_room=room, players=room.players, current_player=2)
@@ -31,7 +31,7 @@ def setup_test_environment():
         for _ in range(5):
             player.cards.create(name="Carta Mano")
 
-        room = WaitingRoom(id=2, room_name="Test room")
+        room = WaitingRoom(id=2, name="Test room")
         player = Player(id=3, username="Player3", room=room)
         room.players.add(player)
         game = Game(id=2, waiting_room=room, players=room.players, current_player=3)
