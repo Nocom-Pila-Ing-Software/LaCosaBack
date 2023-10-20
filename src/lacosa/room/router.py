@@ -8,6 +8,7 @@ from lacosa.room.schemas import RoomCreationRequest, RoomCreationResponse, RoomD
 from lacosa.room.utils.room_creator import RoomCreator
 from lacosa.room.utils.room_data import RoomStatusHandler
 from lacosa.room.utils.player_creator import PlayerCreator
+from lacosa.room.utils.error_responses import error_responses
 from lacosa.schemas import PlayerName, PlayerID
 
 room_router = APIRouter()
@@ -21,7 +22,7 @@ async def get_room_listing() -> RoomListingList:
 
 
 @room_router.get(path="/{room_id}", status_code=status.HTTP_200_OK,
-                 responses={status.HTTP_404_NOT_FOUND: {"description": "Room not found"}})
+                 responses=error_responses["404"])
 async def get_room_info(room_id: int) -> RoomDataResponse:
     """Returns the room data"""
     with db_session:
@@ -32,7 +33,7 @@ async def get_room_info(room_id: int) -> RoomDataResponse:
 
 
 @room_router.post(path="", status_code=status.HTTP_201_CREATED,
-                  responses={status.HTTP_400_BAD_REQUEST: {"description": "Invalid request"}})
+                  responses=error_responses["400"])
 async def create_room(creation_request: RoomCreationRequest) -> RoomCreationResponse:
     """Creates a new room and returns the room id and the player id
 
@@ -47,8 +48,7 @@ async def create_room(creation_request: RoomCreationRequest) -> RoomCreationResp
 
 
 @room_router.post("/{room_id}/player", response_model=PlayerID, status_code=status.HTTP_200_OK,
-                  responses={status.HTTP_404_NOT_FOUND: {"description": "Room not found"},
-                             status.HTTP_400_BAD_REQUEST: {"description": "Invalid request"}})
+                  responses=error_responses["400&404"])
 async def add_player_to_waiting_room(request_data: RoomAddPlayerRequest, room_id: int) -> PlayerID:
     """Adds a player to the waiting room and returns the player id"""
     with db_session:
@@ -60,8 +60,7 @@ async def add_player_to_waiting_room(request_data: RoomAddPlayerRequest, room_id
 
 
 @room_router.delete("/{room_id}/player", status_code=status.HTTP_200_OK,
-                    responses={status.HTTP_404_NOT_FOUND: {"description": "Room not found"},
-                               status.HTTP_400_BAD_REQUEST: {"description": "Invalid request"}})
+                    responses=error_responses["400&404"])
 async def leave_room(player_id: PlayerID) -> None:
     """Removes a player from a waiting room
 

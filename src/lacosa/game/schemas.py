@@ -4,7 +4,7 @@ from typing import List
 from lacosa.schemas import PlayerID, CardInfo
 
 
-class Actions(str, Enum):
+class Action(str, Enum):
     draw = "draw"
     action = "action"
     defense = "defense"
@@ -40,6 +40,7 @@ class PublicPlayerInfo(BaseModel):
 
 
 class GameEvent(BaseModel):
+    """Represents an event that occurred during the game"""
     eventID: int
     type: EventTypes
     player: PublicPlayerInfo
@@ -59,7 +60,7 @@ class GameResult(BaseModel):
 class GameStatus(BaseModel):
     gameID: int
     playerPlayingTurn: PlayerID
-    currentAction: Actions
+    currentAction: Action
     players: List[PublicPlayerInfo]
     deadPlayers: List[PublicPlayerInfo]
     lastPlayedCard: CardInfo

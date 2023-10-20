@@ -24,7 +24,7 @@ class GameStatusHandler(ResponseInterface):
             result={
                 "isGameOver": self.is_game_over,
                 "humansWin": False,
-                "winners": self._get_player_info()[1]
+                "winners": self._get_player_info()[1] #FIXME: this doesn't work, is harcoded
             },
             events=[],
         )

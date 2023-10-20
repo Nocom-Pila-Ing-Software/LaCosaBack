@@ -12,12 +12,13 @@ from lacosa.game.utils.game_creator import GameCreator
 from .utils.deck import Deck
 from lacosa.game.utils.game_status import GameStatusHandler
 from lacosa.game.utils.game_actions import CardPlayer
+from lacosa.game.utils.error_responses import error_responses
 
 game_router = APIRouter()
 
 
 @game_router.get(path="/{room_id}", status_code=status.HTTP_200_OK,
-                 responses={status.HTTP_404_NOT_FOUND: {"description": "Game not found"}})
+                 responses=error_responses["404"])
 async def get_game_info(room_id) -> GameStatus:
     """Returns the current status/information of the game"""
     with db_session:
@@ -30,8 +31,7 @@ async def get_game_info(room_id) -> GameStatus:
 
 
 @game_router.post(path="", status_code=status.HTTP_201_CREATED,
-                  responses={status.HTTP_400_BAD_REQUEST: {"description": "Invalid request"},
-                             status.HTTP_403_FORBIDDEN: {"description": "Player is not the host"}})
+                  responses=error_responses["400&403"])
 async def create_game(creation_request: GameCreationRequest) -> GameID:
     """Creates a new game"""
     with db_session:
@@ -42,10 +42,8 @@ async def create_game(creation_request: GameCreationRequest) -> GameID:
     return response
 
 
-@game_router.put(path="/{room_id}/draw-card", status_code=status.HTTP_200_OK,
-                 responses={status.HTTP_404_NOT_FOUND: {"description": "Game not found"},
-                            status.HTTP_400_BAD_REQUEST: {"description": "Invalid request"},
-                            status.HTTP_403_FORBIDDEN: {"description": "Player have not permission to execute this action"}})
+@game_router.put(path="/{room_id}/deal-card", status_code=status.HTTP_200_OK,
+                 responses=error_responses["400&403&404"])
 async def draw_card(room_id: int, player_id: PlayerID) -> None:
     """Deals a card to a player"""
     with db_session:
@@ -53,9 +51,7 @@ async def draw_card(room_id: int, player_id: PlayerID) -> None:
 
 
 @game_router.put(path="/{room_id}/discard-card", status_code=status.HTTP_200_OK,
-                 responses={status.HTTP_404_NOT_FOUND: {"description": "Game not found"},
-                            status.HTTP_400_BAD_REQUEST: {"description": "Invalid request"},
-                            status.HTTP_403_FORBIDDEN: {"description": "Player have not permission to execute this action"}})
+                 responses=error_responses["400&403&404"])
 async def discard_card(discard_request: GenericCardRequest, room_id: int) -> None:
     """Discards a card from a player's hand"""
     with db_session:
@@ -63,9 +59,7 @@ async def discard_card(discard_request: GenericCardRequest, room_id: int) -> Non
 
 
 @game_router.put(path="/{room_id}/play-card", status_code=status.HTTP_200_OK,
-                 responses={status.HTTP_404_NOT_FOUND: {"description": "Game not found"},
-                            status.HTTP_400_BAD_REQUEST: {"description": "Invalid request"},
-                            status.HTTP_403_FORBIDDEN: {"description": "Player have not permission to execute this action"}})
+                 responses=error_responses["400&403&404"])
 async def play_card(play_request: PlayCardRequest, room_id: int) -> None:
     """
     Try to play a card from a player's hand
@@ -78,9 +72,7 @@ async def play_card(play_request: PlayCardRequest, room_id: int) -> None:
 
 
 @game_router.put(path="/{room_id}/defend-card", status_code=status.HTTP_200_OK,
-                 responses={status.HTTP_404_NOT_FOUND: {"description": "Game not found"},
-                            status.HTTP_400_BAD_REQUEST: {"description": "Invalid request"},
-                            status.HTTP_403_FORBIDDEN: {"description": "Player have not permission to execute this action"}})
+                 responses=error_responses["400&403&404"])
 async def defend_card(defend_request: GenericCardRequest, room_id: int) -> None:
     """
     Use a defense card to prevent the effect of an attack card
@@ -92,9 +84,7 @@ async def defend_card(defend_request: GenericCardRequest, room_id: int) -> None:
 
 
 @game_router.put(path="/{room_id}/trade-card", status_code=status.HTTP_200_OK,
-                 responses={status.HTTP_404_NOT_FOUND: {"description": "Game not found"},
-                            status.HTTP_400_BAD_REQUEST: {"description": "Invalid request"},
-                            status.HTTP_403_FORBIDDEN: {"description": "Player have not permission to execute this action"}})
+                 responses=error_responses["400&403&404"])
 async def trade_card(trade_request: GenericCardRequest, room_id: int) -> None:
     """Trade a card with another player"""
     with db_session:

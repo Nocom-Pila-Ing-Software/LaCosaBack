@@ -30,9 +30,9 @@ class RoomDataResponse(BaseModel):
 class RoomListing(BaseModel):
     id: int
     name: str
-    player_amount: int
-    min_players: int
-    max_players: int
+    playerAmount: int
+    minPlayers: int
+    maxPlayers: int
 
 
 class RoomListingList(BaseModel):
