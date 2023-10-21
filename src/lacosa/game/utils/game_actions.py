@@ -29,8 +29,6 @@ class CardPlayer(ActionInterface):
         self.game.cards.add(self.card)
         self.game.last_played_card = self.card
 
-        # TODO: next turn cambio de lugar no deberia avanzar
-        # para mi esto se tendria que encargar cada carta en particular
         self.game.current_player = self.get_next_player_id()
 
     def get_next_player_id(self):
