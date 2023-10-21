@@ -160,14 +160,14 @@ def db_game_creation_without_cards():
         Game(id=0, waiting_room=room, players=room.players, current_player=1)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def db_game_creation_with_trade_event():
     db.drop_all_tables(with_all_data=True)
     db.create_tables()
 
     with db_session:
         room = WaitingRoom(id=1, name="Test room")
-        for i in range(6):
+        for i in range(8):
             player = Player(id=i, username="Player"+str(i),
                             room=room, is_host=i == 1, position=i)
             room.players.add(player)
@@ -183,11 +183,14 @@ def db_game_creation_with_trade_event():
 
         events_in_game = select(e for e in game.events)[:]
 
-        for i in range(6):
-            for j in range(5):
+        for i in range(8):
+            for j in range(4):
+                card = None
                 if players_in_game[i] == events_in_game[0].player2:
-                    players_in_game[i].cards.create(
+                    card = players_in_game[i].cards.create(
                         name="No, gracias", description="Carta test defensa")
                 else:
-                    players_in_game[i].cards.create(
+                    card = players_in_game[i].cards.create(
                         name="Carta"+str(i*5+j), description="Carta test")
+                game.cards.add(card)
+
