@@ -5,13 +5,13 @@ import json
 import time
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect, status
 from lacosa.utils import find_card, find_game, find_player
-from pony.orm import db_session
+from pony.orm import db_session, commit
 from lacosa.game.schemas import GameCreationRequest, GameStatus, GenericCardRequest, PlayCardRequest
 from lacosa.schemas import PlayerID, GameID
 from lacosa.game.utils.game_creator import GameCreator
 from .utils.deck import Deck
 from lacosa.game.utils.game_status import GameStatusHandler
-from lacosa.game.utils.game_actions import CardPlayer
+from lacosa.game.utils.game_actions import CardDefender, CardPlayer, CardTrader
 from lacosa.game.utils.error_responses import error_responses
 
 game_router = APIRouter()
@@ -80,7 +80,8 @@ async def defend_card(defend_request: GenericCardRequest, room_id: int) -> None:
     If the defense card id is -1, the player is not using a defense card
     """
     with db_session:
-        pass
+        defend_handler = CardDefender(defend_request, room_id)
+        defend_handler.execute_action()
 
 
 @game_router.put(path="/{room_id}/trade-card", status_code=status.HTTP_200_OK,
@@ -88,4 +89,7 @@ async def defend_card(defend_request: GenericCardRequest, room_id: int) -> None:
 async def trade_card(trade_request: GenericCardRequest, room_id: int) -> None:
     """Trade a card with another player"""
     with db_session:
-        pass
+        trade_handler = CardTrader(trade_request, room_id)
+        trade_handler.execute_action()
+
+
