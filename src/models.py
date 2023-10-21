@@ -17,10 +17,10 @@ class Event(db.Entity):
     id = PrimaryKey(int, auto=True)
     game = Required('Game')
     type = Required(EventType)
-    player = Required('Player')
-    target_player = Optional('Player')
-    card = Required('Card')
-    defense_card = Optional('Card')
+    player1 = Required('Player')
+    player2 = Required('Player')
+    card1 = Optional('Card')
+    card2 = Optional('Card')
     is_completed = Required(bool, default=False)
     is_successful = Required(bool, default=False)
 
@@ -60,7 +60,7 @@ class Player(db.Entity):
 
     # I dont know if this is the best way to do this
     events = Set(Event)
-    events_target = Set(Event, reverse="target_player")
+    events2 = Set(Event, reverse="player2")
 
 
 class Card(db.Entity):
@@ -81,4 +81,4 @@ class Card(db.Entity):
 
     # I dont know if this is the best way to do this
     events = Set(Event)
-    events_defense = Set(Event, reverse="defense_card")
+    events2 = Set(Event, reverse="card2")
