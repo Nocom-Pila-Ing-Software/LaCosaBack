@@ -2,6 +2,7 @@ from .deck import Deck
 from lacosa.game.schemas import GenericCardRequest
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
+import lacosa.game.utils.turn_handler as turn_handler
 from models import Game, Player, Card
 
 
@@ -13,6 +14,7 @@ def discard_card_util(discard_request: GenericCardRequest, room_id: int):
     _handle_errors(game, player, card)
 
     Deck.discard_card(card, player, game)
+    turn_handler.increment_turn(game, player)
 
 
 def _handle_errors(game: Game, player: Player, card: Card):

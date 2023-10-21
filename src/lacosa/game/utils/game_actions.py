@@ -31,10 +31,9 @@ class CardPlayer(ActionInterface):
         Deck.discard_card(self.card, self.player, self.game)
         self.game.last_played_card = self.card
 
-        next_player: Player = turn_handler.get_next_player(
+        turn_handler.increment_turn(
             self.game, self.player
         )
-        self.game.current_player = next_player.id
 
     def handle_errors(self) -> None:
         """

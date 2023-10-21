@@ -15,3 +15,8 @@ def get_next_player(game: Game, current_player: Player) -> Player:
     ).first()
 
     return next_player
+
+
+def increment_turn(game: Game, current_player: Player) -> None:
+    next_player = get_next_player(game, current_player)
+    game.current_player = next_player.id
