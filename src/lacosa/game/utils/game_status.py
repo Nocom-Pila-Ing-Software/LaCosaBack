@@ -20,7 +20,13 @@ class GameStatusHandler(ResponseInterface):
             deadPlayers=self.dead_players,
             lastPlayedCard=self.last_card,
             playerPlayingTurn=PlayerID(playerID=self.game.current_player),
-            isGameOver=self.is_game_over
+            currentAction=self.game.current_action,
+            result={
+                "isGameOver": self.is_game_over,
+                "humansWin": False,
+                "winners": self._get_player_info()[1] #FIXME: this doesn't work, is harcoded
+            },
+            events=[],
         )
         return response
 
@@ -60,7 +66,7 @@ class GameStatusHandler(ResponseInterface):
         return CardInfo(**card_info)
 
     def delete_if_game_over(self, response: GameStatus) -> None:
-        if response.isGameOver:
+        if response.result.isGameOver:
             # Delete deck
             for card in self.game.cards:
                 card.delete()

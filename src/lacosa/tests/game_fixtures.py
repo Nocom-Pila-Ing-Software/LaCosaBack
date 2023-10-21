@@ -55,7 +55,13 @@ def get_game_status_response(game_data: Dict) -> GameStatus:
         deadPlayers=[],
         lastPlayedCard=card,
         playerPlayingTurn = PlayerID(playerID = 1),
-        isGameOver = False
+        currentAction="draw",
+        result={
+            "isGameOver": False,
+            "humansWin": False,
+            "winners": []
+        },
+        events=[]
     )
     return response
 
@@ -89,7 +95,7 @@ def db_game_creation_with_cards():
         player3 = room.players.create(id=3, username="Player3", is_host=False, position=3)
 
         # Create a game with players
-        game = Game(id=5, waiting_room=room, current_player=1, players=room.players)
+        game = Game(id=5, waiting_room=room, current_player=1, current_action="draw", last_played_card=None, players=room.players, events={})
 
         # añadir player a game
         game.players.add(player1)
