@@ -16,9 +16,6 @@ def test_create_game_success(db_game_creation):
         players=[
             PlayerID(playerID=1),
             PlayerID(playerID=2),
-            PlayerID(playerID=3),
-            PlayerID(playerID=4),
-            PlayerID(playerID=5)
         ]
     ).model_dump()
 

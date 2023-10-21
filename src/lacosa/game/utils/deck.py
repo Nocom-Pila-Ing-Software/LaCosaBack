@@ -2,8 +2,7 @@ from models import Game, Player
 import random
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
-import json
-from pathlib import Path
+
 
 class Deck:
     @classmethod
@@ -14,21 +13,11 @@ class Deck:
         Args:
             game (Game): The game object to add the deck to
         """
-        player_count = game.players.count()
-        max(4, min(12, player_count))
-
-        config_path = Path(__file__).resolve().parent.parent / 'utils' / 'config_deck.json'
-
-        with open(config_path) as config_file:
-            config = json.load(config_file)
-        
-        for card_name, card_data in config["cards"].items():
-            card_amount = card_data["amount_per_player"].get(str(player_count))
-            card_description = card_data["description"]
-            card_type = card_data["type"]
-            
-            for _ in range(int(card_amount)):
-                game.cards.create(name=card_name, description=card_description, type=card_type)
+        for i in range(40):
+            if i % 2 == 0:
+                game.cards.create(name="Lanzallamas")
+            else:
+                game.cards.create(name="Carta Mazo")
 
     @classmethod
     def deal_cards(cls, game: Game) -> None:
@@ -43,7 +32,7 @@ class Deck:
 
         for player in players_in_game:
             if player.role == "thing":
-                player.cards.create(name="La Cosa", description="Eres La Cosa, infecta o destruye a los Humanos, no puedes descartarla.")
+                player.cards.create(name="La Cosa")
                 for _ in range(3):
                     cls.draw_card(int(game.id), player.id)
             else:
