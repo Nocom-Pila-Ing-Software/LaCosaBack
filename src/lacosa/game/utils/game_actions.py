@@ -2,6 +2,7 @@ from ..schemas import PlayCardRequest
 from .card_effects import get_card_effect_function, CardEffectFunc
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
+from .deck import Deck
 from lacosa.interfaces import ActionInterface
 
 
@@ -25,8 +26,7 @@ class CardPlayer(ActionInterface):
         effect_func: CardEffectFunc = get_card_effect_function(self.card.name)
         effect_func(self.target_player, self.game)
 
-        self.player.cards.remove(self.card)
-        self.game.cards.add(self.card)
+        Deck.discard_card(self.card, self.player, self.game)
         self.game.last_played_card = self.card
 
         self.game.current_player = self.get_next_player_id()
