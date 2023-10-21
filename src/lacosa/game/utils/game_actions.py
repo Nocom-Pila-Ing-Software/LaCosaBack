@@ -4,6 +4,8 @@ import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
 from .deck import Deck
 from lacosa.interfaces import ActionInterface
+import lacosa.game.utils.turn_handler as turn_handler
+from models import Player
 
 
 class CardPlayer(ActionInterface):
@@ -29,15 +31,10 @@ class CardPlayer(ActionInterface):
         Deck.discard_card(self.card, self.player, self.game)
         self.game.last_played_card = self.card
 
-        self.game.current_player = self.get_next_player_id()
-
-    def get_next_player_id(self):
-        next_player = self.game.players.select(
-            lambda p: p.position == self.player.position + 1).first()
-        if next_player is None:
-            next_player = self.game.players.select(
-                lambda p: p.position == 1).first()
-        return next_player.id
+        next_player: Player = turn_handler.get_next_player(
+            self.game, self.player
+        )
+        self.game.current_player = next_player.id
 
     def handle_errors(self) -> None:
         """
