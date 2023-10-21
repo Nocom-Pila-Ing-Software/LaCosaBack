@@ -66,7 +66,6 @@ class Player(db.Entity):
 class Card(db.Entity):
     id = PrimaryKey(int, auto=True)
     name = Required(str, default="Generic card name")
-    type = Required(str, default="Generic card type")
     description = Required(str, default="Generic card description")
     # The following attributes are optional because a card can belong to a Game
     # and not a player and viceversa
