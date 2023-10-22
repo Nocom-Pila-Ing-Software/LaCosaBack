@@ -77,24 +77,3 @@ def test_discard_card_invalid_player_turn(discard_card_game_creation):
     print(response.json())
     assert response.status_code == 403
 
-
-def test_turn_increment(discard_card_game_creation):
-    # TODO: remove this test when card trade is implemented
-    room_id = discard_card_game_creation["room"]["id"]
-    card_id = discard_card_game_creation["cards"][0][0]["id"]
-    player_id = discard_card_game_creation["players"][0]["id"]
-
-    discard_request = {
-        "playerID": player_id,
-        "cardID": card_id,
-    }
-
-    response = client.put(
-        f"/game/{room_id}/discard-card", json=discard_request)
-
-    assert response.status_code == 200
-
-    with db_session:
-        game = Game.get(id=room_id)
-        player = Player.get(id=player_id)
-        assert player.id != game.current_player

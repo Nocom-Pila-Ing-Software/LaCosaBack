@@ -14,7 +14,6 @@ def discard_card_util(discard_request: GenericCardRequest, room_id: int):
     _handle_errors(game, player, card)
 
     Deck.discard_card(card, player, game)
-    turn_handler.increment_turn(game, player)
 
 
 def _handle_errors(game: Game, player: Player, card: Card):
