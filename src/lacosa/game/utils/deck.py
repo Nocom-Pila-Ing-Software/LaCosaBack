@@ -1,4 +1,4 @@
-from models import Game, Player
+from models import Card, Game, Player
 import random
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
@@ -59,6 +59,11 @@ class Deck:
         card.player = player
         game.cards.remove(card)
         player.cards.add(card)
+
+    @classmethod
+    def discard_card(cls, card: Card, player: Player, game: Game):
+        player.cards.remove(card)
+        game.cards.add(card)
 
     @classmethod
     def _handle_draw_card_errors(cls, game: Game, player: Player) -> None:

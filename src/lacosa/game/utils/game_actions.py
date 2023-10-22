@@ -2,7 +2,10 @@ from ..schemas import PlayCardRequest
 from .card_effects import get_card_effect_function, CardEffectFunc
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
+from .deck import Deck
 from lacosa.interfaces import ActionInterface
+import lacosa.game.utils.turn_handler as turn_handler
+from models import Player
 
 
 class CardPlayer(ActionInterface):
@@ -25,19 +28,12 @@ class CardPlayer(ActionInterface):
         effect_func: CardEffectFunc = get_card_effect_function(self.card.name)
         effect_func(self.target_player, self.game)
 
-        self.player.cards.remove(self.card)
-        self.game.cards.add(self.card)
+        Deck.discard_card(self.card, self.player, self.game)
         self.game.last_played_card = self.card
 
-        self.game.current_player = self.get_next_player_id()
-
-    def get_next_player_id(self):
-        next_player = self.game.players.select(
-            lambda p: p.position == self.player.position + 1).first()
-        if next_player is None:
-            next_player = self.game.players.select(
-                lambda p: p.position == 1).first()
-        return next_player.id
+        turn_handler.increment_turn(
+            self.game, self.player
+        )
 
     def handle_errors(self) -> None:
         """
