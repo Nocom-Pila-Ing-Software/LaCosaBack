@@ -1,5 +1,5 @@
 from lacosa.schemas import PlayerName
-from lacosa.room.schemas import RoomDataResponse
+from lacosa.room.schemas import RoomDataResponse, PlayerSchema
 from typing import List
 import lacosa.utils as utils
 from lacosa.interfaces import ResponseInterface
@@ -25,9 +25,17 @@ class RoomStatusHandler(ResponseInterface):
             hasStarted=has_room_started,
             maxPlayers=self.room.max_players,
             minPlayers=self.room.min_players,
+            host=self._get_host_schema()
         )
 
         return response
+
+    def _get_host_schema(self) -> PlayerSchema:
+        host = self.room.players.filter(lambda p: p.is_host).first()
+        return PlayerSchema(
+            id=host.id,
+            name=host.username,
+        )
 
     def _get_number_of_players_in_room(self) -> int:
         return len(self.room.players)
