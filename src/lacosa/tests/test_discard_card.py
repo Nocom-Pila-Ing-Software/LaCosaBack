@@ -74,6 +74,7 @@ def test_discard_card_invalid_player_turn(discard_card_game_creation):
     response = client.put(
         f"/game/{room_id}/discard-card", json=discard_request)
 
+    print(response.json())
     assert response.status_code == 403
 
 
