@@ -143,7 +143,7 @@ def db_game_creation_with_cards_player_data():
             player.cards.create(name="Carta_test", description="Carta test")
 
 
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def discard_card_game_creation():
     db.drop_all_tables(with_all_data=True)
     db.create_tables()
