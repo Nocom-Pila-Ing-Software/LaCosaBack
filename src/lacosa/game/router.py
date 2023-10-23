@@ -6,12 +6,15 @@ import time
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect, status
 from lacosa.utils import find_card, find_game, find_player
 from pony.orm import db_session, commit
+from pony.orm import db_session
 from lacosa.game.schemas import GameCreationRequest, GameStatus, GenericCardRequest, PlayCardRequest
 from lacosa.schemas import PlayerID, GameID
 from lacosa.game.utils.game_creator import GameCreator
 from .utils.deck import Deck
 from lacosa.game.utils.game_status import GameStatusHandler
 from lacosa.game.utils.game_actions import CardDefender, CardPlayer, CardTrader
+from lacosa.game.utils.game_actions import CardPlayer
+from lacosa.game.utils.discard_card import discard_card_util
 from lacosa.game.utils.error_responses import error_responses
 
 game_router = APIRouter()
@@ -55,7 +58,7 @@ async def draw_card(room_id: int, player_id: PlayerID) -> None:
 async def discard_card(discard_request: GenericCardRequest, room_id: int) -> None:
     """Discards a card from a player's hand"""
     with db_session:
-        pass
+        discard_card_util(discard_request, room_id)
 
 
 @game_router.put(path="/{room_id}/play-card", status_code=status.HTTP_200_OK,

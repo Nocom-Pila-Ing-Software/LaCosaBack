@@ -20,12 +20,22 @@ class RoomCreationResponse(BaseModel):
     playerID: int
 
 
+# FIXME move this to another place
+# I didn't use playerID or playerName because we should change those in the future.
+# Also, it produces stuttering in the code.
+# For example, player.playerName instead of just doing player.name
+class PlayerSchema(BaseModel):
+    id: int
+    name: str
+
+
 class RoomDataResponse(BaseModel):
     CountPlayers: int
     Players: List[PlayerName]
     hasStarted: bool
     minPlayers: int
     maxPlayers: int
+    host: PlayerSchema
 
 
 class RoomListing(BaseModel):
