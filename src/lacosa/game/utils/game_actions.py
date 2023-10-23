@@ -40,6 +40,8 @@ class CardPlayer(ActionInterface):
         event_create.create()
         event = utils.find_partial_event(self.player.id)
 
+        Deck.discard_card(self.game.id, self.player.id, self.card.id)
+
         check_card_is_defensible = self.check_card_is_defensible(self.card)
         if not check_card_is_defensible:
             execute_card_effect(self.card, self.player ,self.target_player, self.game)
