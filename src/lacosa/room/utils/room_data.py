@@ -42,7 +42,7 @@ class RoomStatusHandler(ResponseInterface):
 
     def _get_players_names_in_room(self) -> List[PlayerName]:
         players_names = [
-            PlayerName(playerName=player.username) for player in self.room.players
+            PlayerName(playerName=player.username) for player in self.room.players.sort_by(lambda p: p.id)
         ]
         return players_names
 
