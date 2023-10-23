@@ -122,7 +122,8 @@ def db_game_creation_with_cards():
 
         player2.cards.create(id=7, name="Aquí estoy bien",
                                 description="Aquí estoy bien")
-        player2.cards.create()
+        player2.cards.create(id=8, name="Nada de barbacoas",
+                                description="Nada de barbacoas")
         player2.cards.create()
         player2.cards.create()
 
