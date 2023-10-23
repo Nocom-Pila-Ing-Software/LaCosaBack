@@ -168,18 +168,18 @@ class CardTradeInformer(ResponseInterface):
                 amount_infectado_cards_in_hand += 1
 
         cards_info = []
-        print(amount_infectado_cards_in_hand)
-        print(self.target.role)
-        print(self.target.username)
         for card in self.player.cards:
             usable = True
-            if (card.name == "La cosa" or
-                (card.name == "infectado" and amount_infectado_cards_in_hand ==
-                         1 and self.player.role == "infected") or
-                        (card.name == "infectado" and self.player.role == "human") or
-                    (card.name == "infectado" and self.player.role ==
-                            "infected" and self.target.role != "the thing")
-                ):
+            print(self.player.role)
+            if card.name == "La cosa":
+                usable = False
+            if card.name == "infectado" and amount_infectado_cards_in_hand == 1 and self.player.role == "infected":
+                usable = False
+            if card.name == "infectado" and self.target.role == "infected":
+                usable = False
+            if card.name == "infectado" and self.target.role != "human" and self.player.role == "the thing":
+                usable = False
+            if card.name == "infectado" and self.player.role == "human":
                 usable = False
 
             cards_info.append(UsabilityInfoCard(
