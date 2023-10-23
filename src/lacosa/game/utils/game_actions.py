@@ -188,8 +188,11 @@ class CardDefender(ActionInterface):
                 self.game.current_action = "draw"
                 self.game.last_played_card = self.card
 
-                self.event.player2.cards.remove(self.event.card2)
                 Deck.draw_card(self.game.id, self.event.player2.id)
+
+                self.event.player2.cards.remove(self.event.card2)
+                self.game.cards.add(self.event.card2)
+
 
         elif self.event.type == "action":
             if self.card is not None:
@@ -203,6 +206,7 @@ class CardDefender(ActionInterface):
                 self.event.is_successful = True
 
             self.event.is_completed = True
+            
             self.game.last_played_card = self.card
             
             self.game.current_action = "trade"
