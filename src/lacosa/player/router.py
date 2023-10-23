@@ -26,7 +26,6 @@ async def get_cards_usability(player_id: int) -> UsabilityActionResponse:
     return response
 
 
-
 @player_router.get(path="/{player_id}/targets/{card_id}", status_code=status.HTTP_200_OK,
                    responses=error_responses["400&403&404"])
 async def get_possible_targets(player_id: int, card_id: int) -> TargetsResponse:
