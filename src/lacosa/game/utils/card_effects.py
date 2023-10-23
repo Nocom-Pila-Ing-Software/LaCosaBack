@@ -37,3 +37,19 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
     }
 
     return _card_effects.get(card_name, do_nothing)
+
+
+def execute_card_effect(self, card, player , target_player) -> None:
+        """
+        Plays a card on the game
+
+        Args:
+        play_request (PlayCardRequest): Input data to validate
+        game_id (int): The id of the game to validate
+        """
+        effect_func: CardEffectFunc = get_card_effect_function(card.name)
+        effect_func(player, target_player, self.game)
+
+        player.cards.remove(card)
+        self.game.cards.add(card)
+        self.game.last_played_card = card
