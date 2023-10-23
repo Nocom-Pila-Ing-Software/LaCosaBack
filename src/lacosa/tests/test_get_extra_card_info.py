@@ -206,3 +206,5 @@ def get_cards_defend_player_dead(db_game_creation_without_cards_dead_players):
     assert response.json()["detail"] == "Player is dead"
 
 
+
+
