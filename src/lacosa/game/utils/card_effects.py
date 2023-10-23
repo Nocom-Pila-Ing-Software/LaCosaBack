@@ -42,7 +42,8 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "Cambio de lugar": apply_switch_position_cards_effect,
         "Más vale que corras": apply_switch_position_cards_effect,
         "Aquí estoy bien": do_nothing,
-        "Nada de barbacoas": do_nothing
+        "Nada de barbacoas": do_nothing,
+        "No, gracias": do_nothing
     }
 
     return _card_effects.get(card_name, do_nothing)
@@ -56,7 +57,8 @@ def execute_card_effect(card, player ,target_player, game) -> None:
         game_id (int): The id of the game to validate
         """
         effect_func: CardEffectFunc = get_card_effect_function(card.name)
-        effect_func(player, target_player, game)
+        if effect_func is not None:
+            effect_func(player, target_player, game)
 
         player.cards.remove(card)
         game.cards.add(card)
