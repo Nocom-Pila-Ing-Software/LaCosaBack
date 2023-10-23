@@ -1,7 +1,7 @@
 from main import app
 from fastapi.testclient import TestClient
 from pony.orm import db_session
-from .game_fixtures import db_game_creation_with_cards_player_data, db_game_creation_without_cards_dead_players, get_info_card_game_creation, get_defend_card_game_creation, get_tradeable_info_card_game_creation
+from .game_fixtures import db_game_creation_with_cards_player_data, db_game_creation_without_cards_dead_players, get_info_card_game_creation, get_defend_card_game_creation, get_tradeable_info_card_game_creation, get_info_card_game_creation_with_dead_players
 from .room_fixtures import db_room_creation_with_players
 
 client = TestClient(app)
@@ -373,7 +373,144 @@ def get_cards_tradeable_player_dead(db_game_creation_without_cards_dead_players)
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Player is dead"
-    
+
+def get_targets_card(get_info_card_game_creation_with_dead_players):
+    # Player1 uses Lanzallamas
+    player_id = get_info_card_game_creation_with_dead_players["players"][0]["id"]
+    card_id = get_info_card_game_creation_with_dead_players["players"][0]["cards"][2]["cardID"]
+
+    response = client.get(f"/player/{player_id}/cards/{card_id}/targets")
+
+    assert response.status_code == 200
+
+    response = response.json()
+
+    assert response == {
+        "targets": [
+            {
+                "id": 2,
+                "name": "Player2"
+            },
+            {
+                "id": 5,
+                "name": "Player5"
+            }
+        ]
+    }
+
+    # Player2 uses Lanzallamas
+    player_id = get_info_card_game_creation_with_dead_players["players"][1]["id"]
+    card_id = get_info_card_game_creation_with_dead_players["players"][1]["cards"][2]["cardID"]
+
+    response = client.get(f"/player/{player_id}/cards/{card_id}/targets")
+
+    assert response.status_code == 200
+
+    response = response.json()
+
+    assert response == {
+        "targets": [
+            {
+                "id": 1,
+                "name": "Player1"
+            },
+            {
+                "id": 4,
+                "name": "Player4"
+            }
+        ]
+    }
+
+    # Player2 uses Seducción
+    player_id = get_info_card_game_creation_with_dead_players["players"][1]["id"]
+    card_id = get_info_card_game_creation_with_dead_players["players"][1]["cards"][4]["cardID"]
+
+    response = client.get(f"/player/{player_id}/cards/{card_id}/targets")
+
+    assert response.status_code == 200
+
+    response = response.json()
+
+    assert response == {
+        "targets": [
+            {
+                "id": 1,
+                "name": "Player1"
+            },
+            {
+                "id": 4,
+                "name": "Player4"
+            },
+            {
+                "id": 5,
+                "name": "Player5"
+            }
+        ]
+    }
+
+    # Player4 uses Cambio de lugar
+    player_id = get_info_card_game_creation_with_dead_players["players"][3]["id"]
+    card_id = get_info_card_game_creation_with_dead_players["players"][3]["cards"][3]["cardID"]
+
+    response = client.get(f"/player/{player_id}/cards/{card_id}/targets")
+
+    assert response.status_code == 200
+
+    response = response.json()
+
+    assert response == {
+        "targets": [
+            {
+                "id": 2,
+                "name": "Player2"
+            },
+            {
+                "id": 5,
+                "name": "Player5"
+            }
+        ]
+    }
+
+def get_targets_card_wrong_player_id():
+    response = client.get(f"/player/809/cards/1/targets")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Player not found"
+
+def get_targets_card_wrong_card_id(get_info_card_game_creation):
+    player_id = get_info_card_game_creation["players"][0]["id"]
+    card_id = 809
+
+    response = client.get(f"/player/{player_id}/cards/{card_id}/targets")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Card not found"
+
+def get_targets_card_without_targets(get_info_card_game_creation):
+    player_id = get_info_card_game_creation["players"][0]["id"]
+    card_id = get_info_card_game_creation["players"][0]["cards"][0]["cardID"]
+
+    response = client.get(f"/player/{player_id}/cards/{card_id}/targets")
+
+    assert response.status_code == 200
+
+    response = response.json()
+
+    assert response == {
+        "targets": []
+    }
+
+def get_targets_card_player_not_in_game(db_room_creation_with_players):
+    response = client.get(f"/player/1/cards/1/targets")
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Player not in game"
+
+def get_targets_card_player_dead(db_game_creation_without_cards_dead_players):
+    response = client.get(f"/player/1/cards/1/targets")
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Player is dead"
 
 
 

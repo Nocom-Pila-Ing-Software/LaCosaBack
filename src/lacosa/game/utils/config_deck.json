@@ -29,6 +29,7 @@
             },
             "description": "Elimina un jugador adyacente.",
             "type": "action",
+            "target": "adjacent",
             "defensible_by": [
                 "Nada de barbacoas"
             ]
@@ -46,6 +47,7 @@
                 "12": 0
             },
             "description": "Obliga a un jugador adyacente a mostrarte todas sus cartas.",
+            "target": "adjacent",
             "type": "action"
         },
         "Hacha": {
@@ -61,6 +63,7 @@
                 "12": 0
             },
             "description": "Puede usarse para retirar una carta 'Puerta atrancada' o 'Cuarentena' de un jugador adyacente o de ti mismo.",
+            "target": "adjacent",
             "type": "action"
         },
         "Sospecha": {
@@ -76,6 +79,7 @@
                 "12": 0
             },
             "description": "Toma 1 carta aleatoria de un jugador adyacente, mirala y devuélvesela.",
+            "target": "adjacent",
             "type": "action"
         },
         "Whisky": {
@@ -137,6 +141,7 @@
             },
             "description": "Cámbiate de sitio físicamente con un jugador adyacente, Llévate tu mano de cartas al cambiar de lugar. A continuación, intercambia 1 carta con el siguiente jugador desde tu nueva ubicación y termina tu turno. El siguiente turno comienza con el jugador con el que hayas realizado el intercambio.",
             "type": "action",
+            "target": "adjacent",
             "defensible_by": [
                 "Aquí estoy bien"
             ]
@@ -155,6 +160,7 @@
             },
             "description": "Cámbiate de sitio físicamente con cualquier jugador que no esté bajo los efectos de “Cuarentena”, ignorando cualquier carta “Puerta atrancada” que haya en la mesa. Llévate tu mano de cartas al cambiar de lugar. A continuación, intercambia 1 carta con el siguiente jugador desde tu nueva ubicación y termina tu turno. El siguiente turno comienza con el jugador con el que hayas realizado el intercambio.",
             "type": "action",
+            "target": "global",
             "defensible_by": [
                 "Aquí estoy bien"
             ]
@@ -172,6 +178,7 @@
                 "12": 7
             },
             "description": "Permite intercambiar una carta con cualquier jugador que no esté en Cuarentena y luego terminar tu turno.",
+            "target": "global",
             "type": "action"
         },
         "Aterrador": {
