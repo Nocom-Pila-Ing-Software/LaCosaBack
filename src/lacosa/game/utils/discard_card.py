@@ -2,7 +2,6 @@ from .deck import Deck
 from lacosa.game.schemas import GenericCardRequest
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
-import lacosa.game.utils.turn_handler as turn_handler
 from models import Game, Player, Card
 
 

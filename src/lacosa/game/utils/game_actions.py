@@ -1,14 +1,11 @@
 from lacosa.game.utils.deck import Deck
-from models import Event
 from ..schemas import GenericCardRequest, PlayCardRequest
 from .card_effects import get_card_effect_function, CardEffectFunc
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
 from .deck import Deck
 from lacosa.interfaces import ActionInterface
-from pony.orm import db_session, commit
 import lacosa.game.utils.turn_handler as turn_handler
-from models import Player
 
 
 class CardPlayer(ActionInterface):
