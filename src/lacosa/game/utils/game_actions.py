@@ -23,7 +23,7 @@ class CardPlayer(ActionInterface):
     def execute_action(self) -> None:
         # Creo un evento de tipo acción
         self.game.current_action = "action"
-        
+
         # Creo el evento de acción
         event_request = EventCreationRequest(
             gameID=self.game.id,
@@ -40,18 +40,19 @@ class CardPlayer(ActionInterface):
 
         check_card_is_defensible = self.check_card_is_defensible(self.card)
         if not check_card_is_defensible:
-            execute_card_effect(self.card, self.player ,self.target_player, self.game)
+            execute_card_effect(self.card, self.player,
+                                self.target_player, self.game)
 
             event_create.is_completed = True
             event_create.is_successful = True
 
             self.game.current_action = "trade"
-            
+
             event_request = EventCreationRequest(
                 gameID=self.game.id,
                 playerID=self.player.id,
                 targetPlayerID=self.next_player_trade.id,
-                cardID=-1, #probar
+                cardID=-1,  # probar
                 targetCardID=-1,
                 type=EventTypes.trade,
                 isCompleted=False,
@@ -64,15 +65,15 @@ class CardPlayer(ActionInterface):
             self.game.current_player = self.target_player.position
 
     def get_next_player_id(self):
-        next_player = self.game.players.select(
-            lambda p: p.position == self.player.position + 1).first()
-        if next_player is None:
-            next_player = self.game.players.select(
-                lambda p: p.position == 1).first()
+        next_player = turn_handler.get_next_player(
+            self.game,
+            self.player.position
+        )
         return next_player.id
 
     def check_card_is_defensible(self, card) -> bool:
-        config_path = Path(__file__).resolve().parent.parent / 'utils' / 'config_deck.json'
+        config_path = Path(__file__).resolve().parent.parent / \
+            'utils' / 'config_deck.json'
 
         with open(config_path) as config_file:
             config = json.load(config_file)
@@ -129,11 +130,10 @@ class CardTrader(ActionInterface):
             self.event.player2.cards.add(self.event.card1)
 
     def get_next_player_id(self):
-        next_player = self.game.players.select(
-            lambda p: p.position == self.event.player1.position + 1).first()
-        if next_player is None:
-            next_player = self.game.players.select(
-                lambda p: p.position == 1).first()
+        next_player = turn_handler.get_next_player(
+            self.game,
+            self.event.player1.position
+        )
         return next_player.id
 
     def handle_errors(self) -> None:
@@ -163,7 +163,8 @@ class CardDefender(ActionInterface):
         self.game = utils.find_game(game_id)
         self.event = utils.find_event_to_defend(defend_request.playerID)
         self.player = utils.find_player(defend_request.playerID)
-        self.card = utils.find_card(defend_request.cardID) if defend_request.cardID != -1 else None
+        self.card = utils.find_card(
+            defend_request.cardID) if defend_request.cardID != -1 else None
         self.handle_errors()
 
     def execute_action(self) -> None:
@@ -185,26 +186,28 @@ class CardDefender(ActionInterface):
 
                 self.event.player2.cards.remove(self.event.card2)
                 Deck.draw_card(self.game.id, self.event.player2.id)
-                
+
         elif self.event.type == "action":
             if self.card is not None:
                 self.event.card2 = self.card
-                execute_card_effect(self.event.card2, self.event.player2 ,self.event.player1, self.game)
+                execute_card_effect(
+                    self.event.card2, self.event.player2, self.event.player1, self.game)
                 self.event.is_successful = False
             else:
-                execute_card_effect(self.event.card1, self.event.player1 ,self.event.player2, self.game)
+                execute_card_effect(
+                    self.event.card1, self.event.player1, self.event.player2, self.game)
                 self.event.is_successful = True
-            
+
             self.event.is_completed = True
-            
+
             self.game.current_action = "trade"
 
             event_request = EventCreationRequest(
                 gameID=self.game.id,
                 playerID=self.event.player1.id,
                 targetPlayerID=self.get_next_player_id(),
-                cardID= -1,
-                targetCardID= -1,
+                cardID=-1,
+                targetCardID=-1,
                 type=EventTypes.trade,
                 isCompleted=False,
                 isSuccessful=False
@@ -212,13 +215,11 @@ class CardDefender(ActionInterface):
             event_create = EventCreator(event_request)
             event_create.create()
 
-
     def get_next_player_id(self):
-        next_player = self.game.players.select(
-            lambda p: p.position == self.event.player1.position + 1).first()
-        if next_player is None:
-            next_player = self.game.players.select(
-                lambda p: p.position == 1).first()
+        next_player = turn_handler.get_next_player(
+            self.game,
+            self.event.player1.position
+        )
         return next_player.id
 
     def handle_errors(self) -> None:
