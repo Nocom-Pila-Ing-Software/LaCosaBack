@@ -181,7 +181,7 @@ def test_play_card_invalid_player(db_game_creation_with_cards):
     assert response.json() == {"detail": "Player not found"}
 
 
-def test_play_cambio_de_lugar_card(db_game_creation_with_cards):
+def test_play_cambio_de_lugar_card_no_defended(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
         playerID=1,
         targetPlayerID=2,
@@ -262,6 +262,279 @@ def test_play_cambio_de_lugar_card(db_game_creation_with_cards):
     ]
 
     assert response.json()["deadPlayers"] == []
+
+
+def test_play_mas_vale_que_corras_card_no_defended(db_game_creation_with_cards):
+    mock_play_request = PlayCardRequest(
+        playerID=1,
+        targetPlayerID=2,
+        cardID=6
+    ).model_dump()
+
+    response = client.put("/game/5/play-card", json=mock_play_request)
+
+    assert response.status_code == 200
+
+    response = client.get("/game/5")
+
+    # The target player is dead
+    assert response.json()["players"] == [
+
+        {
+            "playerID": 1,
+            "username": "Player1",
+            "is_host": True,
+            "is_alive": True
+        },
+        {
+            "playerID": 2,
+            "username": "Player2",
+            "is_host": False,
+            "is_alive": True
+        },
+        {
+            "playerID": 3,
+            "username": "Player3",
+            "is_host": False,
+            "is_alive": True
+        }
+    ]
+
+    # Check event was created
+    with db_session:
+        game_record = select(g for g in Game if g.id == 5).get()
+        event_record = select(e for e in game_record.events).get()
+        assert event_record.player1.id == 1
+        assert event_record.player2.id == 2
+        assert event_record.card1.id == 6
+        assert event_record.type == "action"
+        assert event_record.is_completed == False
+        assert event_record.is_successful == False
+
+    #no defenderse de la carta
+    mock_play_request = GenericCardRequest(
+        playerID=2,
+        cardID=-1
+    ).model_dump()
+
+    response = client.put("/game/5/defend-card", json=mock_play_request)
+    assert response.status_code == 200
+
+    response = client.get("/game/5")
+
+    assert response.json()["players"] == [
+
+        {
+            "playerID": 2,
+            "username": "Player2",
+            "is_host": False,
+            "is_alive": True
+        },
+        {
+            "playerID": 1,
+            "username": "Player1",
+            "is_host": True,
+            "is_alive": True
+        },
+        {
+            "playerID": 3,
+            "username": "Player3",
+            "is_host": False,
+            "is_alive": True
+        }
+    ]
+
+    assert response.json()["deadPlayers"] == []
+
+
+def test_play_cambio_de_lugar_card_defended(db_game_creation_with_cards):
+    mock_play_request = PlayCardRequest(
+        playerID=1,
+        targetPlayerID=2,
+        cardID=5
+    ).model_dump()
+
+    response = client.put("/game/5/play-card", json=mock_play_request)
+
+    assert response.status_code == 200
+
+    response = client.get("/game/5")
+
+    # The target player is dead
+    assert response.json()["players"] == [
+
+        {
+            "playerID": 1,
+            "username": "Player1",
+            "is_host": True,
+            "is_alive": True
+        },
+        {
+            "playerID": 2,
+            "username": "Player2",
+            "is_host": False,
+            "is_alive": True
+        },
+        {
+            "playerID": 3,
+            "username": "Player3",
+            "is_host": False,
+            "is_alive": True
+        }
+    ]
+
+    # Check event was created
+    with db_session:
+        game_record = select(g for g in Game if g.id == 5).get()
+        event_record = select(e for e in game_record.events).get()
+        assert event_record.player1.id == 1
+        assert event_record.player2.id == 2
+        assert event_record.card1.id == 5
+        assert event_record.type == "action"
+        assert event_record.is_completed == False
+        assert event_record.is_successful == False
+
+    #defenderse de la carta con aqui estoy bien
+    mock_play_request = GenericCardRequest(
+        playerID=2,
+        cardID=7
+    ).model_dump()
+
+    response = client.put("/game/5/defend-card", json=mock_play_request)
+    assert response.status_code == 200
+
+    response = client.get("/game/5")
+
+    assert response.json()["players"] == [
+
+        {
+            "playerID": 1,
+            "username": "Player1",
+            "is_host": True,
+            "is_alive": True
+        },
+        {
+            "playerID": 2,
+            "username": "Player2",
+            "is_host": False,
+            "is_alive": True
+        },
+        {
+            "playerID": 3,
+            "username": "Player3",
+            "is_host": False,
+            "is_alive": True
+        }
+    ]
+
+    # Check event was completed correctly
+    with db_session:
+        game_record = select(g for g in Game if g.id == 5).get()
+        event_record = select(
+            e for e in game_record.events if e.type == "action" and e.is_completed == True
+            ).order_by(lambda e: e.id).first()
+        assert event_record.player1.id == 1
+        assert event_record.player2.id == 2
+        assert event_record.card1.id == 5
+        assert event_record.card2.id == 7
+        assert event_record.type == "action"
+        assert event_record.is_completed == True
+        assert event_record.is_successful == False
+    
+
+def test_play_mas_vale_que_corras_card_defended(db_game_creation_with_cards):
+    mock_play_request = PlayCardRequest(
+        playerID=1,
+        targetPlayerID=2,
+        cardID=6
+    ).model_dump()
+
+    response = client.put("/game/5/play-card", json=mock_play_request)
+
+    assert response.status_code == 200
+
+    response = client.get("/game/5")
+
+    # The target player is dead
+    assert response.json()["players"] == [
+
+        {
+            "playerID": 1,
+            "username": "Player1",
+            "is_host": True,
+            "is_alive": True
+        },
+        {
+            "playerID": 2,
+            "username": "Player2",
+            "is_host": False,
+            "is_alive": True
+        },
+        {
+            "playerID": 3,
+            "username": "Player3",
+            "is_host": False,
+            "is_alive": True
+        }
+    ]
+
+    # Check event was created
+    with db_session:
+        game_record = select(g for g in Game if g.id == 5).get()
+        event_record = select(e for e in game_record.events).get()
+        assert event_record.player1.id == 1
+        assert event_record.player2.id == 2
+        assert event_record.card1.id == 6
+        assert event_record.type == "action"
+        assert event_record.is_completed == False
+        assert event_record.is_successful == False
+
+    #defenderse de la carta con aqui estoy bien
+    mock_play_request = GenericCardRequest(
+        playerID=2,
+        cardID=7
+    ).model_dump()
+
+    response = client.put("/game/5/defend-card", json=mock_play_request)
+    assert response.status_code == 200
+
+    response = client.get("/game/5")
+
+    assert response.json()["players"] == [
+
+        {
+            "playerID": 1,
+            "username": "Player1",
+            "is_host": True,
+            "is_alive": True
+        },
+        {
+            "playerID": 2,
+            "username": "Player2",
+            "is_host": False,
+            "is_alive": True
+        },
+        {
+            "playerID": 3,
+            "username": "Player3",
+            "is_host": False,
+            "is_alive": True
+        }
+    ]
+
+    # Check event was completed correctly
+    with db_session:
+        game_record = select(g for g in Game if g.id == 5).get()
+        event_record = select(
+            e for e in game_record.events if e.type == "action" and e.is_completed == True
+            ).order_by(lambda e: e.id).first()
+        assert event_record.player1.id == 1
+        assert event_record.player2.id == 2
+        assert event_record.card1.id == 6
+        assert event_record.card2.id == 7
+        assert event_record.type == "action"
+        assert event_record.is_completed == True
+        assert event_record.is_successful == False
 
 
 def test_play_card_invalid_player(db_game_creation_with_cards):

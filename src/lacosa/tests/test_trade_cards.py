@@ -363,10 +363,6 @@ def test_trade_in_invalid_turn_state(db_game_creation_with_trade_event):
         card_player_1_id = cards_player_1[1].id
         card_player_2_id = cards_player_2[3].id
 
-        # print all the events in the game
-        for event in game.events:
-            print(event.card1, event.card2, event.is_completed)
-
     response1 = client.put(
         "/game/1/trade-card", json={"playerID": player2_id, "cardID": card_player_2_id})
 
