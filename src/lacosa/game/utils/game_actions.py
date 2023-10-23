@@ -45,14 +45,6 @@ class CardPlayer(ActionInterface):
     def handle_errors(self) -> None:
         """
         Checks for errors in play_request and raises HTTPException if needed
-
-        Args:
-        play_request (PlayCardRequest): Input data to validate
-        game_id (int): The id of the game to validate
-
-        Raises:
-        HTTPException(status_code=400): If the player is not found or not is allowed to play
-        HTTPException(status_code=404): If the game is not found
         """
 
         exceptions.validate_player_in_game(self.game, self.player)
