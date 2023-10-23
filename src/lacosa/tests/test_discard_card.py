@@ -24,6 +24,7 @@ def test_discard_card_success(discard_card_game_creation):
         f"/game/{room_id}/discard-card", json=discard_request)
 
     assert response.status_code == 200
+    assert response.json() == None
 
     with db_session:
         game = Game.get(id=room_id)
@@ -74,6 +75,5 @@ def test_discard_card_invalid_player_turn(discard_card_game_creation):
     response = client.put(
         f"/game/{room_id}/discard-card", json=discard_request)
 
-    print(response.json())
     assert response.status_code == 403
-
+    assert response.json() == {'detail': "Can't discard card, it's not your turn"}

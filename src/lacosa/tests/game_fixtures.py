@@ -144,49 +144,50 @@ def db_game_creation_with_cards_player_data():
             player.cards.create(name="Carta_test", description="Carta test")
 
 
+discard_card_game_data = {
+    "room": {"id": 1, "name": "Test room"},
+    "players": [
+        {"id": 1, "username": "Player1", "is_host": True, "position": 1},
+        {"id": 2, "username": "Player2", "is_host": False, "position": 2}
+    ],
+    "game": {"id": 1, "current_player": 1},
+    "cards": [
+        [
+            {"id": 1, "name": "card1"},
+            {"id": 2, "name": "card2"},
+            {"id": 3, "name": "card3"},
+            {"id": 4, "name": "card4"},
+        ],
+        [
+            {"id": 5, "name": "card5"},
+            {"id": 6, "name": "card6"},
+            {"id": 7, "name": "card7"},
+            {"id": 8, "name": "card8"},
+        ]
+    ]
+}
+
+
 @pytest.fixture(scope="module")
 def discard_card_game_creation():
     db.drop_all_tables(with_all_data=True)
     db.create_tables()
-    data = {
-        "room": {"id": 1, "name": "Test room"},
-        "players": [
-            {"id": 1, "username": "Player1", "is_host": True, "position": 1},
-            {"id": 2, "username": "Player2", "is_host": False, "position": 2}
-        ],
-        "game": {"id": 1, "current_player": 1},
-        "cards": [
-            [
-                {"id": 1, "name": "card1"},
-                {"id": 2, "name": "card2"},
-                {"id": 3, "name": "card3"},
-                {"id": 4, "name": "card4"},
-            ],
-            [
-                {"id": 5, "name": "card5"},
-                {"id": 6, "name": "card6"},
-                {"id": 7, "name": "card7"},
-                {"id": 8, "name": "card8"},
-            ]
-        ]
-    }
-
     # second half
     with db_session:
-        room = WaitingRoom(**data["room"])
-        for player_data in data["players"]:
+        room = WaitingRoom(**discard_card_game_data["room"])
+        for player_data in discard_card_game_data["players"]:
             room.players.create(**player_data)
 
         game = Game(
             waiting_room=room,
             players=room.players,
-            **data["game"]
+            **discard_card_game_data["game"]
         )
-        for player, cards in zip(game.players, data["cards"]):
+        for player, cards in zip(game.players, discard_card_game_data["cards"]):
             for card in cards:
                 player.cards.create(**card)
 
-    return data
+    return discard_card_game_data
 
 
 @ pytest.fixture(scope="module")
