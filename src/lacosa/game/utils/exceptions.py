@@ -1,3 +1,5 @@
+import json
+from pathlib import Path
 from fastapi import HTTPException, status
 from models import Game, Player, Card
 
@@ -68,12 +70,17 @@ def validate_current_player(game: Game, player: Player):
 
 
 def validate_correct_defense_card(card, event):
-    if event.type == "trade" and card.name == "No, gracias":
-        return
-    if event.type == "action" and card.name == "No, gracias":
+    config_path = Path(__file__).resolve().parent.parent / \
+        'utils' / 'config_deck.json'
+
+    with open(config_path) as config_file:
+        config = json.load(config_file)
+
+    if (event.type == "action" and card.name not in config["cards"][event.card1.name]["defensible_by"]) or (event.type == "trade" and card.name != "No, gracias"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
-    
+
+
 def validate_correct_type(card, type):
     if card.type != type:
         raise HTTPException(
