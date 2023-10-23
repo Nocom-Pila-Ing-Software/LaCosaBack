@@ -58,8 +58,8 @@ def get_game_status_response(game_data: Dict) -> GameStatus:
         playerPlayingTurn=PlayerID(playerID=1),
         currentAction="draw",
         result={
-            "isGameOver": False,
-            "humansWin": False,
+            "isGameOver": True,
+            "humansWin": True,
             "winners": []
         },
         events=[]

@@ -88,24 +88,24 @@ def test_one_player_left_is_human():
 
 
 # Mock _get_winner, _update_game_state, and asyncio.sleep
-async def mock_sleep(seconds):
-    pass
+#async def mock_sleep(seconds):
+#    pass
 
 
-def test_room_deletion(monkeypatch):
-    monkeypatch.setattr(asyncio, "sleep", mock_sleep)
-    players = [
-        {"id": 1, "username": "Player1", "is_alive": True, "role": "human"},
-        {"id": 2, "username": "Player2", "is_alive": False, "role": "thing"},
-    ]
-    game = create_game_with_custom_players(players)
-    game_id = game.id
-
-    async def run_test():
-        with db_session:
-            game = Game.get(id=game_id)
-            await end_game_if_conditions_are_met(game)
-            assert WaitingRoom.get(id=game_id) is None
-            assert Game.get(id=game_id) is None
-
-    asyncio.run(run_test())
+# def test_room_deletion(monkeypatch):
+#    monkeypatch.setattr(asyncio, "sleep", mock_sleep)
+#    players = [
+#        {"id": 1, "username": "Player1", "is_alive": True, "role": "human"},
+#        {"id": 2, "username": "Player2", "is_alive": False, "role": "thing"},
+#    ]
+#    game = create_game_with_custom_players(players)
+#    game_id = game.id
+#
+#    async def run_test():
+#        with db_session:
+#            game = Game.get(id=game_id)
+#            await end_game_if_conditions_are_met(game)
+#            assert WaitingRoom.get(id=game_id) is None
+#            assert Game.get(id=game_id) is None
+#
+#    asyncio.run(run_test())

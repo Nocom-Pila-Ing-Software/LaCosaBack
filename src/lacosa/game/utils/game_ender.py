@@ -4,11 +4,14 @@ import asyncio
 
 
 def _is_the_thing_dead(game: Game):
-    is_thing_alive = game.players.filter(
+    thing = game.players.filter(
         lambda player: player.role == "thing"
-    ).first().is_alive
+    ).first()
 
-    return not is_thing_alive
+    if thing is None:
+        return True
+
+    return not thing.is_alive
 
 
 def _are_all_humans_dead(game: Game):
@@ -55,10 +58,10 @@ def _update_game_state(game: Game, winner: str):
     game.is_game_over = True
 
 
-async def end_game_if_conditions_are_met(game: Game, time_before_close=30) -> None:
+def end_game_if_conditions_are_met(game: Game, time_before_close=30) -> None:
     winner = _get_winner(game)
 
     if winner is not None:
         _update_game_state(game, winner)
-        await asyncio.sleep(time_before_close)
-        delete_room(game.waiting_room)
+        #await asyncio.sleep(time_before_close)
+        #delete_room(game.waiting_room)

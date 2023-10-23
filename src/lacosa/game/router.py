@@ -13,6 +13,7 @@ from lacosa.game.utils.game_actions import CardDefender, CardPlayer, CardTrader
 from lacosa.game.utils.game_actions import CardPlayer
 from lacosa.game.utils.discard_card import discard_card_util
 from lacosa.game.utils.error_responses import error_responses
+from lacosa.game.utils.game_ender import end_game_if_conditions_are_met
 
 game_router = APIRouter()
 
@@ -23,9 +24,8 @@ async def get_game_info(room_id) -> GameStatus:
     """Returns the current status/information of the game"""
     with db_session:
         status_handler = GameStatusHandler(room_id)
+        end_game_if_conditions_are_met(status_handler.game)
         response = status_handler.get_response()
-        # FIXME: this is a bit ugly
-        status_handler.delete_if_game_over(response)
 
     return response
 
@@ -91,5 +91,3 @@ async def trade_card(trade_request: GenericCardRequest, room_id: int) -> None:
     with db_session:
         trade_handler = CardTrader(trade_request, room_id)
         trade_handler.execute_action()
-
-

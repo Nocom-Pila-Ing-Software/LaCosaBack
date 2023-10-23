@@ -11,7 +11,6 @@ class GameStatusHandler(ResponseInterface):
         self.game = utils.find_game(room_id)
         self.players, self.dead_players = self._get_player_info()
         self.last_card = self._get_last_card_info()
-        self.is_game_over = self._is_game_over()
 
     def get_response(self) -> GameStatus:
         response = GameStatus(
@@ -21,17 +20,17 @@ class GameStatusHandler(ResponseInterface):
             lastPlayedCard=self.last_card,
             playerPlayingTurn=PlayerID(playerID=self.game.current_player),
             currentAction=self.game.current_action,
-            result={
-                "isGameOver": self.is_game_over,
-                "humansWin": False,
-                "winners": self._get_player_info()[1] #FIXME: this doesn't work, is harcoded
-            },
+            result=self.get_result_schema(),
             events=[],
         )
         return response
 
-    def _is_game_over(self):
-        return len(self.players) == 1
+    def get_result_schema(self):
+        return {
+            "isGameOver": self.game.is_game_over,
+            "humansWin": self.game.have_humans_won,
+            "winners": [],
+        }
 
     def _get_player_schema(self, player):
         return PublicPlayerInfo(
