@@ -432,8 +432,6 @@ def test_get_targets_card(get_info_card_game_creation_with_dead_players):
 
     response = response.json()
 
-    print(get_info_card_game_creation_with_dead_players["cards"][1][4]["name"])
-
     assert response == {
         "targets": [
             {

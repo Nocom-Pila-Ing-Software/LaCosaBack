@@ -170,7 +170,6 @@ class CardTradeInformer(ResponseInterface):
         cards_info = []
         for card in self.player.cards:
             usable = True
-            print(self.player.role)
             if card.name == "La cosa":
                 usable = False
             if card.name == "infectado" and amount_infectado_cards_in_hand == 1 and self.player.role == "infected":
