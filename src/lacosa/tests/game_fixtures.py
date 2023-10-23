@@ -159,6 +159,18 @@ def db_game_creation_without_cards():
         room.players.add(player)
         Game(id=0, waiting_room=room, players=room.players, current_player=1)
 
+@pytest.fixture(scope="module")
+def db_game_creation_without_cards_dead_players():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+
+    with db_session:
+        room = WaitingRoom(id=0, name="Test room")
+        player = Player(id=1, username="Player", room=room,
+                        is_host=True, position=1, is_alive=False)
+        room.players.add(player)
+        Game(id=0, waiting_room=room, players=room.players, current_player=1)
+
 
 @pytest.fixture()
 def db_game_creation_with_trade_event():

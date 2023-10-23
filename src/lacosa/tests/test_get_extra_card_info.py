@@ -1,7 +1,7 @@
 from main import app
 from fastapi.testclient import TestClient
 from pony.orm import db_session
-from .game_fixtures import db_game_creation_with_cards_player_data, db_game_creation_without_cards, get_info_card_game_creation
+from .game_fixtures import db_game_creation_with_cards_player_data, db_game_creation_without_cards_dead_players, get_info_card_game_creation
 from .room_fixtures import db_room_creation_with_players
 
 client = TestClient(app)
@@ -103,6 +103,12 @@ def get_card_usability_wrong_player_id():
 def get_card_usability_player_not_in_game(db_game_creation_without_cards):
     response = client.get(f"/player/1/cards-usability")
 
-    assert response.status_code == 403
+    assert response.status_code == 400
     assert response.json()["detail"] == "Player not in game"
+
+def get_card_usability_player_dead(db_game_creation_without_cards_dead_players):
+    response = client.get(f"/player/1/cards-usability")
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Player is dead"
 
