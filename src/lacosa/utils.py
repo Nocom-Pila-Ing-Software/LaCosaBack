@@ -95,11 +95,10 @@ def find_event_to_defend(player_id: int, failure_status=status.HTTP_400_BAD_REQU
     Returns:
     Event: The partial event with the given player
     """
-
     event = select(e for e in Event if (e.player2.id == player_id) and e.is_completed == False).get()
     if event is None:
         raise HTTPException(
-            status_code=failure_status, detail="Player not found")
+            status_code=failure_status, detail="Player not found or no event to defend")
     return event
 
 def find_target_in_trade_event(player_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Player:

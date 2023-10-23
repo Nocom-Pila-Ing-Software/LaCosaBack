@@ -37,13 +37,14 @@ class CardPlayer(ActionInterface):
         )
         event_create = EventCreator(event_request)
         event_create.create()
+        event = utils.find_partial_event(self.player.id)
 
         check_card_is_defensible = self.check_card_is_defensible(self.card)
         if not check_card_is_defensible:
             execute_card_effect(self.card, self.player ,self.target_player, self.game)
 
-            event_create.is_completed = True
-            event_create.is_successful = True
+            event.is_completed = True
+            event.is_successful = True
 
             self.game.current_action = "trade"
             
@@ -80,8 +81,7 @@ class CardPlayer(ActionInterface):
         if card.name in config['cards']:
             if 'defensible_by' in config['cards'][card.name]:
                 return True
-            else:
-                return False
+        return False
 
     def handle_errors(self) -> None:
         """
