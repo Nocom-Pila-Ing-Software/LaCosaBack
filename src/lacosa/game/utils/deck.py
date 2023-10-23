@@ -56,9 +56,6 @@ class Deck:
 
         card = random.choice(list(game.cards))
 
-        game = utils.find_game(game_id)
-        game.current_action = "action"
-
         card.player = player
         game.cards.remove(card)
         player.cards.add(card)
