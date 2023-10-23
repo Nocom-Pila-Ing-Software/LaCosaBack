@@ -1,5 +1,6 @@
-from models import Game, WaitingRoom, Player, Card, db
-from pony.orm import db_session
+import random
+from models import Event, Game, WaitingRoom, Player, Card, db
+from pony.orm import db_session, select
 from lacosa.game.schemas import PublicPlayerInfo, GameStatus
 from lacosa.schemas import PlayerID, CardInfo
 import pytest
@@ -199,3 +200,39 @@ def db_game_creation_without_cards():
                         is_host=True, position=1)
         room.players.add(player)
         Game(id=0, waiting_room=room, players=room.players, current_player=1)
+
+
+@pytest.fixture()
+def db_game_creation_with_trade_event():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+
+    with db_session:
+        room = WaitingRoom(id=1, name="Test room")
+        for i in range(8):
+            player = Player(id=i, username="Player"+str(i),
+                            room=room, is_host=i == 1, position=i)
+            room.players.add(player)
+        game = Game(id=1, waiting_room=room, players=room.players,
+                    current_player=random.randint(0, 5), last_played_card=None, current_action="trade", events=[])
+
+        players_in_game = select(p for p in game.players)[:]
+
+        event = Event(id=1, game=game, type="trade", player1=game.current_player,
+                      player2=players_in_game[3] if players_in_game[3].id != game.current_player else players_in_game[4])
+
+        Game.get(id=1).events.add(event)
+
+        events_in_game = select(e for e in game.events)[:]
+
+        for i in range(8):
+            for j in range(4):
+                card = None
+                if players_in_game[i] == events_in_game[0].player2:
+                    card = players_in_game[i].cards.create(
+                        name="No, gracias", description="Carta test defensa")
+                else:
+                    card = players_in_game[i].cards.create(
+                        name="Carta"+str(i*5+j), description="Carta test")
+                game.cards.add(card)
+
