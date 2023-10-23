@@ -88,15 +88,10 @@ def find_partial_event(player_id: int, failure_status=status.HTTP_400_BAD_REQUES
 def find_event_to_defend(player_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Event:
     """
     Find a partial Event by the player ID
-<<<<<<< HEAD
 
     Args:
     player_id (int): The ID of the player that is in the event
 
-=======
-    Args:
-    player_id (int): The ID of the player that is in the event
->>>>>>> NP-134_Change_of_place_card_effect
     Returns:
     Event: The partial event with the given player
     """

@@ -1,23 +1,14 @@
-<<<<<<< HEAD
-from lacosa.game.utils.deck import Deck
-from ..schemas import GenericCardRequest, PlayCardRequest
-from .card_effects import get_card_effect_function, CardEffectFunc
-=======
 from ..schemas import PlayCardRequest, EventTypes, GenericCardRequest, EventCreationRequest
 from lacosa.game.utils.deck import Deck
 from lacosa.game.utils.event_creator import EventCreator
 from .card_effects import execute_card_effect
->>>>>>> NP-134_Change_of_place_card_effect
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
 from .deck import Deck
 from lacosa.interfaces import ActionInterface
-<<<<<<< HEAD
 import lacosa.game.utils.turn_handler as turn_handler
-=======
 from pathlib import Path
 import json
->>>>>>> NP-134_Change_of_place_card_effect
 
 
 class CardPlayer(ActionInterface):
@@ -54,14 +45,6 @@ class CardPlayer(ActionInterface):
             event_create.is_completed = True
             event_create.is_successful = True
 
-<<<<<<< HEAD
-        Deck.discard_card(self.card, self.player, self.game)
-        self.game.last_played_card = self.card
-
-        turn_handler.increment_turn(
-            self.game, self.player
-        )
-=======
             self.game.current_action = "trade"
             
             event_request = EventCreationRequest(
@@ -87,7 +70,6 @@ class CardPlayer(ActionInterface):
             next_player = self.game.players.select(
                 lambda p: p.position == 1).first()
         return next_player.id
->>>>>>> NP-134_Change_of_place_card_effect
 
     def check_card_is_defensible(self, card) -> bool:
         config_path = Path(__file__).resolve().parent.parent / 'utils' / 'config_deck.json'
@@ -120,7 +102,6 @@ class CardPlayer(ActionInterface):
         exceptions.validate_player_alive(self.target_player)
 
 
-<<<<<<< HEAD
 class CardTrader(ActionInterface):
     def __init__(self, trade_request: GenericCardRequest, game_id: int):
         self.game = utils.find_game(game_id)
@@ -185,8 +166,6 @@ class CardTrader(ActionInterface):
         # TODO: Validate player is allowed to trade the card with the other player (La cosa y eso)
 
 
-=======
->>>>>>> NP-134_Change_of_place_card_effect
 class CardDefender(ActionInterface):
     def __init__(self, defend_request: GenericCardRequest, game_id: int):
         self.game = utils.find_game(game_id)
@@ -197,28 +176,12 @@ class CardDefender(ActionInterface):
 
     def execute_action(self) -> None:
         """
-<<<<<<< HEAD
         If the player has selected a card, save it in the event
-=======
-        Deside if the player can defend the event and executes the action
->>>>>>> NP-134_Change_of_place_card_effect
 
         Args:
         defend_request (PlayCardRequest): Input data to validate
         game_id (int): The id of the game to validate
         """
-<<<<<<< HEAD
-
-        if self.card is not None:
-            self.event.card2 = self.card
-            self.event.is_completed = True
-            self.event.is_successful = False
-            self.game.current_player = self.get_next_player_id()
-            self.game.current_action = "draw"
-
-            self.event.player2.cards.remove(self.event.card2)
-            Deck.draw_card(self.game.id, self.event.player2.id)
-=======
         if self.event.type == "trade":
             if self.card is not None:
                 self.event.card2 = self.card
@@ -257,7 +220,6 @@ class CardDefender(ActionInterface):
             event_create = EventCreator(event_request)
             event_create.create()
 
->>>>>>> NP-134_Change_of_place_card_effect
 
     def get_next_player_id(self):
         next_player = self.game.players.select(
@@ -267,10 +229,6 @@ class CardDefender(ActionInterface):
                 lambda p: p.position == 1).first()
         return next_player.id
 
-<<<<<<< HEAD
-=======
-
->>>>>>> NP-134_Change_of_place_card_effect
     def handle_errors(self) -> None:
         """
         Checks for errors in defend_request and raises HTTPException if needed
@@ -286,14 +244,6 @@ class CardDefender(ActionInterface):
         """
 
         exceptions.validate_player_in_game(self.game, self.player)
-<<<<<<< HEAD
-        exceptions.validate_current_action(self.game, "defend", "trade")
-        exceptions.validate_current_player(self.game, self.player)
-        exceptions.validate_player_alive(self.player)
-        exceptions.validate_player_has_card(self.player, self.card.id)
-        # exceptions.validate_card_type(self.card, "defense") #FIXME: implement this
-        exceptions.validate_correct_defense_card(self.card, self.event)
-=======
         exceptions.validate_current_action(self.game, "defense", "trade")
         exceptions.validate_current_player(self.game, self.player)
         exceptions.validate_player_alive(self.player)
@@ -301,4 +251,3 @@ class CardDefender(ActionInterface):
             exceptions.validate_player_has_card(self.player, self.card.id)
             exceptions.validate_correct_defense_card(self.card, self.event)
         # exceptions.validate_card_type(self.card, "defense") #FIXME: implement this
->>>>>>> NP-134_Change_of_place_card_effect
