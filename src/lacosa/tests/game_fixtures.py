@@ -520,7 +520,7 @@ def db_game_creation_with_trade_event_2():
             {"id": 2, "username": "Player2", "is_host": False,
                 "position": 2, "role": "the thing"},
             {"id": 3, "username": "Player3", "is_host": False,
-                "position": -1, "role": "infected", "is_alive": False},
+                "position": -1, "role": "infected"},
             {"id": 4, "username": "Player4", "is_host": False,
                 "position": 3, "role": "human"}, 
             {"id": 5, "username": "Player5", "is_host": False,
