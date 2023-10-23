@@ -18,10 +18,15 @@ def validate_player_alive(player):
         )
 
 
-def validate_player_in_game(game: Game, player: Player):
-    if player not in game.players:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Player not in game")
+def validate_player_in_game(game: Game, player: Player, default_status_code=status.HTTP_404_NOT_FOUND):
+    if game is None:
+        # Verify that the player is in a game
+        if player.game is None:
+            raise HTTPException(status_code=default_status_code,
+                                detail="Player not in game")
+    elif player not in game.players:
+        raise HTTPException(status_code=default_status_code,
+                            detail="Player not in game")
 
 
 def validate_card_in_hand(card: Card, player: Player):
@@ -48,21 +53,28 @@ def validate_deck_not_empty(game: Game):
     if not game.cards:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No cards left in deck")
-    
-def validate_current_action(game: Game, action: str,action2: str = None):
+
+
+def validate_current_action(game: Game, action: str, action2: str = None):
     if game.current_action != action and game.current_action != action2:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
-    
+
+
 def validate_current_player(game: Game, player: Player):
     if game.current_player != player.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
-    
+
 
 def validate_correct_defense_card(card, event):
     if event.type == "trade" and card.name == "No, gracias":
         return
     if event.type == "action" and card.name == "No, gracias":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
+    
+def validate_correct_type(card, type):
+    if card.type != type:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")

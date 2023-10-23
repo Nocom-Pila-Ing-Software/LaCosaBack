@@ -102,4 +102,20 @@ def find_event_to_defend(player_id: int, failure_status=status.HTTP_400_BAD_REQU
             status_code=failure_status, detail="Player not found")
     return event
 
+def find_target_in_trade_event(player_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Player:
+    """
+    Find a player by the player ID of the player in the trade event
+
+    Args:
+    player_id (int): The ID of the player that is in the event
+
+    Returns:
+    Player: The target player
+    """
+
+    event = select(e for e in Event if (e.player1.id == player_id) and e.is_completed == False).first()
+    if event is None:
+        raise HTTPException(
+            status_code=failure_status, detail="Player not found")
+    return event.player2
 
