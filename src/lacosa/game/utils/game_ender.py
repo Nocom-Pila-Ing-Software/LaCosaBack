@@ -11,12 +11,12 @@ def _is_the_thing_dead(game: Game):
     return not is_thing_alive
 
 
-def _is_only_one_human_alive(game: Game):
+def _are_all_humans_dead(game: Game):
     human_count = game.players.filter(
         lambda player: player.role == "human" and player.is_alive
     ).count()
 
-    return human_count == 1
+    return human_count == 0
 
 
 def _is_only_one_player_alive(game: Game):
@@ -34,13 +34,13 @@ def _get_winner(game: Game):
     """
     is_one_player_left, player_left = _is_only_one_player_alive(game)
     is_thing_is_dead = _is_the_thing_dead(game)
-    is_one_human_left = _is_only_one_human_alive(game)
+    no_humans_left = _are_all_humans_dead(game)
 
     if is_thing_is_dead:
         return "human"
     elif is_one_player_left:
         return player_left.role
-    elif is_one_human_left:
+    elif no_humans_left:
         return "thing"
     else:
         return None

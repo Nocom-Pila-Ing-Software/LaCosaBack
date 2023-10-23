@@ -57,11 +57,12 @@ def test_the_thing_is_dead():
     expect_winner_to_be(players, "human")
 
 
-def test_is_only_one_player_not_infected():
+def test_no_humans_left():
     players = [
-        {"id": 1, "username": "Player1", "is_alive": True, "role": "human"},
+        {"id": 1, "username": "Player1", "is_alive": False, "role": "human"},
         {"id": 3, "username": "Player3", "is_alive": True, "role": "infected"},
-        {"id": 4, "username": "Player4", "is_alive": True, "role": "thing"},
+        {"id": 4, "username": "Player4", "is_alive": True, "role": "infected"},
+        {"id": 5, "username": "Player5", "is_alive": True, "role": "thing"},
     ]
     expect_winner_to_be(players, "thing")
 
