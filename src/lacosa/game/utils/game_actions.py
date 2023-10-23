@@ -23,6 +23,7 @@ class CardPlayer(ActionInterface):
     def execute_action(self) -> None:
         # Creo un evento de tipo acción
         self.game.current_action = "action"
+        self.game.last_played_card = self.card
 
         # Creo el evento de acción
         event_request = EventCreationRequest(
@@ -183,6 +184,7 @@ class CardDefender(ActionInterface):
                 self.event.is_successful = False
                 self.game.current_player = self.get_next_player_id()
                 self.game.current_action = "draw"
+                self.game.last_played_card = self.card
 
                 self.event.player2.cards.remove(self.event.card2)
                 Deck.draw_card(self.game.id, self.event.player2.id)
@@ -199,7 +201,8 @@ class CardDefender(ActionInterface):
                 self.event.is_successful = True
 
             self.event.is_completed = True
-
+            self.game.last_played_card = self.card
+            
             self.game.current_action = "trade"
 
             event_request = EventCreationRequest(
