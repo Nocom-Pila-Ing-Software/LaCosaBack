@@ -2,7 +2,7 @@ from main import app
 from fastapi.testclient import TestClient
 from models import WaitingRoom, Player, db
 from pony.orm import db_session
-from lacosa.room.schemas import RoomDataResponse, PlayerName
+from lacosa.room.schemas import RoomDataResponse, PlayerName, PlayerSchema
 import pytest
 from .room_fixtures import db_room_creation_with_players
 
@@ -20,14 +20,14 @@ def test_get_room_data_success(db_room_creation_with_players):
         hasStarted=False,
         maxPlayers=8,
         minPlayers=2,
+        host=PlayerSchema(id=1, name="Test_player"),
     ).model_dump()
 
     response = client.get("/room/0")
     data = response.json()
 
-    #ordenar
+    # ordenar
     data["Players"].sort(key=lambda x: x["playerName"])
-
 
     assert response.status_code == 200
     assert data == mock_room_data

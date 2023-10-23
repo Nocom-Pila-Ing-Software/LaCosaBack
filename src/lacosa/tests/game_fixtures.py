@@ -17,9 +17,6 @@ def db_game_creation():
         room = WaitingRoom(id=0, name="Test room")
         room.players.create(username="Player1", is_host=True, position=1)
         room.players.create(username="Player2", is_host=False, position=2)
-        room.players.create(username="Player3", is_host=False, position=3)
-        room.players.create(username="Player4", is_host=False, position=4)
-        room.players.create(username="Player5", is_host=False, position=5)
 
 
 def get_player_data() -> List[Dict]:
@@ -118,13 +115,15 @@ def db_game_creation_with_cards():
         # Add cards to players
         player1.cards.create(id=4, name="Lanzallamas",
                              description="Está que arde")
-        player1.cards.create()
-        player1.cards.create()
-        player1.cards.create()
-        player1.cards.create()
+        player1.cards.create(id=5, name="Cambio de lugar",
+                                description="Cambio de lugar")
+        player1.cards.create(id=6, name="Más vale que corras",
+                                description="Más vale que corras")
 
-        player2.cards.create()
-        player2.cards.create()
+        player2.cards.create(id=7, name="Aquí estoy bien",
+                                description="Aquí estoy bien")
+        player2.cards.create(id=8, name="Nada de barbacoas",
+                                description="Nada de barbacoas")
         player2.cards.create()
         player2.cards.create()
 
@@ -147,7 +146,53 @@ def db_game_creation_with_cards_player_data():
             player.cards.create(name="Carta_test", description="Carta test")
 
 
+discard_card_game_data = {
+    "room": {"id": 1, "name": "Test room"},
+    "players": [
+        {"id": 1, "username": "Player1", "is_host": True, "position": 1},
+        {"id": 2, "username": "Player2", "is_host": False, "position": 2}
+    ],
+    "game": {"id": 1, "current_player": 1},
+    "cards": [
+        [
+            {"id": 1, "name": "card1"},
+            {"id": 2, "name": "card2"},
+            {"id": 3, "name": "card3"},
+            {"id": 4, "name": "card4"},
+        ],
+        [
+            {"id": 5, "name": "card5"},
+            {"id": 6, "name": "card6"},
+            {"id": 7, "name": "card7"},
+            {"id": 8, "name": "card8"},
+        ]
+    ]
+}
+
+
 @pytest.fixture(scope="module")
+def discard_card_game_creation():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+    # second half
+    with db_session:
+        room = WaitingRoom(**discard_card_game_data["room"])
+        for player_data in discard_card_game_data["players"]:
+            room.players.create(**player_data)
+
+        game = Game(
+            waiting_room=room,
+            players=room.players,
+            **discard_card_game_data["game"]
+        )
+        for player, cards in zip(game.players, discard_card_game_data["cards"]):
+            for card in cards:
+                player.cards.create(**card)
+
+    return discard_card_game_data
+
+
+@ pytest.fixture(scope="module")
 def db_game_creation_without_cards():
     db.drop_all_tables(with_all_data=True)
     db.create_tables()

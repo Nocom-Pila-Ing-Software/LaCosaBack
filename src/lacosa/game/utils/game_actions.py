@@ -1,11 +1,14 @@
+from ..schemas import PlayCardRequest, EventTypes, GenericCardRequest, EventCreationRequest
 from lacosa.game.utils.deck import Deck
-from models import Event
-from ..schemas import GenericCardRequest, PlayCardRequest
-from .card_effects import get_card_effect_function, CardEffectFunc
+from lacosa.game.utils.event_creator import EventCreator
+from .card_effects import execute_card_effect
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
+from .deck import Deck
 from lacosa.interfaces import ActionInterface
-from pony.orm import db_session, commit
+import lacosa.game.utils.turn_handler as turn_handler
+from pathlib import Path
+import json
 
 
 class CardPlayer(ActionInterface):
@@ -13,26 +16,52 @@ class CardPlayer(ActionInterface):
         self.game = utils.find_game(game_id)
         self.player = utils.find_player(play_request.playerID)
         self.target_player = utils.find_player(play_request.targetPlayerID)
+        self.next_player_trade = utils.find_player(self.get_next_player_id())
         self.card = utils.find_card(play_request.cardID)
         self.handle_errors()
 
     def execute_action(self) -> None:
-        """
-        Plays a card on the game
+        # Creo un evento de tipo acción
+        self.game.current_action = "action"
+        
+        # Creo el evento de acción
+        event_request = EventCreationRequest(
+            gameID=self.game.id,
+            playerID=self.player.id,
+            targetPlayerID=self.target_player.id,
+            cardID=self.card.id,
+            targetCardID=-1,
+            type=EventTypes.action,
+            isCompleted=False,
+            isSuccessful=False
+        )
+        event_create = EventCreator(event_request)
+        event_create.create()
 
-        Args:
-        play_request (PlayCardRequest): Input data to validate
-        game_id (int): The id of the game to validate
-        """
+        check_card_is_defensible = self.check_card_is_defensible(self.card)
+        if not check_card_is_defensible:
+            execute_card_effect(self.card, self.player ,self.target_player, self.game)
 
-        effect_func: CardEffectFunc = get_card_effect_function(self.card.name)
-        effect_func(self.target_player, self.game)
+            event_create.is_completed = True
+            event_create.is_successful = True
 
-        self.player.cards.remove(self.card)
-        self.game.cards.add(self.card)
-        self.game.last_played_card = self.card
-
-        self.game.current_player = self.get_next_player_id()
+            self.game.current_action = "trade"
+            
+            event_request = EventCreationRequest(
+                gameID=self.game.id,
+                playerID=self.player.id,
+                targetPlayerID=self.next_player_trade.id,
+                cardID=-1, #probar
+                targetCardID=-1,
+                type=EventTypes.trade,
+                isCompleted=False,
+                isSuccessful=False
+            )
+            event_create = EventCreator(event_request)
+            event_create.create()
+        else:
+            self.game.current_action = "defense"
+            self.game.current_player = self.target_player.position
 
     def get_next_player_id(self):
         next_player = self.game.players.select(
@@ -41,6 +70,18 @@ class CardPlayer(ActionInterface):
             next_player = self.game.players.select(
                 lambda p: p.position == 1).first()
         return next_player.id
+
+    def check_card_is_defensible(self, card) -> bool:
+        config_path = Path(__file__).resolve().parent.parent / 'utils' / 'config_deck.json'
+
+        with open(config_path) as config_file:
+            config = json.load(config_file)
+
+        if card.name in config['cards']:
+            if 'defensible_by' in config['cards'][card.name]:
+                return True
+            else:
+                return False
 
     def handle_errors(self) -> None:
         """
@@ -133,16 +174,44 @@ class CardDefender(ActionInterface):
         defend_request (PlayCardRequest): Input data to validate
         game_id (int): The id of the game to validate
         """
+        if self.event.type == "trade":
+            if self.card is not None:
+                self.event.card2 = self.card
 
-        if self.card is not None:
-            self.event.card2 = self.card
+                self.event.is_completed = True
+                self.event.is_successful = False
+                self.game.current_player = self.get_next_player_id()
+                self.game.current_action = "draw"
+
+                self.event.player2.cards.remove(self.event.card2)
+                Deck.draw_card(self.game.id, self.event.player2.id)
+                
+        elif self.event.type == "action":
+            if self.card is not None:
+                self.event.card2 = self.card
+                execute_card_effect(self.event.card2, self.event.player2 ,self.event.player1, self.game)
+                self.event.is_successful = False
+            else:
+                execute_card_effect(self.event.card1, self.event.player1 ,self.event.player2, self.game)
+                self.event.is_successful = True
+            
             self.event.is_completed = True
-            self.event.is_successful = False
-            self.game.current_player = self.get_next_player_id()
-            self.game.current_action = "draw"
+            
+            self.game.current_action = "trade"
 
-            self.event.player2.cards.remove(self.event.card2)
-            Deck.draw_card(self.game.id, self.event.player2.id)
+            event_request = EventCreationRequest(
+                gameID=self.game.id,
+                playerID=self.event.player1.id,
+                targetPlayerID=self.get_next_player_id(),
+                cardID= -1,
+                targetCardID= -1,
+                type=EventTypes.trade,
+                isCompleted=False,
+                isSuccessful=False
+            )
+            event_create = EventCreator(event_request)
+            event_create.create()
+
 
     def get_next_player_id(self):
         next_player = self.game.players.select(
@@ -167,9 +236,10 @@ class CardDefender(ActionInterface):
         """
 
         exceptions.validate_player_in_game(self.game, self.player)
-        exceptions.validate_current_action(self.game, "defend", "trade")
+        exceptions.validate_current_action(self.game, "defense", "trade")
         exceptions.validate_current_player(self.game, self.player)
         exceptions.validate_player_alive(self.player)
-        exceptions.validate_player_has_card(self.player, self.card.id)
+        if self.card is not None:
+            exceptions.validate_player_has_card(self.player, self.card.id)
+            exceptions.validate_correct_defense_card(self.card, self.event)
         # exceptions.validate_card_type(self.card, "defense") #FIXME: implement this
-        exceptions.validate_correct_defense_card(self.card, self.event)

@@ -8,10 +8,12 @@ class EventType(str, Enum):
     action = "action"
     trade = "trade"
 
+
 class CardType(str, Enum):
     action = "action"
     defense = "defense"
     special = "special"
+
 
 class Event(db.Entity):
     id = PrimaryKey(int, auto=True)
@@ -56,7 +58,7 @@ class Player(db.Entity):
     is_host = Required(bool, default=False)
     is_alive = Required(bool, default=True)
     cards = Set('Card')
-    position = Optional(int)
+    position = Optional(int)  # becomes 0 when dead
 
     # I dont know if this is the best way to do this
     events = Set(Event)
@@ -66,14 +68,11 @@ class Player(db.Entity):
 class Card(db.Entity):
     id = PrimaryKey(int, auto=True)
     name = Required(str, default="Generic card name")
-    type = Required(str, default="Generic card type")
     description = Required(str, default="Generic card description")
     # The following attributes are optional because a card can belong to a Game
     # and not a player and viceversa
     player = Optional(Player)
     deck = Optional(Game)
-    is_cancelled_by = Set('Card', reverse="cancels")
-    cancels = Set('Card', reverse="is_cancelled_by")
 
     # This attribute is the counterpart of Game.last_played_card
     played_on_game = Optional(Game, reverse="last_played_card")

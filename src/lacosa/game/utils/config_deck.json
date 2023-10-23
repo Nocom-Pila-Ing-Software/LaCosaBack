@@ -29,6 +29,7 @@
             },
             "description": "Elimina un jugador adyacente.",
             "type": "action",
+
             "target": "adjacent",
             "defensible_by": [
                 "Nada de barbacoas"

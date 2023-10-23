@@ -1,5 +1,4 @@
 from pony.orm import commit
-import lacosa.utils as utils
 from models import WaitingRoom
 
 

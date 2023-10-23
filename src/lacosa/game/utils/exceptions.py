@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from models import Game, Player
+from models import Game, Player, Card
 
 
 def validate_player_has_card(player, card_id):
@@ -27,6 +27,20 @@ def validate_player_in_game(game: Game, player: Player, default_status_code=stat
     elif player not in game.players:
         raise HTTPException(status_code=default_status_code,
                             detail="Player not in game")
+
+
+def validate_card_in_hand(card: Card, player: Player):
+    if card not in player.cards:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Card not in hand")
+
+
+def validate_player_is_in_turn(player: Player, game: Game):
+    if game.current_player != player.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Can't discard card, it's not your turn"
+        )
 
 
 def validate_ammount_of_cards(player: Player):
