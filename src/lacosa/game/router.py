@@ -59,8 +59,7 @@ async def discard_card(discard_request: GenericCardRequest, room_id: int) -> Non
     """Discards a card from a player's hand"""
     with db_session:
         discard_card_util(discard_request, room_id)
-        game = utils.find_game(room_id)
-        game.current_action = "trade"
+
 
 
 @game_router.put(path="/{room_id}/play-card", status_code=status.HTTP_200_OK,
