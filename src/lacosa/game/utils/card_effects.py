@@ -28,7 +28,7 @@ def apply_lanzallamas_effect(current_player: Player, target_player: Player, game
     update_player_positions_after_death(target_player, game)
 
 
-def apply_cambio_de_lugar_effect(current_player: Player, target_player: Player, game: Game) -> None:
+def apply_switch_position_cards_effect(current_player: Player, target_player: Player, game: Game) -> None:
     switch_player_positions(current_player, target_player)
 
 
@@ -39,7 +39,8 @@ def do_nothing(target_player: Player, game: Game):
 def get_card_effect_function(card_name: str) -> CardEffectFunc:
     _card_effects: Dict[str, CardEffectFunc] = {
         "Lanzallamas": apply_lanzallamas_effect,
-        "Cambio de lugar": apply_cambio_de_lugar_effect
+        "Cambio de lugar": apply_switch_position_cards_effect,
+        "Más vale que corras": apply_switch_position_cards_effect,
     }
 
     return _card_effects.get(card_name, do_nothing)
