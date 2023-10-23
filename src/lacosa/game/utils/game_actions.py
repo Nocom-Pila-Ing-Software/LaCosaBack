@@ -9,7 +9,7 @@ from lacosa.interfaces import ActionInterface
 import lacosa.game.utils.turn_handler as turn_handler
 from pathlib import Path
 import json
-
+from pony.orm import commit
 
 class CardPlayer(ActionInterface):
     def __init__(self, play_request: PlayCardRequest, game_id: int):
@@ -129,6 +129,14 @@ class CardTrader(ActionInterface):
             self.event.player2.cards.remove(self.event.card2)
             self.event.player2.cards.add(self.event.card1)
 
+            if(self.event.player1.role == "the thing" and self.event.card1.name == "infectado"):
+                self.event.player2.role = "infected"
+            elif(self.event.player2.role == "the thing" and self.event.card2.name == "infectado"):
+                self.event.player1.role = "infected"
+
+            commit()
+
+
     def get_next_player_id(self):
         next_player = turn_handler.get_next_player(
             self.game,
@@ -155,7 +163,7 @@ class CardTrader(ActionInterface):
         exceptions.validate_current_player(self.game, self.player)
         exceptions.validate_player_alive(self.player)
         exceptions.validate_player_has_card(self.player, self.card.id)
-        # TODO: Validate player is allowed to trade the card with the other player (La cosa y eso)
+        exceptions.validate_card_allowed_to_trade(self.card, self.event, self.player)
 
 
 class CardDefender(ActionInterface):

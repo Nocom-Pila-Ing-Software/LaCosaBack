@@ -85,3 +85,36 @@ def validate_correct_type(card, type):
     if card.type != type:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
+    
+def validate_card_allowed_to_trade(card, event, player):
+    if card.name == "la cosa":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
+    
+    if card.name == "infectado" and player.role == "human":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
+    
+    amount_infectado_cards_in_hand = 0
+    for card in player.cards:
+        if card.name == "infectado":
+            amount_infectado_cards_in_hand += 1
+
+    if card.name == "infectado" and player.role == "the thing":
+        if event.player1.role != "human" and event.player2.role != "human":
+            print("Hola1")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
+    if card.name == "infectado" and amount_infectado_cards_in_hand == 1 and player.role == "infected":
+        print("Hola2")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
+    if card.name == "infectado" and (event.player1.role != "the thing" and event.player2.role != "the thing") and player.role == "infected":
+        print("Hola3")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
+    if card.name == "infectado" and player.role == "human":
+        print("Hola4")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
+
