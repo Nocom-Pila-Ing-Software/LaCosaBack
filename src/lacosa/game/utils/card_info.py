@@ -3,7 +3,7 @@ from pathlib import Path
 from lacosa.game.utils.deck import Deck
 import lacosa.game.utils.exceptions as exceptions
 from lacosa.interfaces import ResponseInterface
-from ..schemas import UsabilityResponse
+from lacosa.player.schemas import UsabilityActionResponse, UsabilityActionInfoCard
 
 
 class CardUsabilityInformer(ResponseInterface):
@@ -11,7 +11,7 @@ class CardUsabilityInformer(ResponseInterface):
         self.player_id = player_id
         self.handle_errors()
 
-    def get_response(self) -> UsabilityResponse:
+    def get_response(self) -> UsabilityActionResponse:
         """
         Returns the information of which cards can be played or discarded by the player
 
@@ -19,7 +19,7 @@ class CardUsabilityInformer(ResponseInterface):
         UsabilityResponse: The cards information
         """
 
-        return UsabilityResponse(cards=self.get_cards_info())
+        return UsabilityActionResponse(cards=self.get_cards_info())
     
     def get_cards_info(self) -> list:
         """
@@ -44,14 +44,12 @@ class CardUsabilityInformer(ResponseInterface):
             if card.name == "La cosa" or (card.name == "infectado" and amount_infectado_cards_in_hand == 1):
                 discardable = False
 
-            card_info = {
-                "cardID": card.id,
-                "name": card.name,
-                "description": card.description,
-                "playable": False,
-                "discardable": False
-            }
-            cards_info.append(card_info)
+            cards_info.append(UsabilityActionInfoCard(
+                cardID=card.id,
+                name=card.name,
+                description=card.description,
+                usable=playable or discardable
+            ))
         return cards_info
     
     def get_card_type(self, card_name: str) -> str:
