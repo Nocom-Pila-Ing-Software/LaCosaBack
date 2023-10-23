@@ -526,7 +526,7 @@ def db_game_creation_with_trade_event_2():
             {"id": 5, "username": "Player5", "is_host": False,
                  "position": 4, "role": "human"},               
         ],
-        "game": {"id": 1, "current_player": 1, "current_action": "draw"},
+        "game": {"id": 1, "current_player": 1, "current_action": "trade"},
         "cards": [
             [
                 {"id": 1, "name": "infectado", "type": "contagio"},
