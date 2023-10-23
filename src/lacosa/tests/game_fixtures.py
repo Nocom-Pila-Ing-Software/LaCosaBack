@@ -159,7 +159,7 @@ def db_game_creation_without_cards():
         room.players.add(player)
         Game(id=0, waiting_room=room, players=room.players, current_player=1)
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def db_game_creation_without_cards_dead_players():
     db.drop_all_tables(with_all_data=True)
     db.create_tables()
@@ -206,7 +206,7 @@ def db_game_creation_with_trade_event():
                         name="Carta"+str(i*5+j), description="Carta test")
                 game.cards.add(card)
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def get_info_card_game_creation():
     db.drop_all_tables(with_all_data=True)
     db.create_tables()
@@ -217,19 +217,19 @@ def get_info_card_game_creation():
             {"id": 2, "username": "Player2", "is_host": False, "position": 2, "role": "the thing"},
             {"id": 3, "username": "Player3", "is_host": False, "position": 3, "role": "infected"},
         ],
-        "game": {"id": 1, "current_player": 2, "current_action": "draw"},
+        "game": {"id": 1, "current_player": 1, "current_action": "draw"},
         "cards": [
             [
                 {"id": 1, "name": "infectado"},
-                {"id": 2, "name": "card2"},
-                {"id": 3, "name": "card3"},
-                {"id": 4, "name": "card4"},
+                {"id": 2, "name": "Lanzallamas"},
+                {"id": 3, "name": "Lanzallamas"},
+                {"id": 4, "name": "Lanzallamas"},
             ],
             [
                 {"id": 5, "name": "infectado"},
                 {"id": 6, "name": "La cosa"},
                 {"id": 7, "name": "Lanzallamas"},
-                {"id": 8, "name": "No gracias"},
+                {"id": 8, "name": "No, gracias"},
                 {"id": 19, "name": "Sospecha"},
             ],
             [

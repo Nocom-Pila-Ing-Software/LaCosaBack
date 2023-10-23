@@ -1,14 +1,15 @@
 import json
 from pathlib import Path
+from lacosa import utils
 from lacosa.game.utils.deck import Deck
 import lacosa.game.utils.exceptions as exceptions
 from lacosa.interfaces import ResponseInterface
 from lacosa.player.schemas import UsabilityActionResponse, UsabilityActionInfoCard
-
+from fastapi import status
 
 class CardUsabilityInformer(ResponseInterface):
     def __init__(self, player_id: int):
-        self.player_id = player_id
+        self.player = utils.find_player(player_id)
         self.handle_errors()
 
     def get_response(self) -> UsabilityActionResponse:
@@ -41,14 +42,15 @@ class CardUsabilityInformer(ResponseInterface):
             if card.name == "infectado" or card.name == "La cosa" or self.get_card_type(card.name) == "defense":
                 playable = False
             
-            if card.name == "La cosa" or (card.name == "infectado" and amount_infectado_cards_in_hand == 1):
+            if card.name == "La cosa" or (card.name == "infectado" and amount_infectado_cards_in_hand == 1 and self.player.role == "infected"):
                 discardable = False
 
             cards_info.append(UsabilityActionInfoCard(
                 cardID=card.id,
                 name=card.name,
                 description=card.description,
-                usable=playable or discardable
+                playable=playable,
+                discardable=discardable
             ))
         return cards_info
     
@@ -61,12 +63,12 @@ class CardUsabilityInformer(ResponseInterface):
         with open(config_path) as config_file:
             config = json.load(config_file)
 
-        return config[card_name]["type"]
+        return config["cards"][card_name]["type"]
 
     def handle_errors(self) -> None:
         """
         Checks for errors and raises HTTPException if needed
         """
 
-        exceptions.validate_player_in_game(self.game, self.player)
+        exceptions.validate_player_in_game(None, self.player, status.HTTP_400_BAD_REQUEST)
         exceptions.validate_player_alive(self.player)

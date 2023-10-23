@@ -143,6 +143,7 @@ class CardDefender(ActionInterface):
 
             self.event.player2.cards.remove(self.event.card2)
             Deck.draw_card(self.game.id, self.event.player2.id)
+            commit()
 
     def get_next_player_id(self):
         next_player = self.game.players.select(
