@@ -1,5 +1,5 @@
 from pony.orm import select
-from models import Game, Player, Card, WaitingRoom
+from models import Game, Player, Card, WaitingRoom, Event
 from fastapi import HTTPException, status
 
 
@@ -48,7 +48,7 @@ def find_player(player_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> P
     return player
 
 
-def find_card(card_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Player:
+def find_card(card_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Card:
     """
     Find a player by ID
 
@@ -59,9 +59,41 @@ def find_card(card_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Playe
     Returns:
     Player: The player with the given ID
     """
+    if card_id == -1:
+        return None
+    else:
+        card = select(c for c in Card if c.id == card_id).get()
+        if card is None:
+            raise HTTPException(
+                status_code=failure_status, detail="Card not found")
+        return card
 
-    card = select(c for c in Card if c.id == card_id).get()
-    if card is None:
+def find_partial_event(player_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Event:
+    """
+    Find a partial Event by the player ID
+    Args:
+    player_id (int): The ID of the player that is in the event
+    Returns:
+    Event: The partial event with the given player
+    """
+
+    event = select(e for e in Event if (e.player1.id == player_id or e.player2.id == player_id) and e.is_completed == False).get()
+    if event is None:
         raise HTTPException(
-            status_code=failure_status, detail="Card not found")
-    return card
+            status_code=failure_status, detail="Player not found")
+    return event
+
+def find_event_to_defend(player_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Event:
+    """
+    Find a partial Event by the player ID
+    Args:
+    player_id (int): The ID of the player that is in the event
+    Returns:
+    Event: The partial event with the given player
+    """
+
+    event = select(e for e in Event if (e.player2.id == player_id) and e.is_completed == False).get()
+    if event is None:
+        raise HTTPException(
+            status_code=failure_status, detail="Player not found")
+    return event

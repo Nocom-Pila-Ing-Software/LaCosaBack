@@ -17,10 +17,10 @@ class Event(db.Entity):
     id = PrimaryKey(int, auto=True)
     game = Required('Game')
     type = Required(EventType)
-    player = Required('Player')
-    target_player = Optional('Player')
-    card = Required('Card')
-    defense_card = Optional('Card')
+    player1 = Required('Player')
+    player2 = Required('Player')
+    card1 = Optional('Card')
+    card2 = Optional('Card')
     is_completed = Required(bool, default=False)
     is_successful = Required(bool, default=False)
 
@@ -60,7 +60,7 @@ class Player(db.Entity):
 
     # I dont know if this is the best way to do this
     events = Set(Event)
-    events_target = Set(Event, reverse="target_player")
+    events2 = Set(Event, reverse="player2")
 
 
 class Card(db.Entity):
@@ -72,8 +72,6 @@ class Card(db.Entity):
     # and not a player and viceversa
     player = Optional(Player)
     deck = Optional(Game)
-    is_cancelled_by = Set('Card', reverse="cancels")
-    cancels = Set('Card', reverse="is_cancelled_by")
 
     # This attribute is the counterpart of Game.last_played_card
     played_on_game = Optional(Game, reverse="last_played_card")
@@ -81,4 +79,4 @@ class Card(db.Entity):
 
     # I dont know if this is the best way to do this
     events = Set(Event)
-    events_defense = Set(Event, reverse="defense_card")
+    events2 = Set(Event, reverse="card2")

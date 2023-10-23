@@ -28,7 +28,10 @@
                 "12": 5
             },
             "description": "Elimina un jugador adyacente.",
-            "type": "action"
+            "type": "action",
+            "defensible_by": [
+                "Nada de barbacoas"
+            ]
         },
         "Análisis": {
             "amount_per_player": {
@@ -133,7 +136,10 @@
                 "12": 5
             },
             "description": "Cámbiate de sitio físicamente con un jugador adyacente, Llévate tu mano de cartas al cambiar de lugar. A continuación, intercambia 1 carta con el siguiente jugador desde tu nueva ubicación y termina tu turno. El siguiente turno comienza con el jugador con el que hayas realizado el intercambio.",
-            "type": "action"
+            "type": "action",
+            "defensible_by": [
+                "Aquí estoy bien"
+            ]
         },
         "Más vale que corras": {
             "amount_per_player": {
@@ -148,7 +154,10 @@
                 "12": 5
             },
             "description": "Cámbiate de sitio físicamente con cualquier jugador que no esté bajo los efectos de “Cuarentena”, ignorando cualquier carta “Puerta atrancada” que haya en la mesa. Llévate tu mano de cartas al cambiar de lugar. A continuación, intercambia 1 carta con el siguiente jugador desde tu nueva ubicación y termina tu turno. El siguiente turno comienza con el jugador con el que hayas realizado el intercambio.",
-            "type": "action"
+            "type": "action",
+            "defensible_by": [
+                "Aquí estoy bien"
+            ]
         },
         "Seducción": {
             "amount_per_player": {
