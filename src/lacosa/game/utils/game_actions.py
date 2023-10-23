@@ -190,8 +190,7 @@ class CardDefender(ActionInterface):
 
                 Deck.draw_card(self.game.id, self.event.player2.id)
 
-                self.event.player2.cards.remove(self.event.card2)
-                self.game.cards.add(self.event.card2)
+                Deck.discard_card(self.card, self.event.player2, self.game)
 
 
         elif self.event.type == "action":
@@ -200,6 +199,7 @@ class CardDefender(ActionInterface):
                 execute_card_effect(
                     self.event.card2, self.event.player2, self.event.player1, self.game)
                 self.event.is_successful = False
+                Deck.draw_card(self.game.id, self.event.player2.id)
             else:
                 execute_card_effect(
                     self.event.card1, self.event.player1, self.event.player2, self.game)
