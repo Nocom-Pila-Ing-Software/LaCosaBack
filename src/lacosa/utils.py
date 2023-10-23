@@ -111,7 +111,7 @@ def find_target_in_trade_event(player_id: int, failure_status=status.HTTP_400_BA
     Player: The target player
     """
 
-    event = select(e for e in Event if (e.player1.id == player_id) and e.is_completed == False).get()
+    event = select(e for e in Event if (e.player1.id == player_id) and e.is_completed == False).first()
     if event is None:
         raise HTTPException(
             status_code=failure_status, detail="Player not found")

@@ -59,3 +59,8 @@ def validate_correct_defense_card(card, event):
     if event.type == "action" and card.name == "No, gracias":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
+    
+def validate_correct_type(card, type):
+    if card.type != type:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
