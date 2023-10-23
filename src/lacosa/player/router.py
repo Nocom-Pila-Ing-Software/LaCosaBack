@@ -50,4 +50,5 @@ async def get_cards_defend(player_id: int, card_id: int) -> UsabilityResponse:
 async def get_cards_trade(player_id: int) -> UsabilityResponse:
     """Returns the information of which cards can be traded with the player"""
     with db_session:
-        pass
+        card_trade_info_handler = card_info.CardTradeInformer(player_id)
+        response = card_trade_info_handler.get_response()

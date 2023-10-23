@@ -7,6 +7,7 @@ from lacosa.interfaces import ResponseInterface
 from lacosa.player.schemas import UsabilityActionResponse, UsabilityActionInfoCard, UsabilityResponse, UsabilityInfoCard
 from fastapi import status
 
+
 class CardUsabilityInformer(ResponseInterface):
     def __init__(self, player_id: int):
         self.player = utils.find_player(player_id)
@@ -21,7 +22,7 @@ class CardUsabilityInformer(ResponseInterface):
         """
 
         return UsabilityActionResponse(cards=self.get_cards_info())
-    
+
     def get_cards_info(self) -> list:
         """
         Returns the information of which cards can be played or discarded by the player
@@ -41,7 +42,7 @@ class CardUsabilityInformer(ResponseInterface):
             discardable = True
             if card.name == "infectado" or card.name == "La cosa" or self.get_card_type(card.name) == "defense":
                 playable = False
-            
+
             if card.name == "La cosa" or (card.name == "infectado" and amount_infectado_cards_in_hand == 1 and self.player.role == "infected"):
                 discardable = False
 
@@ -53,12 +54,13 @@ class CardUsabilityInformer(ResponseInterface):
                 discardable=discardable
             ))
         return cards_info
-    
+
     def get_card_type(self, card_name: str) -> str:
         """
         Returns the type of the card
         """
-        config_path = Path(__file__).resolve().parent.parent / 'utils' / 'config_deck.json'
+        config_path = Path(__file__).resolve().parent.parent / \
+            'utils' / 'config_deck.json'
 
         with open(config_path) as config_file:
             config = json.load(config_file)
@@ -70,8 +72,10 @@ class CardUsabilityInformer(ResponseInterface):
         Checks for errors and raises HTTPException if needed
         """
 
-        exceptions.validate_player_in_game(None, self.player, status.HTTP_400_BAD_REQUEST)
+        exceptions.validate_player_in_game(
+            None, self.player, status.HTTP_400_BAD_REQUEST)
         exceptions.validate_player_alive(self.player)
+
 
 class CardDefenseInformer(ResponseInterface):
     def __init__(self, player_id: int, card_id: int):
@@ -88,7 +92,7 @@ class CardDefenseInformer(ResponseInterface):
         """
 
         return UsabilityResponse(cards=self.get_cards_info())
-    
+
     def get_cards_info(self) -> list:
         """
         Returns the information of which cards can be used to defend against the card played by the attacker
@@ -106,12 +110,13 @@ class CardDefenseInformer(ResponseInterface):
                     description=card.description,
                     usable=True
                 ))
-    
+
     def get_cards_that_defend(self, card_name: str) -> str:
         """
         Returns the type of the card
         """
-        config_path = Path(__file__).resolve().parent.parent / 'utils' / 'config_deck.json'
+        config_path = Path(__file__).resolve().parent.parent / \
+            'utils' / 'config_deck.json'
 
         with open(config_path) as config_file:
             config = json.load(config_file)
@@ -123,6 +128,67 @@ class CardDefenseInformer(ResponseInterface):
         Checks for errors and raises HTTPException if needed
         """
 
-        exceptions.validate_player_in_game(None, self.player, status.HTTP_400_BAD_REQUEST)
+        exceptions.validate_player_in_game(
+            None, self.player, status.HTTP_400_BAD_REQUEST)
         exceptions.validate_player_alive(self.player)
-        exceptions.validate_card_type(self.card, "action", status.HTTP_400_BAD_REQUEST)
+        exceptions.validate_card_type(
+            self.card, "action", status.HTTP_400_BAD_REQUEST)
+
+
+class CardTradeInformer(ResponseInterface):
+    def __init__(self, player_id: int):
+        self.player = utils.find_player(player_id)
+        self.target = utils.find_target_in_trade_event(player_id)
+        self.handle_errors()
+
+    def get_response(self) -> UsabilityResponse:
+        """
+        Returns the information of which cards can be selected to trade with the player
+
+        Returns:
+        UsabilityResponse: The cards information
+        """
+
+        return UsabilityResponse(cards=self.get_cards_info())
+
+    def get_cards_info(self) -> list:
+        """
+        Returns the information of which cards can be selected to trade with the player
+
+        Returns:
+        list: The cards information
+        """
+
+        amount_infectado_cards_in_hand = 0
+        for card in self.player.cards:
+            if card.name == "infectado":
+                amount_infectado_cards_in_hand += 1
+
+        cards_info = []
+        for card in self.player.cards:
+            usable = True
+            if (card.name == "La cosa" or 
+                (card.name == "infectado" and amount_infectado_cards_in_hand == 1 and self.player.role == "infected")
+                (card.name == "infectado" and self.player.role == "human")
+                (card.name == "infectado" and self.player.role == "infected" and self.target.role != "the thing")
+                ):
+                usable = False
+
+            cards_info.append(UsabilityInfoCard(
+                cardID=card.id,
+                name=card.name,
+                description=card.description,
+                usable=usable
+            ))
+
+    def handle_errors(self) -> None:
+        """
+        Checks for errors and raises HTTPException if needed
+        """
+
+        exceptions.validate_player_in_game(
+            None, self.player, status.HTTP_400_BAD_REQUEST)
+        exceptions.validate_player_in_game(
+            None, self.target, status.HTTP_400_BAD_REQUEST)
+        exceptions.validate_player_alive(self.player)
+        exceptions.validate_player_alive(self.target)
