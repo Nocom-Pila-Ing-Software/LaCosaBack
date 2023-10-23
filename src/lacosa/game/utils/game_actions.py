@@ -40,6 +40,8 @@ class CardPlayer(ActionInterface):
         event_create.create()
         event = utils.find_partial_event(self.player.id)
 
+        Deck.discard_card(self.card, self.player, self.game)
+
         check_card_is_defensible = self.check_card_is_defensible(self.card)
         if not check_card_is_defensible:
             execute_card_effect(self.card, self.player,
@@ -186,8 +188,11 @@ class CardDefender(ActionInterface):
                 self.game.current_action = "draw"
                 self.game.last_played_card = self.card
 
-                self.event.player2.cards.remove(self.event.card2)
                 Deck.draw_card(self.game.id, self.event.player2.id)
+
+                self.event.player2.cards.remove(self.event.card2)
+                self.game.cards.add(self.event.card2)
+
 
         elif self.event.type == "action":
             if self.card is not None:
@@ -201,6 +206,7 @@ class CardDefender(ActionInterface):
                 self.event.is_successful = True
 
             self.event.is_completed = True
+            
             self.game.last_played_card = self.card
             
             self.game.current_action = "trade"

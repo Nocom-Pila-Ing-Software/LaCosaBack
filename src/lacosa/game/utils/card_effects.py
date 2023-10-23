@@ -1,3 +1,4 @@
+from lacosa.game.utils.deck import Deck
 from models import Player, Game
 from collections.abc import Callable
 from typing import Dict
@@ -63,3 +64,5 @@ def execute_card_effect(card, player ,target_player, game) -> None:
         player.cards.remove(card)
         game.cards.add(card)
         game.last_played_card = card
+
+        Deck.draw_card(game.id, player.id)
