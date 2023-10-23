@@ -197,7 +197,7 @@ class CardDefender(ActionInterface):
         elif self.event.type == "action":
             if self.card is not None:
                 self.event.card2 = self.card
-                execute_card_effect(self.event.card2, self.event.player2 ,self.event.player, self.game)
+                execute_card_effect(self.event.card2, self.event.player2 ,self.event.player1, self.game)
                 self.event.is_successful = False
             else:
                 execute_card_effect(self.event.card1, self.event.player1 ,self.event.player2, self.game)
