@@ -40,7 +40,9 @@ async def get_possible_targets(player_id: int, card_id: int) -> TargetsResponse:
 async def get_cards_defend(player_id: int, card_id: int) -> UsabilityResponse:
     """Returns the information of which cards can be used to defend against the card played by the attacker"""
     with db_session:
-        pass
+        card_defense_info_handler = card_info.CardDefenseInformer(player_id, card_id)
+        response = card_defense_info_handler.get_response()
+    return response
 
 
 @player_router.get(path="/{player_id}/cards-trade", status_code=status.HTTP_200_OK,
