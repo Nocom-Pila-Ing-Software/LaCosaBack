@@ -507,3 +507,69 @@ def get_info_card_game_creation_with_dead_players():
                 player.cards.create(**card)
 
     return data
+
+@pytest.fixture()
+def db_game_creation_with_trade_event_2():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+    data = {
+        "room": {"id": 1, "name": "Test room"},
+        "players": [
+            {"id": 1, "username": "Player1", "is_host": True,
+                "position": 1, "role": "infected"},
+            {"id": 2, "username": "Player2", "is_host": False,
+                "position": 2, "role": "the thing"},
+            {"id": 3, "username": "Player3", "is_host": False,
+                "position": -1, "role": "infected", "is_alive": False},
+            {"id": 4, "username": "Player4", "is_host": False,
+                "position": 3, "role": "human"}, 
+            {"id": 5, "username": "Player5", "is_host": False,
+                 "position": 4, "role": "human"},               
+        ],
+        "game": {"id": 1, "current_player": 1, "current_action": "draw"},
+        "cards": [
+            [
+                {"id": 1, "name": "infectado", "type": "contagio"},
+                {"id": 2, "name": "Lanzallamas", "type": "action"},
+                {"id": 3, "name": "Lanzallamas", "type": "action"},
+                {"id": 4, "name": "Lanzallamas", "type": "action"}
+            ],
+            [
+                {"id": 5, "name": "infectado", "type": "contagio"},
+                {"id": 6, "name": "La cosa", "type": "especial"},
+                {"id": 7, "name": "Lanzallamas", "type": "action"},
+                {"id": 8, "name": "No, gracias", "type": "defense"},
+                {"id": 19, "name": "Seducción", "type": "action"}
+            ],
+            [],
+            [
+                {"id": 9, "name": "infectado", "type": "contagio"},
+                {"id": 10, "name": "Aterrador", "type": "defense"},
+                {"id": 11, "name": "infectado", "type": "contagio"},
+                {"id": 12, "name": "Cambio de lugar", "type": "action"},
+            ],
+            [
+                {"id": 13, "name": "infectado", "type": "contagio"},
+                {"id": 14, "name": "Aterrador", "type": "defense"},
+                {"id": 15, "name": "Lanzallamas", "type": "action"},
+                {"id": 16, "name": "No, gracias", "type": "defense"},
+            ],
+        ]
+    }
+
+    # second half
+    with db_session:
+        room = WaitingRoom(**data["room"])
+        for player_data in data["players"]:
+            room.players.create(**player_data)
+
+        game = Game(
+            waiting_room=room,
+            players=room.players,
+            **data["game"]
+        )
+        for player, cards in zip(game.players, data["cards"]):
+            for card in cards:
+                player.cards.create(**card)
+
+    return data

@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from models import Game, Card
 from pony.orm import db_session, select, commit
 import pytest
-from .game_fixtures import db_game_creation_with_trade_event
+from .game_fixtures import db_game_creation_with_trade_event, db_game_creation_with_trade_event_2
 
 client = TestClient(app)
 
@@ -445,7 +445,7 @@ def test_trade_in_invalid_turn_state(db_game_creation_with_trade_event):
         assert_game_cards(game, game_event, select_card(
             card_player_2_id), select_card(card_player_1_id))
 
-def test_use_no_gracias_as_tradeable_card(db_game_creation_with_trade_event):
+def test_use_no_gracias_as_tradeable_card(db_game_creation_with_trade_event_2):
     player1_id = None
     player2_id = None
     card_player_1_id = None
@@ -487,4 +487,36 @@ def test_use_no_gracias_as_tradeable_card(db_game_creation_with_trade_event):
 
         assert_game_cards(game, game_event, select_card(
             card_player_2_id), select_card(card_player_1_id))
+        
+def test_succesful_contagion(db_game_creation_with_trade_event):
+    player1_id = None
+    player2_id = None
+    card_player_1_id = None
+    card_player_2_id = None
+    with db_session:
+        game = Game.get(id=1)
+        game.events.create(id=1, type="trade", player1=game.players[1], player2=game.players[1])
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        player1_id = game_event.player1.id
+        player2_id = game_event.player2.id
+
+        card_player_1_id = cards_player_1[1].id
+        card_player_2_id = cards_player_2[1].id
+
+    response1 = client.put(
+        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
+
+    assert response1.status_code == 200 
+
+    with db_session:
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+        
+        assert select(p for p in game.players if p.id == player1_id).first().role == "infectado"
+
+def test_try_trade_card_la_cosa_infeccion():
+    pass
+
+
+
         
