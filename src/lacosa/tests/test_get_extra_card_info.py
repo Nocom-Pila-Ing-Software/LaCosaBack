@@ -1,7 +1,8 @@
 from main import app
 from fastapi.testclient import TestClient
-from pony.orm import db_session
-from .game_fixtures import db_game_creation_with_cards_player_data, db_game_creation_without_cards_dead_players, get_info_card_game_creation, get_defend_card_game_creation, get_tradeable_info_card_game_creation, get_info_card_game_creation_with_dead_players
+from models import Game, Player, Event
+from pony.orm import db_session, select, delete
+from .game_fixtures import db_game_creation_with_cards_player_data, db_game_creation_without_cards_dead_players, get_info_card_game_creation, get_defend_card_game_creation, get_tradeable_info_card_game_creation, get_info_card_game_creation_with_dead_players, db_game_creation_without_cards_dead_players_and_event
 from .room_fixtures import db_room_creation_with_players
 
 client = TestClient(app)
@@ -58,7 +59,7 @@ def test_get_card_usability_sucesfully(get_info_card_game_creation):
             assert card["playable"] == False
             assert card["discardable"] == True
         elif card["cardID"] == 19:
-            assert card["name"] == "Sospecha"
+            assert card["name"] == "Seducción"
             assert card["playable"] == True
             assert card["discardable"] == True
 
@@ -88,30 +89,30 @@ def test_get_card_usability_sucesfully(get_info_card_game_creation):
             assert card["discardable"] == True
 
 
-def get_card_usability_wrong_player_id():
+def test_get_card_usability_wrong_player_id():
     response = client.get(f"/player/809/cards-usability")
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Player not found"
 
 
-def get_card_usability_player_not_in_game(db_room_creation_with_players):
+def test_get_card_usability_player_not_in_game(db_room_creation_with_players):
     response = client.get(f"/player/1/cards-usability")
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Player not in game"
 
 
-def get_card_usability_player_dead(db_game_creation_without_cards_dead_players):
+def test_get_card_usability_player_dead(db_game_creation_without_cards_dead_players):
     response = client.get(f"/player/1/cards-usability")
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Player is dead"
 
-def get_cards_defend(get_defend_card_game_creation):
+def test_get_cards_defend(get_defend_card_game_creation):
     # Review cards defend for player 1
     player_id = get_defend_card_game_creation["players"][0]["id"]
-    card_id = get_defend_card_game_creation["players"][1]["cards"][2]["cardID"]
+    card_id = get_defend_card_game_creation["cards"][1][2]["id"]
 
     response = client.get(f"/player/{player_id}/cards-defend/{card_id}")
 
@@ -133,7 +134,7 @@ def get_cards_defend(get_defend_card_game_creation):
 
     # Review cards defend for player 2
     player_id = get_defend_card_game_creation["players"][1]["id"]
-    card_id = get_defend_card_game_creation["players"][1]["cards"][2]["cardID"]
+    card_id = get_defend_card_game_creation["cards"][1][2]["id"]
 
     response = client.get(f"/player/{player_id}/cards-defend/{card_id}")
 
@@ -153,12 +154,12 @@ def get_cards_defend(get_defend_card_game_creation):
             assert card["name"] == "No, gracias"
             assert card["usable"] == False
         elif card["cardID"] == 19:
-            assert card["name"] == "Sospecha"
+            assert card["name"] == "Seducción"
             assert card["usable"] == False
 
     # Review cards defend for player 3
     player_id = get_defend_card_game_creation["players"][2]["id"]
-    card_id = get_defend_card_game_creation["players"][1]["cards"][2]["cardID"]
+    card_id = get_defend_card_game_creation["cards"][1][2]["id"]
 
     response = client.get(f"/player/{player_id}/cards-defend/{card_id}")
 
@@ -178,13 +179,13 @@ def get_cards_defend(get_defend_card_game_creation):
             assert card["name"] == "Cambio de lugar"
             assert card["usable"] == False
 
-def get_cards_defend_wrong_player_id():
+def test_get_cards_defend_wrong_player_id():
     response = client.get(f"/player/809/cards-defend/1")
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Player not found"
 
-def get_cards_defend_wrong_card_id(get_defend_card_game_creation):
+def test_get_cards_defend_wrong_card_id(get_defend_card_game_creation):
     player_id = get_defend_card_game_creation["players"][0]["id"]
     card_id = 809
 
@@ -193,23 +194,14 @@ def get_cards_defend_wrong_card_id(get_defend_card_game_creation):
     assert response.status_code == 404
     assert response.json()["detail"] == "Card not found"
 
-def get_cards_defend_player_not_in_game(db_room_creation_with_players):
-    response = client.get(f"/player/1/cards-defend/1")
-
-    assert response.status_code == 400
-    assert response.json()["detail"] == "Player not in game"
-
-def get_cards_defend_player_dead(db_game_creation_without_cards_dead_players):
-    response = client.get(f"/player/1/cards-defend/1")
-
-    assert response.status_code == 400
-    assert response.json()["detail"] == "Player is dead"
-
-def get_cards_tradeable(get_tradeable_info_card_game_creation):
+def test_get_cards_tradeable(get_tradeable_info_card_game_creation):
     # Cards tradeable event infected -> human
     with db_session:
-        game = get_tradeable_info_card_game_creation["game"]
-        game.events.create(type="trade", player=game.players[0], target=game.players[2])
+        game = get_tradeable_info_card_game_creation["game"]["id"]
+        game = select(g for g in Game if g.id == game).get()
+        players = (select(p for p in game.players)[:])
+        delete(p for p in Event)
+        game.events.create(type="trade", player1=players[0], player2=players[2])
 
     player_id = get_tradeable_info_card_game_creation["players"][0]["id"]
 
@@ -233,8 +225,11 @@ def get_cards_tradeable(get_tradeable_info_card_game_creation):
 
     # Cards tradeable event human -> infected
     with db_session:
-        game = get_tradeable_info_card_game_creation["game"]
-        game.events.create(type="trade", player=game.players[2], target=game.players[0])
+        game = get_tradeable_info_card_game_creation["game"]["id"]
+        game = select(g for g in Game if g.id == game).get()
+        players = (select(p for p in game.players)[:])
+        delete(p for p in Event)
+        game.events.create(type="trade", player1=players[2], player2=players[0])
 
     player_id = get_tradeable_info_card_game_creation["players"][2]["id"]
 
@@ -258,8 +253,11 @@ def get_cards_tradeable(get_tradeable_info_card_game_creation):
 
     # Cards tradeable event infected -> the thing with 2 cards infected
     with db_session:
-        game = get_tradeable_info_card_game_creation["game"]
-        game.events.create(type="trade", player=game.players[0], target=game.players[1])
+        game = get_tradeable_info_card_game_creation["game"]["id"]
+        game = select(g for g in Game if g.id == game).get()
+        players = (select(p for p in game.players)[:])
+        delete(p for p in Event)
+        game.events.create(type="trade", player1=players[0], player2=players[1])
 
     player_id = get_tradeable_info_card_game_creation["players"][0]["id"]
 
@@ -283,8 +281,11 @@ def get_cards_tradeable(get_tradeable_info_card_game_creation):
 
     # Cards tradeable event infected -> the thing with 1 card infected
     with db_session:
-        game = get_tradeable_info_card_game_creation["game"]
-        game.events.create(type="trade", player=game.players[3], target=game.players[1])
+        game = get_tradeable_info_card_game_creation["game"]["id"]
+        game = select(g for g in Game if g.id == game).get()
+        players = (select(p for p in game.players)[:])
+        delete(p for p in Event)
+        game.events.create(type="trade", player1=players[3], player2=players[1])
 
     player_id = get_tradeable_info_card_game_creation["players"][3]["id"]
 
@@ -308,8 +309,11 @@ def get_cards_tradeable(get_tradeable_info_card_game_creation):
 
     # Cards tradeable event the thing -> infected
     with db_session:
-        game = get_tradeable_info_card_game_creation["game"]
-        game.events.create(type="trade", player=game.players[1], target=game.players[0])
+        game = get_tradeable_info_card_game_creation["game"]["id"]
+        game = select(g for g in Game if g.id == game).get()
+        players = (select(p for p in game.players)[:])
+        delete(p for p in Event)
+        game.events.create(type="trade", player1=players[1], player2=players[0])
 
     player_id = get_tradeable_info_card_game_creation["players"][1]["id"]
 
@@ -333,8 +337,11 @@ def get_cards_tradeable(get_tradeable_info_card_game_creation):
 
     # Cards tradeable event the thing -> human
     with db_session:
-        game = get_tradeable_info_card_game_creation["game"]
-        game.events.create(type="trade", player=game.players[1], target=game.players[2])
+        game = get_tradeable_info_card_game_creation["game"]["id"]
+        game = select(g for g in Game if g.id == game).get()
+        players = (select(p for p in game.players)[:])
+        delete(p for p in Event)
+        game.events.create(type="trade", player1=players[1], player2=players[2])
 
     player_id = get_tradeable_info_card_game_creation["players"][1]["id"]
 
@@ -356,30 +363,24 @@ def get_cards_tradeable(get_tradeable_info_card_game_creation):
             assert card["name"] == "No, gracias"
             assert card["usable"] == True
 
-def get_cards_tradeable_wrong_player_id():
+def test_get_cards_tradeable_wrong_player_id():
     response = client.get(f"/player/809/cards-trade")
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Player not found"
 
-def get_cards_tradeable_player_not_in_game(db_room_creation_with_players):
-    response = client.get(f"/player/1/cards-trade")
-
-    assert response.status_code == 400
-    assert response.json()["detail"] == "Player not in game"
-
-def get_cards_tradeable_player_dead(db_game_creation_without_cards_dead_players):
+def test_get_cards_tradeable_player_dead(db_game_creation_without_cards_dead_players_and_event):
     response = client.get(f"/player/1/cards-trade")
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Player is dead"
 
-def get_targets_card(get_info_card_game_creation_with_dead_players):
+def test_get_targets_card(get_info_card_game_creation_with_dead_players):
     # Player1 uses Lanzallamas
     player_id = get_info_card_game_creation_with_dead_players["players"][0]["id"]
-    card_id = get_info_card_game_creation_with_dead_players["players"][0]["cards"][2]["cardID"]
+    card_id = get_info_card_game_creation_with_dead_players["cards"][0][2]["id"]
 
-    response = client.get(f"/player/{player_id}/cards/{card_id}/targets")
+    response = client.get(f"/player/{player_id}/targets/{card_id}")
 
     assert response.status_code == 200
 
@@ -388,11 +389,11 @@ def get_targets_card(get_info_card_game_creation_with_dead_players):
     assert response == {
         "targets": [
             {
-                "id": 2,
+                "playerID": 2,
                 "name": "Player2"
             },
             {
-                "id": 5,
+                "playerID": 5,
                 "name": "Player5"
             }
         ]
@@ -400,9 +401,9 @@ def get_targets_card(get_info_card_game_creation_with_dead_players):
 
     # Player2 uses Lanzallamas
     player_id = get_info_card_game_creation_with_dead_players["players"][1]["id"]
-    card_id = get_info_card_game_creation_with_dead_players["players"][1]["cards"][2]["cardID"]
+    card_id = get_info_card_game_creation_with_dead_players["cards"][1][2]["id"]
 
-    response = client.get(f"/player/{player_id}/cards/{card_id}/targets")
+    response = client.get(f"/player/{player_id}/targets/{card_id}")
 
     assert response.status_code == 200
 
@@ -411,11 +412,11 @@ def get_targets_card(get_info_card_game_creation_with_dead_players):
     assert response == {
         "targets": [
             {
-                "id": 1,
+                "playerID": 1,
                 "name": "Player1"
             },
             {
-                "id": 4,
+                "playerID": 4,
                 "name": "Player4"
             }
         ]
@@ -423,26 +424,28 @@ def get_targets_card(get_info_card_game_creation_with_dead_players):
 
     # Player2 uses Seducción
     player_id = get_info_card_game_creation_with_dead_players["players"][1]["id"]
-    card_id = get_info_card_game_creation_with_dead_players["players"][1]["cards"][4]["cardID"]
+    card_id = get_info_card_game_creation_with_dead_players["cards"][1][4]["id"]
 
-    response = client.get(f"/player/{player_id}/cards/{card_id}/targets")
+    response = client.get(f"/player/{player_id}/targets/{card_id}")
 
     assert response.status_code == 200
 
     response = response.json()
 
+    print(get_info_card_game_creation_with_dead_players["cards"][1][4]["name"])
+
     assert response == {
         "targets": [
             {
-                "id": 1,
+                "playerID": 1,
                 "name": "Player1"
             },
             {
-                "id": 4,
+                "playerID": 4,
                 "name": "Player4"
             },
             {
-                "id": 5,
+                "playerID": 5,
                 "name": "Player5"
             }
         ]
@@ -450,9 +453,9 @@ def get_targets_card(get_info_card_game_creation_with_dead_players):
 
     # Player4 uses Cambio de lugar
     player_id = get_info_card_game_creation_with_dead_players["players"][3]["id"]
-    card_id = get_info_card_game_creation_with_dead_players["players"][3]["cards"][3]["cardID"]
+    card_id = get_info_card_game_creation_with_dead_players["cards"][3][3]["id"]
 
-    response = client.get(f"/player/{player_id}/cards/{card_id}/targets")
+    response = client.get(f"/player/{player_id}/targets/{card_id}")
 
     assert response.status_code == 200
 
@@ -461,56 +464,44 @@ def get_targets_card(get_info_card_game_creation_with_dead_players):
     assert response == {
         "targets": [
             {
-                "id": 2,
+                "playerID": 2,
                 "name": "Player2"
             },
             {
-                "id": 5,
+                "playerID": 5,
                 "name": "Player5"
             }
         ]
     }
 
-def get_targets_card_wrong_player_id():
-    response = client.get(f"/player/809/cards/1/targets")
+def test_get_targets_card_wrong_player_id():
+    response = client.get(f"/player/809/targets/1")
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Player not found"
 
-def get_targets_card_wrong_card_id(get_info_card_game_creation):
+def test_get_targets_card_wrong_card_id(get_info_card_game_creation):
     player_id = get_info_card_game_creation["players"][0]["id"]
     card_id = 809
 
-    response = client.get(f"/player/{player_id}/cards/{card_id}/targets")
+    response = client.get(f"/player/{player_id}/targets/{card_id}")
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Card not found"
 
-def get_targets_card_without_targets(get_info_card_game_creation):
+def test_get_targets_card_not_in_player_hand(get_info_card_game_creation):
     player_id = get_info_card_game_creation["players"][0]["id"]
-    card_id = get_info_card_game_creation["players"][0]["cards"][0]["cardID"]
+    card_id = get_info_card_game_creation["cards"][1][0]["id"]
 
-    response = client.get(f"/player/{player_id}/cards/{card_id}/targets")
+    response = client.get(f"/player/{player_id}/targets/{card_id}")
 
-    assert response.status_code == 200
+    assert response.status_code == 403
 
-    response = response.json()
+def test_get_targets_card_without_targets(get_info_card_game_creation):
+    player_id = get_info_card_game_creation["players"][0]["id"]
+    card_id = get_info_card_game_creation["cards"][0][0]["id"]
 
-    assert response == {
-        "targets": []
-    }
+    response = client.get(f"/player/{player_id}/targets/{card_id}")
 
-def get_targets_card_player_not_in_game(db_room_creation_with_players):
-    response = client.get(f"/player/1/cards/1/targets")
-
-    assert response.status_code == 400
-    assert response.json()["detail"] == "Player not in game"
-
-def get_targets_card_player_dead(db_game_creation_without_cards_dead_players):
-    response = client.get(f"/player/1/cards/1/targets")
-
-    assert response.status_code == 400
-    assert response.json()["detail"] == "Player is dead"
-
-
+    assert response.status_code == 403
 
