@@ -1,6 +1,6 @@
 from main import app
 from fastapi.testclient import TestClient
-from models import Game
+from models import Game, Card
 from pony.orm import db_session, select, commit
 import pytest
 from .game_fixtures import db_game_creation_with_trade_event
@@ -25,8 +25,8 @@ def get_game_and_cards():
     return game, game_event, cards_player_1, cards_player_2
 
 
-def select_card(game, card_id):
-    return select(c for c in game.cards if c.id == card_id).first()
+def select_card(card_id):
+    return select(c for c in Card if c.id == card_id).first()
 
 
 def assert_game_state(game, game_event, is_completed, player1, player2, card1, card2, action, current_player, is_successful=False):
@@ -74,10 +74,10 @@ def test_successfull_trade(db_game_creation_with_trade_event):
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
 
         assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
-                          player2=game_event.player2, card1=select_card(game, card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
     response2 = client.put(
         "/game/1/trade-card", json={"playerID": player2_id, "cardID": card_player_2_id})
@@ -89,10 +89,10 @@ def test_successfull_trade(db_game_creation_with_trade_event):
         next_position = next_player(game, game_event)
 
         assert_game_state(game, game_event, is_completed=True, player1=game_event.player1,
-                          player2=game_event.player2, card1=select_card(game, card_player_1_id), card2=select_card(game, card_player_2_id), action="draw", current_player=next_position, is_successful=True)
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=select_card(card_player_2_id), action="draw", current_player=next_position, is_successful=True)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_2_id), select_card(game, card_player_1_id))
+            card_player_2_id), select_card(card_player_1_id))
 
 
 def test_unsuccessfull_trade(db_game_creation_with_trade_event):
@@ -118,10 +118,10 @@ def test_unsuccessfull_trade(db_game_creation_with_trade_event):
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
 
         assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
-                          player2=game_event.player2, card1=select_card(game, card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
     response2 = client.put(
         "/game/1/defend-card", json={"playerID": player2_id, "cardID": card_player_2_id})
@@ -134,11 +134,11 @@ def test_unsuccessfull_trade(db_game_creation_with_trade_event):
         next_position = next_player(game, game_event)
 
         assert_game_state(game, game_event, is_completed=True, player1=game_event.player1,
-                          player2=game_event.player2, card1=select_card(game, card_player_1_id), card2=select_card(game, card_player_2_id), action="draw", current_player=next_position, is_successful=False)
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=select_card(card_player_2_id), action="draw", current_player=next_position, is_successful=False)
 
-        assert select_card(game, card_player_1_id) in cards_player_1
-        assert select_card(game, card_player_1_id) not in cards_player_2
-        assert select_card(game, card_player_2_id) not in cards_player_2
+        assert select_card(card_player_1_id) in cards_player_1
+        assert select_card(card_player_1_id) not in cards_player_2
+        assert select_card(card_player_2_id) not in cards_player_2
         assert len(cards_player_1) == 4
         assert len(cards_player_2) == 4
 
@@ -169,7 +169,7 @@ def test_trade_with_invalid_room_id(db_game_creation_with_trade_event):
                           player2=game_event.player2, card1=None, card2=None, action="trade", current_player=game_event.player1.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
     response1 = client.put(
         "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
@@ -180,10 +180,10 @@ def test_trade_with_invalid_room_id(db_game_creation_with_trade_event):
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
 
         assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
-                          player2=game_event.player2, card1=select_card(game, card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
     response2 = client.put(
         "/game/2/trade-card", json={"playerID": player2_id, "cardID": card_player_2_id})
@@ -195,10 +195,10 @@ def test_trade_with_invalid_room_id(db_game_creation_with_trade_event):
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
 
         assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
-                          player2=game_event.player2, card1=select_card(game, card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
 
 def test_trade_with_invalid_player_id(db_game_creation_with_trade_event):
@@ -228,7 +228,7 @@ def test_trade_with_invalid_player_id(db_game_creation_with_trade_event):
                           player2=game_event.player2, card1=None, card2=None, action="trade", current_player=game_event.player1.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
     response1 = client.put(
         "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
@@ -239,10 +239,10 @@ def test_trade_with_invalid_player_id(db_game_creation_with_trade_event):
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
 
         assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
-                          player2=game_event.player2, card1=select_card(game, card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
     response2 = client.put(
         "/game/1/trade-card", json={"playerID": 8998, "cardID": card_player_2_id})
@@ -253,10 +253,10 @@ def test_trade_with_invalid_player_id(db_game_creation_with_trade_event):
     with db_session:
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
         assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
-                          player2=game_event.player2, card1=select_card(game, card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
 
 def test_trade_with_card_not_in_hand(db_game_creation_with_trade_event):
@@ -286,7 +286,7 @@ def test_trade_with_card_not_in_hand(db_game_creation_with_trade_event):
                           player2=game_event.player2, card1=None, card2=None, action="trade", current_player=game_event.player1.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
     response1 = client.put(
         "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
@@ -297,10 +297,10 @@ def test_trade_with_card_not_in_hand(db_game_creation_with_trade_event):
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
 
         assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
-                          player2=game_event.player2, card1=select_card(game, card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
     response2 = client.put(
         "/game/1/trade-card", json={"playerID": player2_id, "cardID": card_player_1_id})
@@ -313,10 +313,10 @@ def test_trade_with_card_not_in_hand(db_game_creation_with_trade_event):
 
         assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
                           player2=game_event.player2, card1=select_card(
-                              game, card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+                              card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
     response2 = client.put(
         "/game/1/trade-card", json={"playerID": game_event.player2.id, "cardID": 800})
@@ -328,10 +328,10 @@ def test_trade_with_card_not_in_hand(db_game_creation_with_trade_event):
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
         assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
                           player2=game_event.player2, card1=select_card(
-                              game, card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+                              card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
     response2 = client.put(
         "/game/1/trade-card", json={"playerID": player2_id, "cardID": card_player_2_id})
@@ -343,10 +343,10 @@ def test_trade_with_card_not_in_hand(db_game_creation_with_trade_event):
         next_position = next_player(game, game_event)
 
         assert_game_state(game, game_event, is_completed=True, player1=game_event.player1,
-                          player2=game_event.player2, card1=select_card(game, card_player_1_id), card2=select_card(game, card_player_2_id), action="draw", current_player=next_position, is_successful=True)
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=select_card(card_player_2_id), action="draw", current_player=next_position, is_successful=True)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_2_id), select_card(game, card_player_1_id))
+            card_player_2_id), select_card(card_player_1_id))
 
 
 def test_trade_in_invalid_turn_state(db_game_creation_with_trade_event):
@@ -377,7 +377,7 @@ def test_trade_in_invalid_turn_state(db_game_creation_with_trade_event):
                           player2=game_event.player2, card1=None, card2=None, action="trade", current_player=game_event.player1.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
         game.current_action = "action"
 
@@ -395,7 +395,7 @@ def test_trade_in_invalid_turn_state(db_game_creation_with_trade_event):
                           player2=game_event.player2, card1=None, card2=None, action="action", current_player=game_event.player1.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
         game.current_action = "trade"
 
@@ -408,10 +408,10 @@ def test_trade_in_invalid_turn_state(db_game_creation_with_trade_event):
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
 
         assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
-                          player2=game_event.player2, card1=select_card(game, card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
     response2 = client.put(
         "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
@@ -424,10 +424,10 @@ def test_trade_in_invalid_turn_state(db_game_creation_with_trade_event):
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
 
         assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
-                          player2=game_event.player2, card1=select_card(game, card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_1_id), select_card(game, card_player_2_id))
+            card_player_1_id), select_card(card_player_2_id))
 
     response2 = client.put(
         "/game/1/trade-card", json={"playerID": player2_id, "cardID": card_player_2_id})
@@ -440,7 +440,7 @@ def test_trade_in_invalid_turn_state(db_game_creation_with_trade_event):
         next_position = next_player(game, game_event)
 
         assert_game_state(game, game_event, is_completed=True, player1=game_event.player1, player2=game_event.player2, card1=select_card(
-            game, card_player_1_id), card2=select_card(game, card_player_2_id), action="draw", current_player=next_position, is_successful=True)
+            card_player_1_id), card2=select_card(card_player_2_id), action="draw", current_player=next_position, is_successful=True)
 
         assert_game_cards(game, game_event, select_card(
-            game, card_player_2_id), select_card(game, card_player_1_id))
+            card_player_2_id), select_card(card_player_1_id))
