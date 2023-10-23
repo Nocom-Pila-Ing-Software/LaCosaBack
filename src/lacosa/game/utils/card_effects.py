@@ -41,7 +41,8 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "Lanzallamas": apply_lanzallamas_effect,
         "Cambio de lugar": apply_switch_position_cards_effect,
         "Más vale que corras": apply_switch_position_cards_effect,
-        "Aquí estoy bien": do_nothing
+        "Aquí estoy bien": do_nothing,
+        "Nada de barbacoas": do_nothing
     }
 
     return _card_effects.get(card_name, do_nothing)
