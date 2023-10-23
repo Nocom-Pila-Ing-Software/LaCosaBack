@@ -1,7 +1,7 @@
 from enum import Enum
 from pydantic import BaseModel
 from typing import List
-from lacosa.schemas import PlayerID, CardInfo, CardID
+from lacosa.schemas import PlayerID, CardInfo
 
 
 class Action(str, Enum):
@@ -42,10 +42,10 @@ class GameEvent(BaseModel):
     """Represents an event that occurred during the game"""
     eventID: int
     type: EventTypes
-    player1: PlayerID
-    player2: PlayerID | None
-    card1: CardID
-    card2: CardID | None
+    player1: PublicPlayerInfo
+    player2: PublicPlayerInfo | None
+    card1: CardInfo
+    card2: CardInfo | None
     isCompleted: bool
     isSuccessful: bool
 

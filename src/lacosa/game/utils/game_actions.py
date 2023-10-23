@@ -1,7 +1,8 @@
 from ..schemas import PlayCardRequest, EventTypes, GenericCardRequest, EventCreationRequest
 from lacosa.game.utils.deck import Deck
 from lacosa.game.utils.event_creator import EventCreator
-from .card_effects import execute_card_effect
+from models import Event
+from .card_effects import get_card_effect_function, CardEffectFunc
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
 from lacosa.interfaces import ActionInterface
@@ -38,7 +39,7 @@ class CardPlayer(ActionInterface):
 
         check_card_is_defensible = self.check_card_is_defensible(self.card)
         if not check_card_is_defensible:
-            execute_card_effect(self, self.card, self.player ,self.target_player)
+            self.execute_card_effect(self.card)
 
             event_create.is_completed = True
             event_create.is_successful = True
@@ -81,6 +82,23 @@ class CardPlayer(ActionInterface):
             else:
                 return False
 
+    def execute_card_effect(self, card) -> None:
+        """
+        Plays a card on the game
+
+        Args:
+        play_request (PlayCardRequest): Input data to validate
+        game_id (int): The id of the game to validate
+        """
+
+        effect_func: CardEffectFunc = get_card_effect_function(self.card.name)
+        effect_func(self.player ,self.target_player, self.game)
+
+        self.player.cards.remove(self.card)
+        self.game.cards.add(self.card)
+        self.game.last_played_card = self.card
+
+        #self.game.current_player = self.get_next_player_id()
 
     def handle_errors(self) -> None:
         """
@@ -132,15 +150,16 @@ class CardDefender(ActionInterface):
         elif self.event.type == "action":
             if self.card is not None:
                 self.event.card2 = self.card
-                execute_card_effect(self, self.event.card2, self.event.player2 ,self.event.player1)
+                self.execute_card_effect(self.event.card2, self.event.player2 ,self.event.player1)
                 self.event.is_successful = False
             else:
-                execute_card_effect(self, self.event.card1, self.event.player1 ,self.event.player2)
+                self.execute_card_effect(self.event.card1, self.event.player1 ,self.event.player2)
                 self.event.is_successful = True
             
             self.event.is_completed = True
             
             self.game.current_action = "trade"
+
             event_request = EventCreationRequest(
                 gameID=self.game.id,
                 playerID=self.event.player1.id,
@@ -163,6 +182,28 @@ class CardDefender(ActionInterface):
                 lambda p: p.position == 1).first()
         return next_player.id
 
+    def execute_card_effect(self, card, player , target_player) -> None:
+        """
+        Plays a card on the game
+
+        Args:
+        play_request (PlayCardRequest): Input data to validate
+        game_id (int): The id of the game to validate
+        """
+        effect_func: CardEffectFunc = get_card_effect_function(card.name)
+        effect_func(player, target_player, self.game)
+
+        player.cards.remove(card)
+        self.game.cards.add(card)
+        self.game.last_played_card = card
+
+    def get_next_player_id(self):
+        next_player = self.game.players.select(
+            lambda p: p.position == self.player.position + 1).first()
+        if next_player is None:
+            next_player = self.game.players.select(
+                lambda p: p.position == 1).first()
+        return next_player.id
 
     def handle_errors(self) -> None:
         """

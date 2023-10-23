@@ -1,4 +1,4 @@
-from models import Event
+from models import Event, EventType, CardType
 from pony.orm import select
 from ..schemas import GameEvent, EventTypes, Action
 import lacosa.utils as utils
