@@ -356,6 +356,24 @@ def get_cards_tradeable(get_tradeable_info_card_game_creation):
             assert card["name"] == "No, gracias"
             assert card["usable"] == True
 
+def get_cards_tradeable_wrong_player_id():
+    response = client.get(f"/player/809/cards-trade")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Player not found"
+
+def get_cards_tradeable_player_not_in_game(db_room_creation_with_players):
+    response = client.get(f"/player/1/cards-trade")
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Player not in game"
+
+def get_cards_tradeable_player_dead(db_game_creation_without_cards_dead_players):
+    response = client.get(f"/player/1/cards-trade")
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Player is dead"
+    
 
 
 
