@@ -258,4 +258,54 @@ def get_info_card_game_creation():
 
     return data
 
+@pytest.fixture()
+def get_defend_card_game_creation():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+    data = {
+        "room": {"id": 1, "name": "Test room"},
+        "players": [
+            {"id": 1, "username": "Player1", "is_host": True, "position": 1},
+            {"id": 2, "username": "Player2", "is_host": False, "position": 2},
+            {"id": 3, "username": "Player3", "is_host": False, "position": 3},
+        ],
+        "game": {"id": 1, "current_player": 1, "current_action": "draw"},
+        "cards": [
+            [
+                {"id": 1, "name": "infectado"},
+                {"id": 2, "name": "Nada de Barbacoas"},
+                {"id": 3, "name": "Nada de Barbacoas"},
+                {"id": 4, "name": "Nada de Barbacoas"},
+            ],
+            [
+                {"id": 5, "name": "infectado"},
+                {"id": 6, "name": "La cosa"},
+                {"id": 7, "name": "Lanzallamas"},
+                {"id": 8, "name": "No, gracias"},
+                {"id": 19, "name": "Sospecha"},
+            ],
+            [
+                {"id": 9, "name": "infectado"},
+                {"id": 10, "name": "Aterrador"},
+                {"id": 11, "name": "Nada de Barbacoas"},
+                {"id": 12, "name": "Cambio de lugar"},
+            ],
+        ]
+    }
 
+    # second half
+    with db_session:
+        room = WaitingRoom(**data["room"])
+        for player_data in data["players"]:
+            room.players.create(**player_data)
+
+        game = Game(
+            waiting_room=room,
+            players=room.players,
+            **data["game"]
+        )
+        for player, cards in zip(game.players, data["cards"]):
+            for card in cards:
+                player.cards.create(**card)
+
+    return data
