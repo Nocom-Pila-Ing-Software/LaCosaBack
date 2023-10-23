@@ -20,7 +20,6 @@ class GameCreationRequest(BaseModel):
     roomID: int
 
 
-
 class GenericCardRequest(BaseModel):
     playerID: int
     cardID: int
@@ -43,10 +42,21 @@ class GameEvent(BaseModel):
     """Represents an event that occurred during the game"""
     eventID: int
     type: EventTypes
-    player: PublicPlayerInfo
-    targetPlayer: PublicPlayerInfo | None
-    card: CardInfo
-    defenseCard: CardInfo | None
+    player1: PublicPlayerInfo
+    player2: PublicPlayerInfo | None
+    card1: CardInfo
+    card2: CardInfo | None
+    isCompleted: bool
+    isSuccessful: bool
+
+
+class EventCreationRequest(BaseModel):
+    gameID: int
+    playerID: int
+    targetPlayerID: int
+    cardID: int | None
+    targetCardID: int | None
+    type: EventTypes
     isCompleted: bool
     isSuccessful: bool
 

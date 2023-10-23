@@ -9,9 +9,13 @@ from lacosa.schemas import PlayerID, GameID
 from lacosa.game.utils.game_creator import GameCreator
 from .utils.deck import Deck
 from lacosa.game.utils.game_status import GameStatusHandler
+<<<<<<< HEAD
 from lacosa.game.utils.game_actions import CardDefender, CardPlayer, CardTrader
 from lacosa.game.utils.game_actions import CardPlayer
 from lacosa.game.utils.discard_card import discard_card_util
+=======
+from lacosa.game.utils.game_actions import CardDefender, CardPlayer
+>>>>>>> NP-134_Change_of_place_card_effect
 from lacosa.game.utils.error_responses import error_responses
 
 game_router = APIRouter()

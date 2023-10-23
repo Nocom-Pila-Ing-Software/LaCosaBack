@@ -48,7 +48,7 @@ def find_player(player_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> P
     return player
 
 
-def find_card(card_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Player:
+def find_card(card_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Card:
     """
     Find a player by ID
 
@@ -59,12 +59,14 @@ def find_card(card_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Playe
     Returns:
     Player: The player with the given ID
     """
-
-    card = select(c for c in Card if c.id == card_id).get()
-    if card is None:
-        raise HTTPException(
-            status_code=failure_status, detail="Card not found")
-    return card
+    if card_id == -1:
+        return None
+    else:
+        card = select(c for c in Card if c.id == card_id).get()
+        if card is None:
+            raise HTTPException(
+                status_code=failure_status, detail="Card not found")
+        return card
 
 def find_partial_event(player_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Event:
     """
@@ -86,10 +88,15 @@ def find_partial_event(player_id: int, failure_status=status.HTTP_400_BAD_REQUES
 def find_event_to_defend(player_id: int, failure_status=status.HTTP_400_BAD_REQUEST) -> Event:
     """
     Find a partial Event by the player ID
+<<<<<<< HEAD
 
     Args:
     player_id (int): The ID of the player that is in the event
 
+=======
+    Args:
+    player_id (int): The ID of the player that is in the event
+>>>>>>> NP-134_Change_of_place_card_effect
     Returns:
     Event: The partial event with the given player
     """

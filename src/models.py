@@ -73,8 +73,6 @@ class Card(db.Entity):
     # and not a player and viceversa
     player = Optional(Player)
     deck = Optional(Game)
-    is_cancelled_by = Set('Card', reverse="cancels")
-    cancels = Set('Card', reverse="is_cancelled_by")
 
     # This attribute is the counterpart of Game.last_played_card
     played_on_game = Optional(Game, reverse="last_played_card")

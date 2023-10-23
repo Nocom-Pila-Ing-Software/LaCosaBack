@@ -48,21 +48,37 @@ def validate_deck_not_empty(game: Game):
     if not game.cards:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No cards left in deck")
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> NP-134_Change_of_place_card_effect
 def validate_current_action(game: Game, action: str,action2: str = None):
     if game.current_action != action and game.current_action != action2:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
+<<<<<<< HEAD
     
 def validate_current_player(game: Game, player: Player):
     if game.current_player != player.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
     
+=======
+
+def validate_current_player(game: Game, player: Player):
+    if game.current_player != player.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action1")
+>>>>>>> NP-134_Change_of_place_card_effect
 
 def validate_correct_defense_card(card, event):
     if event.type == "trade" and card.name == "No, gracias":
         return
     if event.type == "action" and card.name == "No, gracias":
         raise HTTPException(
+<<<<<<< HEAD
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
+=======
+            status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
+>>>>>>> NP-134_Change_of_place_card_effect
