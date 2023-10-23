@@ -659,6 +659,29 @@ def test_play_card_invalid_target(db_game_creation_with_cards):
     assert response.status_code == 400
     assert response.json() == {"detail": "Player not found"}
 
+def test_defense_card_invalid_phase(db_game_creation_with_cards):
+    mock_play_request = GenericCardRequest(
+        playerID=1,
+        cardID=5
+    ).model_dump()
+
+    with db_session:
+        #create event to defend
+        game_record = select(g for g in Game if g.id == 5).get()
+        game_record.events.create(
+            player1=game_record.players.select(lambda p: p.id == 2).get(),
+            player2=game_record.players.select(lambda p: p.id == 1).get(),
+            card1=game_record.cards.select(lambda c: c.id == 5).get(),
+            type="action",
+            is_completed=False,
+            is_successful=False
+        )
+
+    response = client.put("/game/5/defend-card", json=mock_play_request)
+
+    assert response.status_code == 403
+    assert response.json() == {"detail": "Player not has permission to execute this action"}
+
 # no se actualiza la base de datos por cada modulo
 def test_game_is_over(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
@@ -699,3 +722,4 @@ def test_game_is_over(db_game_creation_with_cards):
         assert not Card.exists(id=4)
         assert not Card.exists(id=60)
     """
+    
