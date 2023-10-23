@@ -66,7 +66,7 @@ class CardPlayer(ActionInterface):
             event_create.create()
         else:
             self.game.current_action = "defense"
-            self.game.current_player = self.target_player.position
+            self.game.current_player = self.target_player.id
 
     def get_next_player_id(self):
         next_player = turn_handler.get_next_player(
@@ -210,6 +210,8 @@ class CardDefender(ActionInterface):
             self.game.last_played_card = self.card
             
             self.game.current_action = "trade"
+
+            self.game.current_player = self.event.player1.id
 
             event_request = EventCreationRequest(
                 gameID=self.game.id,
