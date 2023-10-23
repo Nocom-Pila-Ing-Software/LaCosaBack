@@ -205,7 +205,9 @@ def db_game_creation_with_trade_event():
                 else:
                     card = players_in_game[i].cards.create(
                         name="Carta"+str(i*5+j), description="Carta test")
-                game.cards.add(card)
+
+        for _ in range(10):
+            game.cards.create(name="Carta test", description="Carta test")
 
 
 @pytest.fixture()
