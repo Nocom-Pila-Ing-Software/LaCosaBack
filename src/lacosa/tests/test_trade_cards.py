@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from models import Game, Card
 from pony.orm import db_session, select, commit, delete
 import pytest
-from .game_fixtures import db_game_creation_with_trade_event, db_game_creation_with_trade_event_2
+from .game_fixtures import db_game_creation_with_trade_event, db_game_creation_with_trade_event_2, get_defend_trade_card_game_creation
 
 client = TestClient(app)
 
@@ -713,6 +713,8 @@ def test_get_defense_cards_info(get_defend_trade_card_game_creation):
     assert response.status_code == 200
 
     assert response.json() == {"cards": []}
+
+
 
     response1 = client.put(
         "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
