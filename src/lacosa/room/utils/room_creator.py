@@ -41,8 +41,7 @@ class RoomCreator(ResponseInterface, CreatorInterface):
         """
         new_host = self.room.players.create(
             username=self.host_name,
-            is_host=True,
-            position=1
+            is_host=True
         )
         commit()
         return new_host

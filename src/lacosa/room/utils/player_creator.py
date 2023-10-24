@@ -25,14 +25,9 @@ class PlayerCreator(ResponseInterface, CreatorInterface):
             Player: The created player.
         """
 
-        # count players in room ERROR
-        player_count = len(self.room.players)
-
         self.player = self.room.players.create(
-            username=self.player_name,
-            position=player_count+1
+            username=self.player_name
         )
-
         commit()
 
     def get_response(self):
