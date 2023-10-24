@@ -87,7 +87,7 @@ def validate_correct_type(card, type, type2=None):
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
     
 def validate_card_allowed_to_trade(card, event, player):
-    if card.name == "la cosa":
+    if card.name == "La cosa":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
     
@@ -96,8 +96,8 @@ def validate_card_allowed_to_trade(card, event, player):
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
     
     amount_Infeccion_cards_in_hand = 0
-    for card in player.cards:
-        if card.name == "Infeccion":
+    for cardi in player.cards:
+        if cardi.name == "Infeccion":
             amount_Infeccion_cards_in_hand += 1
 
     if card.name == "Infeccion" and player.role == "thing":

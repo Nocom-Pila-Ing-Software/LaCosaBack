@@ -2,7 +2,7 @@ from lacosa.game.utils.deck import Deck
 from models import Player, Game
 from collections.abc import Callable
 from typing import Dict
-from pony.orm import select
+from pony.orm import select, commit
 
 CardEffectFunc = Callable[[Player, Game], None]
 
@@ -12,6 +12,8 @@ def update_player_positions_after_death(player, game):
         if p.position > player.position:
             p.position -= 1
     player.position = 0
+
+    commit()
 
 
 def add_player_hand_to_deck(player: Player, game: Game) -> None:

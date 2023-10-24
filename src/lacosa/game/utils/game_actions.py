@@ -168,7 +168,7 @@ class CardTrader(ActionInterface):
         HTTPException(status_code=403): If the player is not allowed to trade
         HTTPException(status_code=404): If the game is not found
         """
-
+        print("Hola")
         exceptions.validate_player_in_game(self.game, self.player)
         print("Hola1")
         exceptions.validate_current_action(self.game, "trade")
