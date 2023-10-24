@@ -105,8 +105,8 @@ class CardDefenseInformer(ResponseInterface):
 
         cards_info = []
 
-        # If the card is "No, gracias" only is usable if the player is the target of the trade event (and only in a trade event)
-        if self.card.name == "No, gracias":
+        # Get the cards that only are usable if the player is the target of the trade event (and only in a trade event)
+        if self.card is None:
             event = select(e for e in Event if e.type == "trade" and (e.player1 == self.player or e.player2 == self.player) and e.is_completed == False).first()
             if event is not None and event.player2 == self.player:
                 for card in self.player.cards:
