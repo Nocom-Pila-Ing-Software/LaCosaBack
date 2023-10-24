@@ -428,6 +428,16 @@ def test_play_cambio_de_lugar_card_defended(db_game_creation_with_cards):
         assert event_record.is_completed == True
         assert event_record.is_successful == False
     
+def test_play_seduccion(db_game_creation_with_cards):
+    mock_play_request = PlayCardRequest(
+        playerID=1,
+        targetPlayerID=2,
+        cardID=9
+    ).model_dump()
+
+    
+
+
 
 def test_play_mas_vale_que_corras_card_defended(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
