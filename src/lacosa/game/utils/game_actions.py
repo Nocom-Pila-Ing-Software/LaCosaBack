@@ -50,7 +50,7 @@ class CardPlayer(ActionInterface):
             event.is_successful = True
 
             self.game.current_action = "trade"
-            if select(e for e in Event if (e.player1.id == self.player.id or e.player2.id == self.player.id) and e.is_completed == False).get() is None:
+            if select(e for e in Event if (e.player1.id == self.player.id or e.player2.id == self.target_player.id) and e.is_completed == False).get() is None:
                 event_request = EventCreationRequest(
                     gameID=self.game.id,
                     playerID=self.player.id,
