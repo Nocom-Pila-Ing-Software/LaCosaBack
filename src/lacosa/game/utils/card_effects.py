@@ -35,12 +35,21 @@ def apply_lanzallamas_effect(current_player: Player, target_player: Player, game
 def apply_switch_position_cards_effect(current_player: Player, target_player: Player, game: Game) -> None:
     switch_player_positions(current_player, target_player)
 
+
 def apply_anticipate_trade_effect(current_player: Player, target_player: Player, game: Game) -> None:
-    event = select(event for event in game.events if event.player1 == current_player)
+    event = select(
+        event for event in game.events if event.player1 == current_player)
     event.is_completed = True
     event.is_successful = True
-
-    game.events.create(player1=current_player, player2=target_player, card1=None, card2=None, is_completed=False, is_successful=False, type="trade")
+    game.events.create(
+        player1=current_player,
+        player2=target_player,
+        card1=None,
+        card2=None,
+        is_completed=False,
+        is_successful=False,
+        type="trade"
+    )
 
 
 def apply_vigila_tus_espaldas_effect(current_player: Player, target_player: Player, game: Game) -> None:
@@ -72,17 +81,17 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
     return _card_effects.get(card_name, do_nothing)
 
 
-def execute_card_effect(card, player ,target_player, game) -> None:
-        """
-        Plays a card on the game
-        Args:
-        play_request (PlayCardRequest): Input data to validate
-        game_id (int): The id of the game to validate
-        """
-        effect_func: CardEffectFunc = get_card_effect_function(card.name)
-        if effect_func is not None:
-            effect_func(player, target_player, game)
+def execute_card_effect(card, player, target_player, game) -> None:
+    """
+    Plays a card on the game
+    Args:
+    play_request (PlayCardRequest): Input data to validate
+    game_id (int): The id of the game to validate
+    """
+    effect_func: CardEffectFunc = get_card_effect_function(card.name)
+    if effect_func is not None:
+        effect_func(player, target_player, game)
 
-        player.cards.remove(card)
-        game.cards.add(card)
-        game.last_played_card = card
+    player.cards.remove(card)
+    game.cards.add(card)
+    game.last_played_card = card

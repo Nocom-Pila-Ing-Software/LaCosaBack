@@ -12,6 +12,7 @@ from pathlib import Path
 import json
 from pony.orm import commit, select
 
+
 class CardPlayer(ActionInterface):
     def __init__(self, play_request: PlayCardRequest, game_id: int):
         self.game = utils.find_game(game_id)
@@ -128,7 +129,13 @@ class CardTrader(ActionInterface):
             self.event.card2 = self.card
             self.event.is_completed = True
             self.event.is_successful = True
-            if last_event is not None and last_event.type == "action" and last_event.is_successful == True and (last_event.card1.name == "Cambio de lugar" or "Mas vale que corras") and last_event.player1.id == self.event.player1.id:
+            if (
+                last_event is not None
+                and last_event.type == "action"
+                and last_event.is_successful
+                and last_event.card1.name in ("Cambio de lugar", "Mas vale que corras")
+                and last_event.player1.id == self.event.player1.id
+            ):
                 self.game.current_player = last_event.player2.id
             else:
                 self.game.current_player = self.get_next_player_id()
@@ -140,13 +147,12 @@ class CardTrader(ActionInterface):
             self.event.player2.cards.remove(self.event.card2)
             self.event.player2.cards.add(self.event.card1)
 
-            if(self.event.player1.role == "thing" and self.event.card1.name == "Infeccion"):
+            if (self.event.player1.role == "thing" and self.event.card1.name == "Infeccion"):
                 self.event.player2.role = "infected"
-            elif(self.event.player2.role == "thing" and self.event.card2.name == "Infeccion"):
+            elif (self.event.player2.role == "thing" and self.event.card2.name == "Infeccion"):
                 self.event.player1.role = "infected"
 
             commit()
-
 
     def get_next_player_id(self):
         next_player = turn_handler.get_next_player(
@@ -173,7 +179,8 @@ class CardTrader(ActionInterface):
         exceptions.validate_current_player(self.game, self.player)
         exceptions.validate_player_alive(self.player)
         exceptions.validate_player_has_card(self.player, self.card.id)
-        exceptions.validate_card_allowed_to_trade(self.card, self.event, self.player)
+        exceptions.validate_card_allowed_to_trade(
+            self.card, self.event, self.player)
 
 
 class CardDefender(ActionInterface):
@@ -207,7 +214,6 @@ class CardDefender(ActionInterface):
 
                 Deck.discard_card(self.card, self.event.player2, self.game)
 
-
         elif self.event.type == "action":
             if self.card is not None:
                 self.event.card2 = self.card
@@ -221,9 +227,9 @@ class CardDefender(ActionInterface):
                 self.event.is_successful = True
 
             self.event.is_completed = True
-            
+
             self.game.last_played_card = self.card
-            
+
             self.game.current_action = "trade"
 
             self.game.current_player = self.event.player1.id
