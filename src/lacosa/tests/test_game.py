@@ -167,47 +167,47 @@ def test_play_Lanzallamas_card_no_defended(db_game_creation_with_cards):
         }
     ]
 
-# def test_play_vigila_tus_espaldas_card_no_defended(db_game_creation_with_cards_2):
-#    mock_play_request = PlayCardRequest(
-#        playerID=3,
-#        targetPlayerID=3,
-#        cardID=9
-#    ).model_dump()
-#
-#    response = client.put("/game/5/play-card", json=mock_play_request)
-#
-#    assert response.status_code == 200
-#
-#    response = client.get("/game/5")
-#
-#
-#    # The target player is dead
-#    assert response.json()["players"] == [
-#        {
-#            "playerID": 4,
-#            "username": "Player4",
-#            "is_host": False,
-#            "is_alive": True
-#        },
-#        {
-#            "playerID": 3,
-#            "username": "Player3",
-#            "is_host": False,
-#            "is_alive": True
-#        },
-#        {
-#            "playerID": 2,
-#            "username": "Player2",
-#            "is_host": False,
-#            "is_alive": True
-#        },
-#        {
-#            "playerID": 1,
-#            "username": "Player1",
-#            "is_host": True,
-#            "is_alive": True
-#        }
-#    ]
+
+def test_play_vigila_tus_espaldas_card_no_defended(db_game_creation_with_cards_2):
+    mock_play_request = PlayCardRequest(
+        playerID=3,
+        targetPlayerID=3,
+        cardID=10
+    ).model_dump()
+
+    response = client.put("/game/5/play-card", json=mock_play_request)
+
+    assert response.status_code == 200
+
+    response = client.get("/game/5")
+
+    # The target player is dead
+    assert response.json()["players"] == [
+        {
+            "playerID": 4,
+            "username": "Player4",
+            "is_host": False,
+            "is_alive": True
+        },
+        {
+            "playerID": 3,
+            "username": "Player3",
+            "is_host": False,
+            "is_alive": True
+        },
+        {
+            "playerID": 2,
+            "username": "Player2",
+            "is_host": False,
+            "is_alive": True
+        },
+        {
+            "playerID": 1,
+            "username": "Player1",
+            "is_host": True,
+            "is_alive": True
+        }
+    ]
 
 
 def test_play_cambio_de_lugar_card_no_defended(db_game_creation_with_cards):
@@ -471,7 +471,7 @@ def test_play_cambio_de_lugar_card_defended(db_game_creation_with_cards):
         assert event_record.is_successful == False
 
 
-#def test_play_seduccion(db_game_creation_with_cards):
+# def test_play_seduccion(db_game_creation_with_cards):
 #    mock_play_request = PlayCardRequest(
 #        playerID=2,
 #        targetPlayerID=1,
@@ -842,4 +842,3 @@ def test_game_is_over(db_game_creation_with_cards):
         assert not Card.exists(id=4)
         assert not Card.exists(id=60)
     """
-
