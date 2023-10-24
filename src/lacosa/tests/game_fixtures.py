@@ -74,7 +74,7 @@ def db_game_status():
 
     game_data = {
         "players": get_player_data(),
-        "card": {"name": "Lanzallamas", "description": "está que arde"},
+        "card": {"name": "Lanzallamas", "description": "esta que arde"},
         "game_id": 1
     }
 
@@ -109,7 +109,54 @@ def db_game_creation_with_cards():
 
         # crear cartas para el juego
         game.cards.create()
-        game.cards.create()
+
+        # Add cards to players
+        player1.cards.create(id=4, name="Lanzallamas",
+                             description="Esta que arde")
+        player1.cards.create(id=5, name="Cambio de lugar",
+                                description="Cambio de lugar")
+        player1.cards.create(id=6, name="Mas vale que corras",
+                                description="Mas vale que corras")
+
+        player2.cards.create(id=7, name="Aqui estoy bien",
+                                description="Aqui estoy bien")
+        player2.cards.create(id=8, name="Nada de barbacoas",
+                                description="Nada de barbacoas")
+        player2.cards.create()
+        player2.cards.create()
+
+        player3.cards.create(id=60, name="Lanzallamas",
+                             description="Esta que arde")
+
+
+@pytest.fixture(scope="function")
+def db_game_creation_with_cards_2():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+
+    with db_session:
+        # Create a waiting room
+        room = WaitingRoom(id=0, name="Test room")
+        player1 = room.players.create(
+            id=1, username="Player1", is_host=True, position=1)
+        player2 = room.players.create(
+            id=2, username="Player2", is_host=False, position=2)
+        player3 = room.players.create(
+            id=3, username="Player3", is_host=False, position=3)
+        player4 = room.players.create(
+            id=4, username="Player4", is_host=False, position=4)
+
+        # Create a game with players
+        game = Game(id=5, waiting_room=room, current_player=1, current_action="draw",
+                    last_played_card=None, players=room.players, events={})
+
+        # añadir player a game
+        game.players.add(player1)
+        game.players.add(player2)
+        game.players.add(player3)
+        game.players.add(player4)
+
+        # crear cartas para el juego
         game.cards.create()
 
         # Add cards to players
@@ -124,11 +171,15 @@ def db_game_creation_with_cards():
                                 description="Aquí estoy bien")
         player2.cards.create(id=8, name="Nada de barbacoas",
                                 description="Nada de barbacoas")
+
         player2.cards.create(id=9, name="Seducción", description="Seducción", type="action")
         player2.cards.create()
 
+
         player3.cards.create(id=60, name="Lanzallamas",
                              description="Está que arde")
+        player4.cards.create()
+                             
 
 
 @pytest.fixture(scope="module")
@@ -298,7 +349,7 @@ def get_info_card_game_creation():
                 {"id": 6, "name": "La cosa", "type": "especial" },
                 {"id": 7, "name": "Lanzallamas", "type": "action" },
                 {"id": 8, "name": "No, gracias", "type": "defense" },
-                {"id": 19, "name": "Seducción", "type": "action" }
+                {"id": 19, "name": "Seduccion", "type": "action" }
             ],
             [
                 {"id": 9, "name": "infectado", "type": "contagio" },
@@ -351,7 +402,7 @@ def get_defend_card_game_creation():
                 {"id": 6, "name": "La cosa", "type": "especial"},
                 {"id": 7, "name": "Lanzallamas", "type": "action"},
                 {"id": 8, "name": "No, gracias", "type": "defense"},
-                {"id": 19, "name": "Seducción", "type": "action"},
+                {"id": 19, "name": "Seduccion", "type": "action"},
             ],
             [
                 {"id": 9, "name": "infectado", "type": "contagio"},
@@ -473,7 +524,7 @@ def get_info_card_game_creation_with_dead_players():
                 {"id": 6, "name": "La cosa", "type": "especial"},
                 {"id": 7, "name": "Lanzallamas", "type": "action"},
                 {"id": 8, "name": "No, gracias", "type": "defense"},
-                {"id": 19, "name": "Seducción", "type": "action"}
+                {"id": 19, "name": "Seduccion", "type": "action"}
             ],
             [],
             [
@@ -507,3 +558,120 @@ def get_info_card_game_creation_with_dead_players():
                 player.cards.create(**card)
 
     return data
+
+@pytest.fixture()
+def db_game_creation_with_trade_event_2():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+    data = {
+        "room": {"id": 1, "name": "Test room"},
+        "players": [
+            {"id": 1, "username": "Player1", "is_host": True,
+                "position": 1, "role": "infected"},
+            {"id": 2, "username": "Player2", "is_host": False,
+                "position": 2, "role": "the thing"},
+            {"id": 3, "username": "Player3", "is_host": False,
+                "position": -1, "role": "infected"},
+            {"id": 4, "username": "Player4", "is_host": False,
+                "position": 3, "role": "human"}, 
+            {"id": 5, "username": "Player5", "is_host": False,
+                 "position": 4, "role": "human"},               
+        ],
+        "game": {"id": 1, "current_player": 1, "current_action": "trade"},
+        "cards": [
+            [
+                {"id": 1, "name": "infectado", "type": "contagio"},
+                {"id": 2, "name": "Lanzallamas", "type": "action"},
+                {"id": 3, "name": "Lanzallamas", "type": "action"},
+                {"id": 4, "name": "Lanzallamas", "type": "action"}
+            ],
+            [
+                {"id": 5, "name": "infectado", "type": "contagio"},
+                {"id": 6, "name": "La cosa", "type": "especial"},
+                {"id": 7, "name": "Lanzallamas", "type": "action"},
+                {"id": 8, "name": "No, gracias", "type": "defense"},
+                {"id": 19, "name": "Seduccion", "type": "action"}
+            ],
+            [],
+            [
+                {"id": 9, "name": "infectado", "type": "contagio"},
+                {"id": 10, "name": "Aterrador", "type": "defense"},
+                {"id": 11, "name": "infectado", "type": "contagio"},
+                {"id": 12, "name": "Cambio de lugar", "type": "action"},
+            ],
+            [
+                {"id": 13, "name": "infectado", "type": "contagio"},
+                {"id": 14, "name": "Aterrador", "type": "defense"},
+                {"id": 15, "name": "Lanzallamas", "type": "action"},
+                {"id": 16, "name": "No, gracias", "type": "defense"},
+            ],
+        ]
+    }
+
+    # second half
+    with db_session:
+        room = WaitingRoom(**data["room"])
+        for player_data in data["players"]:
+            room.players.create(**player_data)
+
+        game = Game(
+            waiting_room=room,
+            players=room.players,
+            **data["game"]
+        )
+        for player, cards in zip(game.players, data["cards"]):
+            for card in cards:
+                player.cards.create(**card)
+
+    return data
+  
+@pytest.fixture()
+def get_defend_trade_card_game_creation():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+    data = {
+        "room": {"id": 1, "name": "Test room"},
+        "players": [
+            {"id": 1, "username": "Player1", "is_host": True, "position": 1},
+            {"id": 2, "username": "Player2", "is_host": False, "position": 2},
+            {"id": 3, "username": "Player3", "is_host": False, "position": 3},
+        ],
+        "game": {"id": 1, "current_player": 1, "current_action": "trade"},
+        "cards": [
+            [
+                {"id": 1, "name": "No, gracias", "type": "defense"},
+                {"id": 2, "name": "No, gracias", "type": "defense"},
+                {"id": 3, "name": "No, gracias", "type": "defense"},
+                {"id": 4, "name": "No, gracias", "type": "defense"},
+            ],
+            [
+                {"id": 5, "name": "No, gracias", "type": "defense"},
+                {"id": 6, "name": "No, gracias", "type": "defense"},
+                {"id": 7, "name": "No, gracias", "type": "defense"},
+                {"id": 8, "name": "No, gracias", "type": "defense"},
+            ],
+            [
+                {"id": 9, "name": "No, gracias", "type": "defense"},
+                {"id": 10, "name": "No, gracias", "type": "defense"},
+                {"id": 11, "name": "No, gracias", "type": "defense"},
+                {"id": 12, "name": "No, gracias", "type": "defense"},
+            ],
+        ]
+    }
+
+    # second half
+    with db_session:
+        room = WaitingRoom(**data["room"])
+        for player_data in data["players"]:
+            room.players.create(**player_data)
+
+        game = Game(
+            waiting_room=room,
+            players=room.players,
+            **data["game"]
+        )
+        for player, cards in zip(game.players, data["cards"]):
+            for card in cards:
+                player.cards.create(**card)
+
+    return data 

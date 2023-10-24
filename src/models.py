@@ -14,6 +14,11 @@ class CardType(str, Enum):
     defense = "defense"
     special = "special"
 
+class Role(str, Enum):
+    human = "human"
+    infected = "infected"
+    the_thing = "the thing"
+
 
 class Event(db.Entity):
     id = PrimaryKey(int, auto=True)
@@ -54,7 +59,7 @@ class Player(db.Entity):
     game = Optional(Game)
     room = Required(WaitingRoom)
     username = Required(str)
-    role = Required(str, default="human")
+    role = Required(Role, default="human")
     is_host = Required(bool, default=False)
     is_alive = Required(bool, default=True)
     cards = Set('Card')
