@@ -35,8 +35,8 @@ class CardUsabilityInformer(ResponseInterface):
 
         cards_info = []
         amount_Infeccion_cards_in_hand = 0
-        for card in self.player.cards:
-            if card.name == "Infeccion":
+        for cardi in self.player.cards:
+            if cardi.name == "Infeccion":
                 amount_Infeccion_cards_in_hand += 1
 
         for card in self.player.cards:
@@ -179,8 +179,8 @@ class CardTradeInformer(ResponseInterface):
         """
 
         amount_Infeccion_cards_in_hand = 0
-        for card in self.player.cards:
-            if card.name == "Infeccion":
+        for cardi in self.player.cards:
+            if cardi.name == "Infeccion":
                 amount_Infeccion_cards_in_hand += 1
 
         cards_info = []
