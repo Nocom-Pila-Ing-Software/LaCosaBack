@@ -14,6 +14,7 @@ class GameCreator(ResponseInterface, CreatorInterface):
         self.deck_strategy = Deck()
 
     def create(self):
+        self._randomize_players_positions(self.creation_request)
         self.game = self._create_game_on_db(self.creation_request)
         self.deck_strategy.create_deck(self.game)
         self._assign_roles()
@@ -22,6 +23,20 @@ class GameCreator(ResponseInterface, CreatorInterface):
     def get_response(self):
         response = GameID(gameID=self.game.id)
         return response
+
+
+    def _randomize_players_positions(self, creation_request: GameCreationRequest) -> None:
+        """
+        Randomizes the positions of the players in the game (1 to n)
+
+        Args:
+        game (Game): The game object to randomize the positions in
+        """
+        room = utils.find_room(creation_request.roomID)
+        players_in_room = list(select(p for p in room.players))
+        random.shuffle(players_in_room)
+        for i, player in enumerate(players_in_room):
+            player.position = i + 1
 
     def _create_game_on_db(self, creation_request: GameCreationRequest) -> Game:
         """
@@ -40,6 +55,7 @@ class GameCreator(ResponseInterface, CreatorInterface):
             current_player=room.players.select().order_by(lambda p: random.random())[:][0].id
         )
         return game
+
 
     def _assign_roles(self) -> None:
         """
