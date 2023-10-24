@@ -76,7 +76,7 @@ def validate_correct_defense_card(card, event):
     with open(config_path) as config_file:
         config = json.load(config_file)
 
-    if (event.type == "action" and card.name not in config["cards"][event.card1.name]["defensible_by"]) or (event.type == "trade" and card.name != "No, gracias"):
+    if (event.type == "action" and card.name not in config["cards"][event.card1.name]["defensible_by"]) or (event.type == "trade" and card.name != "No gracias"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
 

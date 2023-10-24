@@ -262,7 +262,7 @@ def db_game_creation_with_trade_event():
                 card = None
                 if players_in_game[i] == events_in_game[0].player2:
                     card = players_in_game[i].cards.create(
-                        name="No, gracias", description="Carta test defensa")
+                        name="No gracias", description="Carta test defensa")
                 else:
                     card = players_in_game[i].cards.create(
                         name="Carta"+str(i*5+j), description="Carta test")
@@ -297,8 +297,8 @@ def get_info_card_game_creation():
                 {"id": 5, "name": "infectado", "type": "contagio" },
                 {"id": 6, "name": "La cosa", "type": "especial" },
                 {"id": 7, "name": "Lanzallamas", "type": "action" },
-                {"id": 8, "name": "No, gracias", "type": "defense" },
-                {"id": 19, "name": "Seducción", "type": "action" }
+                {"id": 8, "name": "No gracias", "type": "defense" },
+                {"id": 19, "name": "Seduccion", "type": "action" }
             ],
             [
                 {"id": 9, "name": "infectado", "type": "contagio" },
@@ -350,8 +350,8 @@ def get_defend_card_game_creation():
                 {"id": 5, "name": "infectado", "type": "contagio"},
                 {"id": 6, "name": "La cosa", "type": "especial"},
                 {"id": 7, "name": "Lanzallamas", "type": "action"},
-                {"id": 8, "name": "No, gracias", "type": "defense"},
-                {"id": 19, "name": "Seducción", "type": "action"},
+                {"id": 8, "name": "No gracias", "type": "defense"},
+                {"id": 19, "name": "Seduccion", "type": "action"},
             ],
             [
                 {"id": 9, "name": "infectado", "type": "contagio"},
@@ -408,7 +408,7 @@ def get_tradeable_info_card_game_creation():
                 {"id": 5, "name": "infectado"},
                 {"id": 6, "name": "La cosa"},
                 {"id": 7, "name": "Lanzallamas"},
-                {"id": 8, "name": "No, gracias"},
+                {"id": 8, "name": "No gracias"},
             ],
             [
                 {"id": 9, "name": "infectado"},
@@ -420,7 +420,7 @@ def get_tradeable_info_card_game_creation():
                 {"id": 13, "name": "infectado"},
                 {"id": 14, "name": "Aterrador"},
                 {"id": 15, "name": "Lanzallamas"},
-                {"id": 16, "name": "No, gracias"},
+                {"id": 16, "name": "No gracias"},
             ],
         ]
     }
@@ -472,8 +472,8 @@ def get_info_card_game_creation_with_dead_players():
                 {"id": 5, "name": "infectado", "type": "contagio"},
                 {"id": 6, "name": "La cosa", "type": "especial"},
                 {"id": 7, "name": "Lanzallamas", "type": "action"},
-                {"id": 8, "name": "No, gracias", "type": "defense"},
-                {"id": 19, "name": "Seducción", "type": "action"}
+                {"id": 8, "name": "No gracias", "type": "defense"},
+                {"id": 19, "name": "Seduccion", "type": "action"}
             ],
             [],
             [
@@ -486,7 +486,7 @@ def get_info_card_game_creation_with_dead_players():
                 {"id": 13, "name": "infectado", "type": "contagio"},
                 {"id": 14, "name": "Aterrador", "type": "defense"},
                 {"id": 15, "name": "Lanzallamas", "type": "action"},
-                {"id": 16, "name": "No, gracias", "type": "defense"},
+                {"id": 16, "name": "No gracias", "type": "defense"},
             ],
         ]
     }
@@ -538,8 +538,8 @@ def db_game_creation_with_trade_event_2():
                 {"id": 5, "name": "infectado", "type": "contagio"},
                 {"id": 6, "name": "La cosa", "type": "especial"},
                 {"id": 7, "name": "Lanzallamas", "type": "action"},
-                {"id": 8, "name": "No, gracias", "type": "defense"},
-                {"id": 19, "name": "Seducción", "type": "action"}
+                {"id": 8, "name": "No gracias", "type": "defense"},
+                {"id": 19, "name": "Seduccion", "type": "action"}
             ],
             [],
             [
@@ -552,7 +552,7 @@ def db_game_creation_with_trade_event_2():
                 {"id": 13, "name": "infectado", "type": "contagio"},
                 {"id": 14, "name": "Aterrador", "type": "defense"},
                 {"id": 15, "name": "Lanzallamas", "type": "action"},
-                {"id": 16, "name": "No, gracias", "type": "defense"},
+                {"id": 16, "name": "No gracias", "type": "defense"},
             ],
         ]
     }
