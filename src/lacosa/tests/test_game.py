@@ -171,7 +171,7 @@ def test_play_vigila_tus_espaldas_card_no_defended(db_game_creation_with_cards_2
     mock_play_request = PlayCardRequest(
         playerID=3,
         targetPlayerID=3,
-        cardID=9
+        cardID=10
     ).model_dump()
 
     response = client.put("/game/5/play-card", json=mock_play_request)
