@@ -37,8 +37,7 @@ class GameCreator(ResponseInterface, CreatorInterface):
         game = Game(
             waiting_room=room,
             players=room.players,
-            current_player=room.players.select(
-                lambda p: p.position == 1).first().id
+            current_player=room.players.select().order_by(lambda p: random.random())[:][0].id
         )
         return game
 
