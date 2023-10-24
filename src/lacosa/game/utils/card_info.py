@@ -34,18 +34,18 @@ class CardUsabilityInformer(ResponseInterface):
         """
 
         cards_info = []
-        amount_infectado_cards_in_hand = 0
+        amount_Infeccion_cards_in_hand = 0
         for card in self.player.cards:
-            if card.name == "infectado":
-                amount_infectado_cards_in_hand += 1
+            if card.name == "Infeccion":
+                amount_Infeccion_cards_in_hand += 1
 
         for card in self.player.cards:
             playable = True
             discardable = True
-            if card.name == "infectado" or card.name == "La cosa" or self.get_card_type(card.name) == "defense":
+            if card.name == "Infeccion" or card.name == "La cosa" or self.get_card_type(card.name) == "defense":
                 playable = False
 
-            if card.name == "La cosa" or (card.name == "infectado" and amount_infectado_cards_in_hand == 1 and self.player.role == "infected"):
+            if card.name == "La cosa" or (card.name == "Infeccion" and amount_Infeccion_cards_in_hand == 1 and self.player.role == "infected"):
                 discardable = False
 
             cards_info.append(UsabilityActionInfoCard(
@@ -178,23 +178,23 @@ class CardTradeInformer(ResponseInterface):
         list: The cards information
         """
 
-        amount_infectado_cards_in_hand = 0
+        amount_Infeccion_cards_in_hand = 0
         for card in self.player.cards:
-            if card.name == "infectado":
-                amount_infectado_cards_in_hand += 1
+            if card.name == "Infeccion":
+                amount_Infeccion_cards_in_hand += 1
 
         cards_info = []
         for card in self.player.cards:
             usable = True
             if card.name == "La cosa":
                 usable = False
-            if card.name == "infectado" and amount_infectado_cards_in_hand == 1 and self.player.role == "infected":
+            if card.name == "Infeccion" and amount_Infeccion_cards_in_hand == 1 and self.player.role == "infected":
                 usable = False
-            if card.name == "infectado" and self.target.role == "infected":
+            if card.name == "Infeccion" and self.target.role == "infected":
                 usable = False
-            if card.name == "infectado" and self.target.role != "human" and self.player.role == "the thing":
+            if card.name == "Infeccion" and self.target.role != "human" and self.player.role == "the thing":
                 usable = False
-            if card.name == "infectado" and self.player.role == "human":
+            if card.name == "Infeccion" and self.player.role == "human":
                 usable = False
 
             cards_info.append(UsabilityInfoCard(

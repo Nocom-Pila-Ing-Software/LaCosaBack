@@ -18,7 +18,7 @@ def test_get_card_usability_sucesfully(get_info_card_game_creation):
 
     for card in response.json()["cards"]:
         if card["cardID"] == 1:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["playable"] == False
             assert card["discardable"] == False
         elif card["cardID"] == 2:
@@ -43,7 +43,7 @@ def test_get_card_usability_sucesfully(get_info_card_game_creation):
 
     for card in response.json()["cards"]:
         if card["cardID"] == 5:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["playable"] == False
             assert card["discardable"] == True
         elif card["cardID"] == 6:
@@ -72,7 +72,7 @@ def test_get_card_usability_sucesfully(get_info_card_game_creation):
 
     for card in response.json()["cards"]:
         if card["cardID"] == 9:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["playable"] == False
             assert card["discardable"] == True
         elif card["cardID"] == 10:
@@ -80,7 +80,7 @@ def test_get_card_usability_sucesfully(get_info_card_game_creation):
             assert card["playable"] == False
             assert card["discardable"] == True
         elif card["cardID"] == 11:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["playable"] == False
             assert card["discardable"] == True
         elif card["cardID"] == 12:
@@ -120,7 +120,7 @@ def test_get_cards_defend(get_defend_card_game_creation):
 
     for card in response.json()["cards"]:
         if card["cardID"] == 1:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["usable"] == False
         elif card["cardID"] == 2:
             assert card["name"] == "Nada de Barbacoas"
@@ -142,7 +142,7 @@ def test_get_cards_defend(get_defend_card_game_creation):
 
     for card in response.json()["cards"]:
         if card["cardID"] == 5:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["usable"] == False
         elif card["cardID"] == 6:
             assert card["name"] == "La cosa"
@@ -167,7 +167,7 @@ def test_get_cards_defend(get_defend_card_game_creation):
 
     for card in response.json()["cards"]:
         if card["cardID"] == 9:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["usable"] == False
         elif card["cardID"] == 10:
             assert card["name"] == "Aterrador"
@@ -211,10 +211,10 @@ def test_get_cards_tradeable(get_tradeable_info_card_game_creation):
 
     for card in response.json()["cards"]:
         if card["cardID"] == 1:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["usable"] == False
         elif card["cardID"] == 2:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["usable"] == False
         elif card["cardID"] == 3:
             assert card["name"] == "Lanzallamas"
@@ -239,13 +239,13 @@ def test_get_cards_tradeable(get_tradeable_info_card_game_creation):
 
     for card in response.json()["cards"]:
         if card["cardID"] == 9:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["usable"] == False
         elif card["cardID"] == 10:
             assert card["name"] == "Aterrador"
             assert card["usable"] == True
         elif card["cardID"] == 11:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["usable"] == False
         elif card["cardID"] == 12:
             assert card["name"] == "Cambio de lugar"
@@ -267,10 +267,10 @@ def test_get_cards_tradeable(get_tradeable_info_card_game_creation):
 
     for card in response.json()["cards"]:
         if card["cardID"] == 1:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["usable"] == True
         elif card["cardID"] == 2:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["usable"] == True
         elif card["cardID"] == 3:
             assert card["name"] == "Lanzallamas"
@@ -295,7 +295,7 @@ def test_get_cards_tradeable(get_tradeable_info_card_game_creation):
 
     for card in response.json()["cards"]:
         if card["cardID"] == 13:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["usable"] == False
         elif card["cardID"] == 14:
             assert card["name"] == "Aterrador"
@@ -323,7 +323,7 @@ def test_get_cards_tradeable(get_tradeable_info_card_game_creation):
 
     for card in response.json()["cards"]:
         if card["cardID"] == 5:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["usable"] == False
         elif card["cardID"] == 6:
             assert card["name"] == "La cosa"
@@ -351,7 +351,7 @@ def test_get_cards_tradeable(get_tradeable_info_card_game_creation):
 
     for card in response.json()["cards"]:
         if card["cardID"] == 5:
-            assert card["name"] == "infectado"
+            assert card["name"] == "Infeccion"
             assert card["usable"] == True
         elif card["cardID"] == 6:
             assert card["name"] == "La cosa"
