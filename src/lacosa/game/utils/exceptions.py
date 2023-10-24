@@ -91,26 +91,26 @@ def validate_card_allowed_to_trade(card, event, player):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
     
-    if card.name == "infectado" and player.role == "human":
+    if card.name == "Infeccion" and player.role == "human":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
     
-    amount_infectado_cards_in_hand = 0
+    amount_Infeccion_cards_in_hand = 0
     for card in player.cards:
-        if card.name == "infectado":
-            amount_infectado_cards_in_hand += 1
+        if card.name == "Infeccion":
+            amount_Infeccion_cards_in_hand += 1
 
-    if card.name == "infectado" and player.role == "the thing":
+    if card.name == "Infeccion" and player.role == "thing":
         if event.player1.role != "human" and event.player2.role != "human":
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
-    if card.name == "infectado" and amount_infectado_cards_in_hand == 1 and player.role == "infected":
+    if card.name == "Infeccion" and amount_Infeccion_cards_in_hand == 1 and player.role == "infected":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
-    if card.name == "infectado" and (event.player1.role != "the thing" and event.player2.role != "the thing") and player.role == "infected":
+    if card.name == "Infeccion" and (event.player1.role != "thing" and event.player2.role != "thing") and player.role == "infected":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
-    if card.name == "infectado" and player.role == "human":
+    if card.name == "Infeccion" and player.role == "human":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
 

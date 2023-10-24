@@ -332,29 +332,29 @@ def get_info_card_game_creation():
             {"id": 1, "username": "Player1", "is_host": True,
                 "position": 1, "role": "infected"},
             {"id": 2, "username": "Player2", "is_host": False,
-                "position": 2, "role": "the thing"},
+                "position": 2, "role": "thing"},
             {"id": 3, "username": "Player3", "is_host": False,
                 "position": 3, "role": "infected"},
         ],
         "game": {"id": 1, "current_player": 1, "current_action": "draw"},
         "cards": [
             [
-                {"id": 1, "name": "infectado", "type": "contagio" },
+                {"id": 1, "name": "Infeccion", "type": "contagio" },
                 {"id": 2, "name": "Lanzallamas", "type": "action" },
                 {"id": 3, "name": "Lanzallamas", "type": "action" },
                 {"id": 4, "name": "Lanzallamas", "type": "action" }
             ],
             [
-                {"id": 5, "name": "infectado", "type": "contagio" },
+                {"id": 5, "name": "Infeccion", "type": "contagio" },
                 {"id": 6, "name": "La cosa", "type": "especial" },
                 {"id": 7, "name": "Lanzallamas", "type": "action" },
                 {"id": 8, "name": "No gracias", "type": "defense" },
                 {"id": 19, "name": "Seduccion", "type": "action" }
             ],
             [
-                {"id": 9, "name": "infectado", "type": "contagio" },
+                {"id": 9, "name": "Infeccion", "type": "contagio" },
                 {"id": 10, "name": "Aterrador", "type": "defense" },
-                {"id": 11, "name": "infectado", "type": "contagio" },
+                {"id": 11, "name": "Infeccion", "type": "contagio" },
                 {"id": 12, "name": "Cambio de lugar", "type": "action" }
             ],
         ]
@@ -392,22 +392,22 @@ def get_defend_card_game_creation():
         "game": {"id": 1, "current_player": 1, "current_action": "draw"},
         "cards": [
             [
-                {"id": 1, "name": "infectado", "type": "contagio"},
+                {"id": 1, "name": "Infeccion", "type": "contagio"},
                 {"id": 2, "name": "Nada de Barbacoas", "type": "defense"},
                 {"id": 3, "name": "Nada de Barbacoas", "type": "defense"},
                 {"id": 4, "name": "Nada de Barbacoas", "type": "defense"},
             ],
             [
-                {"id": 5, "name": "infectado", "type": "contagio"},
+                {"id": 5, "name": "Infeccion", "type": "contagio"},
                 {"id": 6, "name": "La cosa", "type": "especial"},
                 {"id": 7, "name": "Lanzallamas", "type": "action"},
                 {"id": 8, "name": "No gracias", "type": "defense"},
                 {"id": 19, "name": "Seduccion", "type": "action"},
             ],
             [
-                {"id": 9, "name": "infectado", "type": "contagio"},
+                {"id": 9, "name": "Infeccion", "type": "contagio"},
                 {"id": 10, "name": "Aterrador", "type": "defense"},
-                {"id": 11, "name": "infectado", "type": "contagio"},
+                {"id": 11, "name": "Infeccion", "type": "contagio"},
                 {"id": 12, "name": "Cambio de lugar", "type": "action"},
             ],
         ]
@@ -441,7 +441,7 @@ def get_tradeable_info_card_game_creation():
             {"id": 1, "username": "Player1", "is_host": True,
                 "position": 1, "role": "infected"},
             {"id": 2, "username": "Player2", "is_host": False,
-                "position": 2, "role": "the thing"},
+                "position": 2, "role": "thing"},
             {"id": 3, "username": "Player3", "is_host": False,
                 "position": 3, "role": "human"},
             {"id": 4, "username": "Player1", "is_host": False,
@@ -450,25 +450,25 @@ def get_tradeable_info_card_game_creation():
         "game": {"id": 1, "current_player": 1, "current_action": "draw"},
         "cards": [
             [
-                {"id": 1, "name": "infectado", "type": "contagio"},
-                {"id": 2, "name": "infectado", "type": "contagio"},
+                {"id": 1, "name": "Infeccion", "type": "contagio"},
+                {"id": 2, "name": "Infeccion", "type": "contagio"},
                 {"id": 3, "name": "Lanzallamas", "type": "action"},
                 {"id": 4, "name": "Nada de Barbacoas", "type": "defense"}
             ],
             [
-                {"id": 5, "name": "infectado"},
+                {"id": 5, "name": "Infeccion"},
                 {"id": 6, "name": "La cosa"},
                 {"id": 7, "name": "Lanzallamas"},
                 {"id": 8, "name": "No gracias"},
             ],
             [
-                {"id": 9, "name": "infectado"},
+                {"id": 9, "name": "Infeccion"},
                 {"id": 10, "name": "Aterrador"},
-                {"id": 11, "name": "infectado"},
+                {"id": 11, "name": "Infeccion"},
                 {"id": 12, "name": "Cambio de lugar"},
             ],
             [
-                {"id": 13, "name": "infectado"},
+                {"id": 13, "name": "Infeccion"},
                 {"id": 14, "name": "Aterrador"},
                 {"id": 15, "name": "Lanzallamas"},
                 {"id": 16, "name": "No gracias"},
@@ -503,7 +503,7 @@ def get_info_card_game_creation_with_dead_players():
             {"id": 1, "username": "Player1", "is_host": True,
                 "position": 1, "role": "infected"},
             {"id": 2, "username": "Player2", "is_host": False,
-                "position": 2, "role": "the thing"},
+                "position": 2, "role": "thing"},
             {"id": 3, "username": "Player3", "is_host": False,
                 "position": -1, "role": "infected", "is_alive": False},
             {"id": 4, "username": "Player4", "is_host": False,
@@ -514,13 +514,13 @@ def get_info_card_game_creation_with_dead_players():
         "game": {"id": 1, "current_player": 1, "current_action": "draw"},
         "cards": [
             [
-                {"id": 1, "name": "infectado", "type": "contagio"},
+                {"id": 1, "name": "Infeccion", "type": "contagio"},
                 {"id": 2, "name": "Lanzallamas", "type": "action"},
                 {"id": 3, "name": "Lanzallamas", "type": "action"},
                 {"id": 4, "name": "Lanzallamas", "type": "action"}
             ],
             [
-                {"id": 5, "name": "infectado", "type": "contagio"},
+                {"id": 5, "name": "Infeccion", "type": "contagio"},
                 {"id": 6, "name": "La cosa", "type": "especial"},
                 {"id": 7, "name": "Lanzallamas", "type": "action"},
                 {"id": 8, "name": "No gracias", "type": "defense"},
@@ -528,13 +528,13 @@ def get_info_card_game_creation_with_dead_players():
             ],
             [],
             [
-                {"id": 9, "name": "infectado", "type": "contagio"},
+                {"id": 9, "name": "Infeccion", "type": "contagio"},
                 {"id": 10, "name": "Aterrador", "type": "defense"},
-                {"id": 11, "name": "infectado", "type": "contagio"},
+                {"id": 11, "name": "Infeccion", "type": "contagio"},
                 {"id": 12, "name": "Cambio de lugar", "type": "action"},
             ],
             [
-                {"id": 13, "name": "infectado", "type": "contagio"},
+                {"id": 13, "name": "Infeccion", "type": "contagio"},
                 {"id": 14, "name": "Aterrador", "type": "defense"},
                 {"id": 15, "name": "Lanzallamas", "type": "action"},
                 {"id": 16, "name": "No gracias", "type": "defense"},
@@ -569,7 +569,7 @@ def db_game_creation_with_trade_event_2():
             {"id": 1, "username": "Player1", "is_host": True,
                 "position": 1, "role": "infected"},
             {"id": 2, "username": "Player2", "is_host": False,
-                "position": 2, "role": "the thing"},
+                "position": 2, "role": "thing"},
             {"id": 3, "username": "Player3", "is_host": False,
                 "position": -1, "role": "infected"},
             {"id": 4, "username": "Player4", "is_host": False,
@@ -580,13 +580,13 @@ def db_game_creation_with_trade_event_2():
         "game": {"id": 1, "current_player": 1, "current_action": "trade"},
         "cards": [
             [
-                {"id": 1, "name": "infectado", "type": "contagio"},
+                {"id": 1, "name": "Infeccion", "type": "contagio"},
                 {"id": 2, "name": "Lanzallamas", "type": "action"},
                 {"id": 3, "name": "Lanzallamas", "type": "action"},
                 {"id": 4, "name": "Lanzallamas", "type": "action"}
             ],
             [
-                {"id": 5, "name": "infectado", "type": "contagio"},
+                {"id": 5, "name": "Infeccion", "type": "contagio"},
                 {"id": 6, "name": "La cosa", "type": "especial"},
                 {"id": 7, "name": "Lanzallamas", "type": "action"},
                 {"id": 8, "name": "No gracias", "type": "defense"},
@@ -594,13 +594,13 @@ def db_game_creation_with_trade_event_2():
             ],
             [],
             [
-                {"id": 9, "name": "infectado", "type": "contagio"},
+                {"id": 9, "name": "Infeccion", "type": "contagio"},
                 {"id": 10, "name": "Aterrador", "type": "defense"},
-                {"id": 11, "name": "infectado", "type": "contagio"},
+                {"id": 11, "name": "Infeccion", "type": "contagio"},
                 {"id": 12, "name": "Cambio de lugar", "type": "action"},
             ],
             [
-                {"id": 13, "name": "infectado", "type": "contagio"},
+                {"id": 13, "name": "Infeccion", "type": "contagio"},
                 {"id": 14, "name": "Aterrador", "type": "defense"},
                 {"id": 15, "name": "Lanzallamas", "type": "action"},
                 {"id": 16, "name": "No gracias", "type": "defense"},

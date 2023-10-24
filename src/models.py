@@ -17,7 +17,7 @@ class CardType(str, Enum):
 class Role(str, Enum):
     human = "human"
     infected = "infected"
-    the_thing = "the thing"
+    the_thing = "thing"
 
 
 class Event(db.Entity):
