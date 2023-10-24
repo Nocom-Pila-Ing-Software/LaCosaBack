@@ -171,9 +171,11 @@ def db_game_creation_with_cards_2():
                                 description="Aquí estoy bien")
         player2.cards.create(id=8, name="Nada de barbacoas",
                                 description="Nada de barbacoas")
-        
-        player3.cards.create(id=9, name="Vigila tus espaldas",
-                                description="Vigila tus espaldas")
+
+        player2.cards.create(id=9, name="Seducción", description="Seducción", type="action")
+        player2.cards.create()
+
+
         player3.cards.create(id=60, name="Lanzallamas",
                              description="Está que arde")
         player4.cards.create()

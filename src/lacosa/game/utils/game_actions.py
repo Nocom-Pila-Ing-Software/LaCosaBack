@@ -52,18 +52,19 @@ class CardPlayer(ActionInterface):
 
             self.game.current_action = "trade"
 
-            event_request = EventCreationRequest(
-                gameID=self.game.id,
-                playerID=self.player.id,
-                targetPlayerID=self.next_player_trade.id,
-                cardID=-1,  # probar
-                targetCardID=-1,
-                type=EventTypes.trade,
-                isCompleted=False,
-                isSuccessful=False
-            )
-            event_create = EventCreator(event_request)
-            event_create.create()
+            if utils.find_partial_event(self.player.id) is None:
+                event_request = EventCreationRequest(
+                    gameID=self.game.id,
+                    playerID=self.player.id,
+                    targetPlayerID=self.next_player_trade.id,
+                    cardID=-1,  # probar
+                    targetCardID=-1,
+                    type=EventTypes.trade,
+                    isCompleted=False,
+                    isSuccessful=False
+                )
+                event_create = EventCreator(event_request)
+                event_create.create()
         else:
             self.game.current_action = "defense"
             self.game.current_player = self.target_player.id
