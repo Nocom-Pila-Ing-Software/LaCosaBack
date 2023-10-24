@@ -6,6 +6,7 @@ import lacosa.game.utils.exceptions as exceptions
 from lacosa.interfaces import ResponseInterface
 from lacosa.player.schemas import UsabilityActionResponse, UsabilityActionInfoCard, UsabilityResponse, UsabilityInfoCard, TargetsResponse, TargetsInfo
 from fastapi import status
+from models import Event
 from pony.orm import select
 
 
@@ -103,14 +104,29 @@ class CardDefenseInformer(ResponseInterface):
         """
 
         cards_info = []
-        for card in self.player.cards:
-            if card.name in self.get_cards_that_defend(self.card.name):
-                cards_info.append(UsabilityInfoCard(
-                    cardID=card.id,
-                    name=card.name,
-                    description=card.description,
-                    usable=True
-                ))
+
+        # If the card is "No, gracias" only is usable if the player is the target of the trade event (and only in a trade event)
+        if self.card.name == "No, gracias":
+            event = select(e for e in Event if e.type == "trade" and (e.player1 == self.player or e.player2 == self.player) and e.is_completed == False).first()
+            if event is not None and event.player2 == self.player:
+                for card in self.player.cards:
+                    if card.name == "No, gracias":
+                        cards_info.append(UsabilityInfoCard(
+                            cardID=card.id,
+                            name=card.name,
+                            description=card.description,
+                            usable=True
+                        ))
+        else:
+            # Cards that can be used to defend against the card (actions card) played by the attacker
+            for card in self.player.cards:
+                if card.name in self.get_cards_that_defend(self.card.name):
+                    cards_info.append(UsabilityInfoCard(
+                        cardID=card.id,
+                        name=card.name,
+                        description=card.description,
+                        usable=True
+                    ))
 
         return cards_info
 
