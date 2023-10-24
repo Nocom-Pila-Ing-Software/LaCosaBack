@@ -66,7 +66,7 @@ class CardPlayer(ActionInterface):
             event_create.create()
         else:
             self.game.current_action = "defense"
-            self.game.current_player = self.target_player.position
+            self.game.current_player = self.target_player.id
 
     def get_next_player_id(self):
         next_player = turn_handler.get_next_player(
@@ -190,8 +190,7 @@ class CardDefender(ActionInterface):
 
                 Deck.draw_card(self.game.id, self.event.player2.id)
 
-                self.event.player2.cards.remove(self.event.card2)
-                self.game.cards.add(self.event.card2)
+                Deck.discard_card(self.card, self.event.player2, self.game)
 
 
         elif self.event.type == "action":
@@ -200,6 +199,7 @@ class CardDefender(ActionInterface):
                 execute_card_effect(
                     self.event.card2, self.event.player2, self.event.player1, self.game)
                 self.event.is_successful = False
+                Deck.draw_card(self.game.id, self.event.player2.id)
             else:
                 execute_card_effect(
                     self.event.card1, self.event.player1, self.event.player2, self.game)
@@ -210,6 +210,8 @@ class CardDefender(ActionInterface):
             self.game.last_played_card = self.card
             
             self.game.current_action = "trade"
+
+            self.game.current_player = self.event.player1.id
 
             event_request = EventCreationRequest(
                 gameID=self.game.id,
