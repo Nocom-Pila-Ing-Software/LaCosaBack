@@ -61,5 +61,6 @@ def execute_card_effect(card, player ,target_player, game) -> None:
         if effect_func is not None:
             effect_func(player, target_player, game)
 
-        Deck.discard_card(game.id, card.id)
+        player.cards.remove(card)
+        game.cards.add(card)
         game.last_played_card = card
