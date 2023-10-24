@@ -63,8 +63,8 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "Vigila tus espaldas": apply_vigila_tus_espaldas_effect,
         "Aqui estoy bien": do_nothing,
         "Nada de barbacoas": do_nothing,
-        "No, gracias": do_nothing,
-        "Seducción": apply_anticipate_trade_effect
+        "No gracias": do_nothing
+        "Seduccion": apply_anticipate_trade_effect
     }
 
     return _card_effects.get(card_name, do_nothing)
