@@ -9,7 +9,7 @@ from lacosa.interfaces import ActionInterface
 import lacosa.game.utils.turn_handler as turn_handler
 from pathlib import Path
 import json
-
+from pony.orm import commit
 
 class CardPlayer(ActionInterface):
     def __init__(self, play_request: PlayCardRequest, game_id: int):
@@ -23,6 +23,7 @@ class CardPlayer(ActionInterface):
     def execute_action(self) -> None:
         # Creo un evento de tipo acción
         self.game.current_action = "action"
+        self.game.last_played_card = self.card
 
         # Creo el evento de acción
         event_request = EventCreationRequest(
@@ -38,6 +39,8 @@ class CardPlayer(ActionInterface):
         event_create = EventCreator(event_request)
         event_create.create()
         event = utils.find_partial_event(self.player.id)
+
+        Deck.discard_card(self.card, self.player, self.game)
 
         check_card_is_defensible = self.check_card_is_defensible(self.card)
         if not check_card_is_defensible:
@@ -63,7 +66,7 @@ class CardPlayer(ActionInterface):
             event_create.create()
         else:
             self.game.current_action = "defense"
-            self.game.current_player = self.target_player.position
+            self.game.current_player = self.target_player.id
 
     def get_next_player_id(self):
         next_player = turn_handler.get_next_player(
@@ -129,6 +132,14 @@ class CardTrader(ActionInterface):
             self.event.player2.cards.remove(self.event.card2)
             self.event.player2.cards.add(self.event.card1)
 
+            if(self.event.player1.role == "the thing" and self.event.card1.name == "infectado"):
+                self.event.player2.role = "infected"
+            elif(self.event.player2.role == "the thing" and self.event.card2.name == "infectado"):
+                self.event.player1.role = "infected"
+
+            commit()
+
+
     def get_next_player_id(self):
         next_player = turn_handler.get_next_player(
             self.game,
@@ -155,7 +166,7 @@ class CardTrader(ActionInterface):
         exceptions.validate_current_player(self.game, self.player)
         exceptions.validate_player_alive(self.player)
         exceptions.validate_player_has_card(self.player, self.card.id)
-        # TODO: Validate player is allowed to trade the card with the other player (La cosa y eso)
+        exceptions.validate_card_allowed_to_trade(self.card, self.event, self.player)
 
 
 class CardDefender(ActionInterface):
@@ -183,9 +194,12 @@ class CardDefender(ActionInterface):
                 self.event.is_successful = False
                 self.game.current_player = self.get_next_player_id()
                 self.game.current_action = "draw"
+                self.game.last_played_card = self.card
 
-                self.event.player2.cards.remove(self.event.card2)
                 Deck.draw_card(self.game.id, self.event.player2.id)
+
+                Deck.discard_card(self.card, self.event.player2, self.game)
+
 
         elif self.event.type == "action":
             if self.card is not None:
@@ -193,14 +207,19 @@ class CardDefender(ActionInterface):
                 execute_card_effect(
                     self.event.card2, self.event.player2, self.event.player1, self.game)
                 self.event.is_successful = False
+                Deck.draw_card(self.game.id, self.event.player2.id)
             else:
                 execute_card_effect(
                     self.event.card1, self.event.player1, self.event.player2, self.game)
                 self.event.is_successful = True
 
             self.event.is_completed = True
-
+            
+            self.game.last_played_card = self.card
+            
             self.game.current_action = "trade"
+
+            self.game.current_player = self.event.player1.id
 
             event_request = EventCreationRequest(
                 gameID=self.game.id,

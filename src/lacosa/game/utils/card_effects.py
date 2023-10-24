@@ -1,3 +1,4 @@
+from lacosa.game.utils.deck import Deck
 from models import Player, Game
 from collections.abc import Callable
 from typing import Dict
