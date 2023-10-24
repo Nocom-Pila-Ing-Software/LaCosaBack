@@ -1,3 +1,4 @@
+from lacosa.game.utils.deck import Deck
 from models import Player, Game
 from collections.abc import Callable
 from typing import Dict
@@ -57,7 +58,8 @@ def execute_card_effect(card, player ,target_player, game) -> None:
         game_id (int): The id of the game to validate
         """
         effect_func: CardEffectFunc = get_card_effect_function(card.name)
-        effect_func(player, target_player, game)
+        if effect_func is not None:
+            effect_func(player, target_player, game)
 
         player.cards.remove(card)
         game.cards.add(card)

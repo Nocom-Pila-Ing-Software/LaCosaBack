@@ -2,6 +2,7 @@
 """
 
 from fastapi import APIRouter, status
+from lacosa import utils
 from pony.orm import db_session
 from pony.orm import db_session
 from lacosa.game.schemas import GameCreationRequest, GameStatus, GenericCardRequest, PlayCardRequest
@@ -48,6 +49,8 @@ async def draw_card(room_id: int, player_id: PlayerID) -> None:
     """Deals a card to a player"""
     with db_session:
         Deck.draw_card(room_id, player_id.playerID)
+        game = utils.find_game(room_id)
+        game.current_action = "action"
 
 
 @game_router.put(path="/{room_id}/discard-card", status_code=status.HTTP_200_OK,
@@ -56,6 +59,7 @@ async def discard_card(discard_request: GenericCardRequest, room_id: int) -> Non
     """Discards a card from a player's hand"""
     with db_session:
         discard_card_util(discard_request, room_id)
+
 
 
 @game_router.put(path="/{room_id}/play-card", status_code=status.HTTP_200_OK,
