@@ -471,80 +471,80 @@ def test_play_cambio_de_lugar_card_defended(db_game_creation_with_cards):
         assert event_record.is_successful == False
 
 
-# def test_play_seduccion(db_game_creation_with_cards):
-#    mock_play_request = PlayCardRequest(
-#        playerID=2,
-#        targetPlayerID=1,
-#        cardID=9
-#    ).model_dump()
-#
-#    with db_session:
-#        game_record = select(g for g in Game if g.id == 5).get()
-#        game_record.current_player = 2
-#        game_record.current_action = "action"
-#
-#    response = client.put("/game/5/play-card", json=mock_play_request)
-#
-#    assert response.status_code == 200
-#
-#    # Check event was created
-#    with db_session:
-#        game_record = select(g for g in Game if g.id == 5).get()
-#        event_record = select(
-#            e for e in game_record.events if e.type == "action").get()
-#        assert event_record.player1.id == 2
-#        assert event_record.player2.id == 1
-#        assert event_record.card1.id == 9
-#        assert event_record.type == "action"
-#        assert event_record.is_completed == True
-#        assert event_record.is_successful == True
-#
-#        event_trade = select(
-#            e for e in game_record.events if e.type == "trade").get()
-#
-#        assert event_trade.player1.id == 2
-#        assert event_trade.player2.id == 1
-#        assert event_trade.type == "trade"
-#        assert event_trade.is_completed == False
-#        assert event_trade.is_successful == False
-#
-#        assert game_record.last_played_card.id == 9
-#        assert game_record.current_player == 2
-#        assert game_record.current_action == "trade"
-#
-#    mock_trade_request = GenericCardRequest(
-#        playerID=2,
-#        cardID=8
-#    ).model_dump()
-#
-#    response = client.put("/game/5/trade-card", json=mock_trade_request)
-#
-#    assert response.status_code == 200
-#
-#    mock_trade_request = GenericCardRequest(
-#        playerID=1,
-#        cardID=5
-#    ).model_dump()
-#
-#    response = client.put("/game/5/trade-card", json=mock_trade_request)
-#
-#    assert response.status_code == 200
-#
-#    with db_session:
-#        game_record = select(g for g in Game if g.id == 5).get()
-#        event_trade = select(
-#            e for e in game_record.events if e.type == "trade").get()
-#
-#        assert event_trade.player1.id == 2
-#        assert event_trade.player2.id == 1
-#        assert event_trade.card1.id == 8
-#        assert event_trade.card2.id == 5
-#        assert event_trade.type == "trade"
-#        assert event_trade.is_completed == True
-#        assert event_trade.is_successful == True
-#
-#        assert game_record.current_player == 3
-#        assert game_record.current_action == "draw"
+def test_play_seduccion(db_game_creation_with_cards_2):
+    mock_play_request = PlayCardRequest(
+        playerID=2,
+        targetPlayerID=1,
+        cardID=9
+    ).model_dump()
+
+    with db_session:
+        game_record = select(g for g in Game if g.id == 5).get()
+        game_record.current_player = 2
+        game_record.current_action = "action"
+
+    response = client.put("/game/5/play-card", json=mock_play_request)
+
+    assert response.status_code == 200
+
+    # Check event was created
+    with db_session:
+        game_record = select(g for g in Game if g.id == 5).get()
+        event_record = select(
+            e for e in game_record.events if e.type == "action").get()
+        assert event_record.player1.id == 2
+        assert event_record.player2.id == 1
+        assert event_record.card1.id == 9
+        assert event_record.type == "action"
+        assert event_record.is_completed == True
+        assert event_record.is_successful == True
+
+        event_trade = select(
+            e for e in game_record.events if e.type == "trade").get()
+
+        assert event_trade.player1.id == 2
+        assert event_trade.player2.id == 1
+        assert event_trade.type == "trade"
+        assert event_trade.is_completed == False
+        assert event_trade.is_successful == False
+
+        assert game_record.last_played_card.id == 9
+        assert game_record.current_player == 2
+        assert game_record.current_action == "trade"
+
+    mock_trade_request = GenericCardRequest(
+        playerID=2,
+        cardID=8
+    ).model_dump()
+
+    response = client.put("/game/5/trade-card", json=mock_trade_request)
+
+    assert response.status_code == 200
+
+    mock_trade_request = GenericCardRequest(
+        playerID=1,
+        cardID=5
+    ).model_dump()
+
+    response = client.put("/game/5/trade-card", json=mock_trade_request)
+
+    assert response.status_code == 200
+
+    with db_session:
+        game_record = select(g for g in Game if g.id == 5).get()
+        event_trade = select(
+            e for e in game_record.events if e.type == "trade").get()
+
+        assert event_trade.player1.id == 2
+        assert event_trade.player2.id == 1
+        assert event_trade.card1.id == 8
+        assert event_trade.card2.id == 5
+        assert event_trade.type == "trade"
+        assert event_trade.is_completed == True
+        assert event_trade.is_successful == True
+
+        assert game_record.current_player == 3
+        assert game_record.current_action == "draw"
 
 
 def test_play_mas_vale_que_corras_card_defended(db_game_creation_with_cards):
