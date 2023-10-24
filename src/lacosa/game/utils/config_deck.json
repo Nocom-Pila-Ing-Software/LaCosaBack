@@ -1,6 +1,6 @@
 {
     "cards": {
-        "Infeccion": {
+        "Infectado": {
             "amount_per_player": {
                 "4": 8,
                 "5": 8,
