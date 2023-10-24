@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 from models import Game, Card
 from pony.orm import db_session, select, commit, delete
 import pytest
-from .game_fixtures import db_game_creation_with_trade_event, db_game_creation_with_trade_event_2
+from .game_fixtures import db_game_creation_with_trade_event, db_game_creation_with_trade_event_2, get_defend_trade_card_game_creation
 
 client = TestClient(app)
 
@@ -684,7 +684,70 @@ def test_try_infected_to_the_thing_send_card(db_game_creation_with_trade_event_2
     assert response1.status_code == 403
 
 
+def test_get_defense_cards_info(get_defend_trade_card_game_creation):
+    player1_id = None
+    player2_id = None
+    card_player_1_id = None
+    card_player_2_id = None
 
+    with db_session:
+        game = Game.get(id=1)
+        players = select(p for p in game.players)[:]
+        game.events.create(
+            type="trade", player1=players[0], player2=players[1], card1=None, card2=None)
+
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        player1_id = game_event.player1.id
+        player2_id = game_event.player2.id
+
+        card_player_1_id = cards_player_1[1].id
+        card_player_2_id = cards_player_2[1].id
+
+        game.current_action = "trade"
+        game.current_player = game_event.player1.id
+
+    response = client.get(
+        f"/player/{player1_id}/cards-defend/-1")
+    
+    assert response.status_code == 200
+
+    assert response.json() == {"cards": []}
+
+
+
+    response1 = client.put(
+        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
+
+    assert response1.status_code == 200
+
+    with db_session:
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+
+    response = client.get(
+        f"/player/{player2_id}/cards-defend/-1")
+    
+    assert response.status_code == 200
+
+    assert len(response.json()["cards"]) == 4
+
+    response2 = client.put(
+        "/game/1/trade-card", json={"playerID": player2_id, "cardID": card_player_2_id})
+
+    assert response2.status_code == 200
+
+    with db_session:
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+        next_position = next_player(game, game_event)
+
+        assert_game_state(game, game_event, is_completed=True, player1=game_event.player1,
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=select_card(card_player_2_id), action="draw", current_player=next_position, is_successful=True)
+
+        assert_game_cards(game, game_event, select_card(
+            card_player_2_id), select_card(card_player_1_id))
 
 
 

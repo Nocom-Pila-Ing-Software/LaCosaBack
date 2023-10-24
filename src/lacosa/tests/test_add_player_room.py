@@ -10,7 +10,7 @@ from .game_fixtures import  db_game_creation_without_cards
 client = TestClient(app)
 
 
-# Test para la función add_player_to_waiting_room con una room valida
+# Test para la funcion add_player_to_waiting_room con una room valida
 def test_add_player_to_waiting_room_valid(db_room_creation):
     response = client.post("/room/0/player", json={"playerName": "Test_player2"})
 
@@ -22,7 +22,7 @@ def test_add_player_to_waiting_room_valid(db_room_creation):
         player = Player.get(id=2)
         assert player in waiting_room.players
 
-# Test para la función add_player_to_waiting_room con una room invalida
+# Test para la funcion add_player_to_waiting_room con una room invalida
 def test_add_player_to_waiting_room_invalid(db_room_creation):
     response = client.post("/room/999/player", json={"playerName": "Test_player2"})
 

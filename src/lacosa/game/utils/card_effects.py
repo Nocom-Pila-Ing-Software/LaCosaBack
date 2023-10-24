@@ -2,6 +2,7 @@ from lacosa.game.utils.deck import Deck
 from models import Player, Game
 from collections.abc import Callable
 from typing import Dict
+from pony.orm import select
 
 CardEffectFunc = Callable[[Player, Game], None]
 
@@ -32,6 +33,23 @@ def apply_lanzallamas_effect(current_player: Player, target_player: Player, game
 def apply_switch_position_cards_effect(current_player: Player, target_player: Player, game: Game) -> None:
     switch_player_positions(current_player, target_player)
 
+def apply_anticipate_trade_effect(current_player: Player, target_player: Player, game: Game) -> None:
+    event = select(event for event in game.events if event.player1 == current_player)
+    event.is_completed = True
+    event.is_successful = True
+
+    game.events.create(player1=current_player, player2=target_player, card1=None, card2=None, is_completed=False, is_successful=False, type="trade")
+
+
+def apply_vigila_tus_espaldas_effect(current_player: Player, target_player: Player, game: Game) -> None: 
+    players = game.players.order_by(Player.position)
+    # jugadores vivos
+    alive_players = [player for player in players if player.is_alive]
+    player_len = len(alive_players)
+
+    for i in range(player_len):
+        alive_players[i].position = player_len - i + 1
+
 
 def do_nothing(*args, **kwargs) -> None:
     pass
@@ -41,10 +59,12 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
     _card_effects: Dict[str, CardEffectFunc] = {
         "Lanzallamas": apply_lanzallamas_effect,
         "Cambio de lugar": apply_switch_position_cards_effect,
-        "Más vale que corras": apply_switch_position_cards_effect,
-        "Aquí estoy bien": do_nothing,
+        "Mas vale que corras": apply_switch_position_cards_effect,
+        "Vigila tus espaldas": apply_vigila_tus_espaldas_effect,
+        "Aqui estoy bien": do_nothing,
         "Nada de barbacoas": do_nothing,
         "No gracias": do_nothing
+        "Seduccion": apply_anticipate_trade_effect
     }
 
     return _card_effects.get(card_name, do_nothing)

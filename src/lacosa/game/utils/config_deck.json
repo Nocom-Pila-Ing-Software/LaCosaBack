@@ -29,7 +29,6 @@
             },
             "description": "Elimina un jugador adyacente.",
             "type": "action",
-
             "target": "adjacent",
             "defensible_by": [
                 "Nada de barbacoas"
@@ -126,7 +125,8 @@
                 "12": 2
             },
             "description": "Invierte el orden de juego. Esto afecta tanto al orden de turnos como a los intercambios de cartas.",
-            "type": "action"
+            "type": "action",
+            "target": "self"
         },
         "Cambio de lugar": {
             "amount_per_player": {
@@ -212,7 +212,7 @@
             "description": "Solo puedes jugar esta carta como respuesta a una carta '¡Cambio de lugar!' o '¡Mas vale que corras!' para cancelar su efecto.",
             "type": "defense"
         },
-        "No gracias": {
+        "No, gracias": {
             "amount_per_player": {
                 "4": 1,
                 "5": 1,
