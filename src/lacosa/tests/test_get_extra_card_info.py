@@ -251,7 +251,7 @@ def test_get_cards_tradeable(get_tradeable_info_card_game_creation):
             assert card["name"] == "Cambio de lugar"
             assert card["usable"] == True
 
-    # Cards tradeable event infected -> the thing with 2 cards infected
+    # Cards tradeable event infected -> thing with 2 cards infected
     with db_session:
         game = get_tradeable_info_card_game_creation["game"]["id"]
         game = select(g for g in Game if g.id == game).get()
@@ -279,7 +279,7 @@ def test_get_cards_tradeable(get_tradeable_info_card_game_creation):
             assert card["name"] == "Nada de Barbacoas"
             assert card["usable"] == True
 
-    # Cards tradeable event infected -> the thing with 1 card infected
+    # Cards tradeable event infected -> thing with 1 card infected
     with db_session:
         game = get_tradeable_info_card_game_creation["game"]["id"]
         game = select(g for g in Game if g.id == game).get()
@@ -307,7 +307,7 @@ def test_get_cards_tradeable(get_tradeable_info_card_game_creation):
             assert card["name"] == "No gracias"
             assert card["usable"] == True
 
-    # Cards tradeable event the thing -> infected
+    # Cards tradeable event thing -> infected
     with db_session:
         game = get_tradeable_info_card_game_creation["game"]["id"]
         game = select(g for g in Game if g.id == game).get()
@@ -335,7 +335,7 @@ def test_get_cards_tradeable(get_tradeable_info_card_game_creation):
             assert card["name"] == "No gracias"
             assert card["usable"] == True
 
-    # Cards tradeable event the thing -> human
+    # Cards tradeable event thing -> human
     with db_session:
         game = get_tradeable_info_card_game_creation["game"]["id"]
         game = select(g for g in Game if g.id == game).get()

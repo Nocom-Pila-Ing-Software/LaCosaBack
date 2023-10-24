@@ -588,7 +588,7 @@ def test_try_trade_card_la_cosa_infeccion(db_game_creation_with_trade_event_2):
     
     assert response1.status_code == 403
 
-    # the thing try to trade card the thing
+    # thing try to trade card thing
     with db_session:
         game = Game.get(id=1)
         delete(e for e in game.events)
@@ -615,7 +615,7 @@ def test_try_infected_to_the_thing_send_card(db_game_creation_with_trade_event_2
     card_player_1_id = None
     card_player_2_id = None
 
-    # infected to the thing trade card Infeccion
+    # infected to thing trade card Infeccion
     with db_session:
         game = Game.get(id=1)
         players = select(p for p in game.players)[:]
@@ -663,7 +663,7 @@ def test_try_infected_to_the_thing_send_card(db_game_creation_with_trade_event_2
         assert_game_cards(game, game_event, select_card(
             card_player_2_id), select_card(card_player_1_id))
         
-    # the thing to infected trade card Infeccion
+    # thing to infected trade card Infeccion
     with db_session:
         game = Game.get(id=1)
         delete(e for e in game.events)

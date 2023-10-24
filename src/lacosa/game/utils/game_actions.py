@@ -139,9 +139,9 @@ class CardTrader(ActionInterface):
             self.event.player2.cards.remove(self.event.card2)
             self.event.player2.cards.add(self.event.card1)
 
-            if(self.event.player1.role == "the thing" and self.event.card1.name == "Infeccion"):
+            if(self.event.player1.role == "thing" and self.event.card1.name == "Infeccion"):
                 self.event.player2.role = "infected"
-            elif(self.event.player2.role == "the thing" and self.event.card2.name == "Infeccion"):
+            elif(self.event.player2.role == "thing" and self.event.card2.name == "Infeccion"):
                 self.event.player1.role = "infected"
 
             commit()
