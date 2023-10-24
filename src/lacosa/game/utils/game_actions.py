@@ -1,3 +1,4 @@
+from models import Event
 from ..schemas import PlayCardRequest, EventTypes, GenericCardRequest, EventCreationRequest
 from lacosa.game.utils.deck import Deck
 from lacosa.game.utils.event_creator import EventCreator
@@ -16,13 +17,11 @@ class CardPlayer(ActionInterface):
         self.game = utils.find_game(game_id)
         self.player = utils.find_player(play_request.playerID)
         self.target_player = utils.find_player(play_request.targetPlayerID)
-        self.next_player_trade = utils.find_player(self.get_next_player_id())
         self.card = utils.find_card(play_request.cardID)
         self.handle_errors()
 
     def execute_action(self) -> None:
         # Creo un evento de tipo acción
-        self.game.current_action = "action"
         self.game.last_played_card = self.card
 
         # Creo el evento de acción
@@ -51,18 +50,18 @@ class CardPlayer(ActionInterface):
             event.is_successful = True
 
             self.game.current_action = "trade"
-
-            if utils.find_partial_event(self.player.id) is None:
+            if select(e for e in Event if (e.player1.id == self.player.id or e.player2.id == self.player.id) and e.is_completed == False).get() is None:
                 event_request = EventCreationRequest(
                     gameID=self.game.id,
                     playerID=self.player.id,
-                    targetPlayerID=self.next_player_trade.id,
+                    targetPlayerID=self.get_next_player_id(),
                     cardID=-1,  # probar
                     targetCardID=-1,
                     type=EventTypes.trade,
                     isCompleted=False,
                     isSuccessful=False
                 )
+
                 event_create = EventCreator(event_request)
                 event_create.create()
         else:
@@ -121,13 +120,15 @@ class CardTrader(ActionInterface):
             self.event.card1 = self.card
             self.game.current_player = self.event.player2.id
         else:
+            events_completed = select(
+                e for e in self.game.events if e.is_completed == True)[:]
+            last_event = None
+            if len(events_completed) > 0:
+                last_event = sorted(events_completed, key=lambda e: e.id)[-1]
             self.event.card2 = self.card
             self.event.is_completed = True
             self.event.is_successful = True
-            events_completed = select(
-                e for e in self.game.events if e.is_completed == True)[:]
-            last_event = sorted(events_completed, key=lambda e: e.id)[-1]
-            if last_event.type == "action" and last_event.is_successful == True and (last_event.card1.name == "Cambio de lugar" or "Mas vale que corras") and last_event.player1.id == self.event.player1.id:
+            if last_event is not None and last_event.type == "action" and last_event.is_successful == True and (last_event.card1.name == "Cambio de lugar" or "Mas vale que corras") and last_event.player1.id == self.event.player1.id:
                 self.game.current_player = last_event.player2.id
             else:
                 self.game.current_player = self.get_next_player_id()
@@ -169,11 +170,17 @@ class CardTrader(ActionInterface):
         """
 
         exceptions.validate_player_in_game(self.game, self.player)
+        print("Hola1")
         exceptions.validate_current_action(self.game, "trade")
+        print("Hola2")
         exceptions.validate_current_player(self.game, self.player)
+        print("Hola3")
         exceptions.validate_player_alive(self.player)
+        print("Hola4")
         exceptions.validate_player_has_card(self.player, self.card.id)
+        print("Hola5")
         exceptions.validate_card_allowed_to_trade(self.card, self.event, self.player)
+        print("Hola6")
 
 
 class CardDefender(ActionInterface):
