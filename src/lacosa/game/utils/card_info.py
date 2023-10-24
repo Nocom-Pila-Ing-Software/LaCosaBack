@@ -129,7 +129,7 @@ class CardDefenseInformer(ResponseInterface):
                         usable=True
                     ))
 
-        return cards_info
+        return sorted(cards_info, key=lambda card: card.cardID)
 
     def get_cards_that_defend(self, card_name: str) -> str:
         """
@@ -151,9 +151,9 @@ class CardDefenseInformer(ResponseInterface):
         exceptions.validate_player_in_game(
             None, self.player, status.HTTP_400_BAD_REQUEST)
         exceptions.validate_player_alive(self.player)
-        exceptions.validate_correct_type(
-            self.card, "action")
-
+        if self.card is not None:
+            exceptions.validate_correct_type(
+                self.card, "action")
 
 class CardTradeInformer(ResponseInterface):
     def __init__(self, player_id: int):

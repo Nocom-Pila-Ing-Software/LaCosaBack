@@ -32,7 +32,7 @@ class Deck:
 
         for player in players_in_game:
             if player.role == "thing":
-                player.cards.create(name="La Cosa")
+                player.cards.create(name="La cosa")
                 for _ in range(3):
                     cls.draw_card(int(game.id), player.id)
             else:
