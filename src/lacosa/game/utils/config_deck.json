@@ -212,7 +212,7 @@
             "description": "Solo puedes jugar esta carta como respuesta a una carta '¡Cambio de lugar!' o '¡Mas vale que corras!' para cancelar su efecto.",
             "type": "defense"
         },
-        "No, gracias": {
+        "No gracias": {
             "amount_per_player": {
                 "4": 1,
                 "5": 1,
