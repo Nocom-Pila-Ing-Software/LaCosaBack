@@ -45,10 +45,10 @@ def test_create_game_success(db_game_creation):
         # The thing role was assigned
         assert the_thing.exists()
 
-        # The thing has 'La Cosa' card
+        # The thing has 'La cosa' card
         assert (
             the_thing.get().cards
-            .select(lambda c: c.name == "La Cosa")
+            .select(lambda c: c.name == "La cosa")
             .exists()
         )
 

@@ -46,7 +46,7 @@ class Deck:
         for player in players_in_game:
             if player.role == "thing":
                 player.cards.create(
-                    name="La Cosa", description="Eres La Cosa, infecta o destruye a los Humanos, no puedes descartarla.")
+                    name="La cosa", description="Eres La Cosa, infecta o destruye a los Humanos, no puedes descartarla.")
                 for _ in range(3):
                     cls.draw_card(int(game.id), player.id)
             else:

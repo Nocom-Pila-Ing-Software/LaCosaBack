@@ -573,3 +573,54 @@ def db_game_creation_with_trade_event_2():
                 player.cards.create(**card)
 
     return data
+  
+@pytest.fixture()
+def get_defend_trade_card_game_creation():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+    data = {
+        "room": {"id": 1, "name": "Test room"},
+        "players": [
+            {"id": 1, "username": "Player1", "is_host": True, "position": 1},
+            {"id": 2, "username": "Player2", "is_host": False, "position": 2},
+            {"id": 3, "username": "Player3", "is_host": False, "position": 3},
+        ],
+        "game": {"id": 1, "current_player": 1, "current_action": "draw"},
+        "cards": [
+            [
+                {"id": 1, "name": "No, gracias", "type": "defense"},
+                {"id": 2, "name": "No, gracias", "type": "defense"},
+                {"id": 3, "name": "No, gracias", "type": "defense"},
+                {"id": 4, "name": "No, gracias", "type": "defense"},
+            ],
+            [
+                {"id": 5, "name": "No, gracias", "type": "defense"},
+                {"id": 6, "name": "No, gracias", "type": "defense"},
+                {"id": 7, "name": "No, gracias", "type": "defense"},
+                {"id": 8, "name": "No, gracias", "type": "defense"},
+            ],
+            [
+                {"id": 9, "name": "No, gracias", "type": "defense"},
+                {"id": 10, "name": "No, gracias", "type": "defense"},
+                {"id": 11, "name": "No, gracias", "type": "defense"},
+                {"id": 12, "name": "No, gracias", "type": "defense"},
+            ],
+        ]
+    }
+
+    # second half
+    with db_session:
+        room = WaitingRoom(**data["room"])
+        for player_data in data["players"]:
+            room.players.create(**player_data)
+
+        game = Game(
+            waiting_room=room,
+            players=room.players,
+            **data["game"]
+        )
+        for player, cards in zip(game.players, data["cards"]):
+            for card in cards:
+                player.cards.create(**card)
+
+    return data 
