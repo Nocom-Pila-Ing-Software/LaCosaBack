@@ -109,8 +109,6 @@ def db_game_creation_with_cards():
 
         # crear cartas para el juego
         game.cards.create()
-        game.cards.create()
-        game.cards.create()
 
         # Add cards to players
         player1.cards.create(id=4, name="Lanzallamas",
@@ -129,6 +127,57 @@ def db_game_creation_with_cards():
 
         player3.cards.create(id=60, name="Lanzallamas",
                              description="Está que arde")
+
+
+@pytest.fixture(scope="function")
+def db_game_creation_with_cards_2():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+
+    with db_session:
+        # Create a waiting room
+        room = WaitingRoom(id=0, name="Test room")
+        player1 = room.players.create(
+            id=1, username="Player1", is_host=True, position=1)
+        player2 = room.players.create(
+            id=2, username="Player2", is_host=False, position=2)
+        player3 = room.players.create(
+            id=3, username="Player3", is_host=False, position=3)
+        player4 = room.players.create(
+            id=4, username="Player4", is_host=False, position=4)
+
+        # Create a game with players
+        game = Game(id=5, waiting_room=room, current_player=1, current_action="draw",
+                    last_played_card=None, players=room.players, events={})
+
+        # añadir player a game
+        game.players.add(player1)
+        game.players.add(player2)
+        game.players.add(player3)
+        game.players.add(player4)
+
+        # crear cartas para el juego
+        game.cards.create()
+
+        # Add cards to players
+        player1.cards.create(id=4, name="Lanzallamas",
+                             description="Está que arde")
+        player1.cards.create(id=5, name="Cambio de lugar",
+                                description="Cambio de lugar")
+        player1.cards.create(id=6, name="Más vale que corras",
+                                description="Más vale que corras")
+
+        player2.cards.create(id=7, name="Aquí estoy bien",
+                                description="Aquí estoy bien")
+        player2.cards.create(id=8, name="Nada de barbacoas",
+                                description="Nada de barbacoas")
+        
+        player3.cards.create(id=9, name="Vigila tus espaldas",
+                                description="Vigila tus espaldas")
+        player3.cards.create(id=60, name="Lanzallamas",
+                             description="Está que arde")
+        player4.cards.create()
+                             
 
 
 @pytest.fixture(scope="module")

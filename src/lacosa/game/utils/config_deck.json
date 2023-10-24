@@ -29,7 +29,6 @@
             },
             "description": "Elimina un jugador adyacente.",
             "type": "action",
-
             "target": "adjacent",
             "defensible_by": [
                 "Nada de barbacoas"
@@ -126,7 +125,8 @@
                 "12": 2
             },
             "description": "Invierte el orden de juego. Esto afecta tanto al orden de turnos como a los intercambios de cartas.",
-            "type": "action"
+            "type": "action",
+            "target": "self"
         },
         "Cambio de lugar": {
             "amount_per_player": {
