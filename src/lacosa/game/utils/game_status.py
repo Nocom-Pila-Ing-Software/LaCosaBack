@@ -72,7 +72,7 @@ class GameStatusHandler(ResponseInterface):
 
             # Delete hands
             for player in self.game.players:
-                for card in player.cards:
-                    card.delete()
+                for cardi in player.cards:
+                    cardi.delete()
 
             delete_room(self.game.waiting_room)
