@@ -74,7 +74,7 @@ def db_game_status():
 
     game_data = {
         "players": get_player_data(),
-        "card": {"name": "Lanzallamas", "description": "está que arde"},
+        "card": {"name": "Lanzallamas", "description": "esta que arde"},
         "game_id": 1
     }
 
@@ -112,21 +112,21 @@ def db_game_creation_with_cards():
 
         # Add cards to players
         player1.cards.create(id=4, name="Lanzallamas",
-                             description="Está que arde")
+                             description="Esta que arde")
         player1.cards.create(id=5, name="Cambio de lugar",
                                 description="Cambio de lugar")
-        player1.cards.create(id=6, name="Más vale que corras",
-                                description="Más vale que corras")
+        player1.cards.create(id=6, name="Mas vale que corras",
+                                description="Mas vale que corras")
 
-        player2.cards.create(id=7, name="Aquí estoy bien",
-                                description="Aquí estoy bien")
+        player2.cards.create(id=7, name="Aqui estoy bien",
+                                description="Aqui estoy bien")
         player2.cards.create(id=8, name="Nada de barbacoas",
                                 description="Nada de barbacoas")
         player2.cards.create()
         player2.cards.create()
 
         player3.cards.create(id=60, name="Lanzallamas",
-                             description="Está que arde")
+                             description="Esta que arde")
 
 
 @pytest.fixture(scope="function")
@@ -347,7 +347,7 @@ def get_info_card_game_creation():
                 {"id": 6, "name": "La cosa", "type": "especial" },
                 {"id": 7, "name": "Lanzallamas", "type": "action" },
                 {"id": 8, "name": "No, gracias", "type": "defense" },
-                {"id": 19, "name": "Seducción", "type": "action" }
+                {"id": 19, "name": "Seduccion", "type": "action" }
             ],
             [
                 {"id": 9, "name": "infectado", "type": "contagio" },
@@ -400,7 +400,7 @@ def get_defend_card_game_creation():
                 {"id": 6, "name": "La cosa", "type": "especial"},
                 {"id": 7, "name": "Lanzallamas", "type": "action"},
                 {"id": 8, "name": "No, gracias", "type": "defense"},
-                {"id": 19, "name": "Seducción", "type": "action"},
+                {"id": 19, "name": "Seduccion", "type": "action"},
             ],
             [
                 {"id": 9, "name": "infectado", "type": "contagio"},
@@ -522,7 +522,7 @@ def get_info_card_game_creation_with_dead_players():
                 {"id": 6, "name": "La cosa", "type": "especial"},
                 {"id": 7, "name": "Lanzallamas", "type": "action"},
                 {"id": 8, "name": "No, gracias", "type": "defense"},
-                {"id": 19, "name": "Seducción", "type": "action"}
+                {"id": 19, "name": "Seduccion", "type": "action"}
             ],
             [],
             [
@@ -588,7 +588,7 @@ def db_game_creation_with_trade_event_2():
                 {"id": 6, "name": "La cosa", "type": "especial"},
                 {"id": 7, "name": "Lanzallamas", "type": "action"},
                 {"id": 8, "name": "No, gracias", "type": "defense"},
-                {"id": 19, "name": "Seducción", "type": "action"}
+                {"id": 19, "name": "Seduccion", "type": "action"}
             ],
             [],
             [
@@ -634,7 +634,7 @@ def get_defend_trade_card_game_creation():
             {"id": 2, "username": "Player2", "is_host": False, "position": 2},
             {"id": 3, "username": "Player3", "is_host": False, "position": 3},
         ],
-        "game": {"id": 1, "current_player": 1, "current_action": "draw"},
+        "game": {"id": 1, "current_player": 1, "current_action": "trade"},
         "cards": [
             [
                 {"id": 1, "name": "No, gracias", "type": "defense"},

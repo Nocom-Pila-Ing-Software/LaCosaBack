@@ -9,7 +9,7 @@ from lacosa.interfaces import ActionInterface
 import lacosa.game.utils.turn_handler as turn_handler
 from pathlib import Path
 import json
-from pony.orm import commit
+from pony.orm import commit, select
 
 class CardPlayer(ActionInterface):
     def __init__(self, play_request: PlayCardRequest, game_id: int):
@@ -123,7 +123,13 @@ class CardTrader(ActionInterface):
             self.event.card2 = self.card
             self.event.is_completed = True
             self.event.is_successful = True
-            self.game.current_player = self.get_next_player_id()
+            events_completed = select(
+                e for e in self.game.events if e.is_completed == True)[:]
+            last_event = sorted(events_completed, key=lambda e: e.id)[-1]
+            if last_event.type == "action" and last_event.is_successful == True and (last_event.card1.name == "Cambio de lugar" or "Mas vale que corras") and last_event.player1.id == self.event.player1.id:
+                self.game.current_player = last_event.player2.id
+            else:
+                self.game.current_player = self.get_next_player_id()
             self.game.current_action = "draw"
 
             self.event.player1.cards.remove(self.event.card1)

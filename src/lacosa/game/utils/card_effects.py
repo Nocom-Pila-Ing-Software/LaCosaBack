@@ -51,9 +51,9 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
     _card_effects: Dict[str, CardEffectFunc] = {
         "Lanzallamas": apply_lanzallamas_effect,
         "Cambio de lugar": apply_switch_position_cards_effect,
-        "Más vale que corras": apply_switch_position_cards_effect,
+        "Mas vale que corras": apply_switch_position_cards_effect,
         "Vigila tus espaldas": apply_vigila_tus_espaldas_effect,
-        "Aquí estoy bien": do_nothing,
+        "Aqui estoy bien": do_nothing,
         "Nada de barbacoas": do_nothing,
         "No, gracias": do_nothing
     }

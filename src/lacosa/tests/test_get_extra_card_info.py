@@ -59,7 +59,7 @@ def test_get_card_usability_sucesfully(get_info_card_game_creation):
             assert card["playable"] == False
             assert card["discardable"] == True
         elif card["cardID"] == 19:
-            assert card["name"] == "Seducción"
+            assert card["name"] == "Seduccion"
             assert card["playable"] == True
             assert card["discardable"] == True
 
@@ -154,7 +154,7 @@ def test_get_cards_defend(get_defend_card_game_creation):
             assert card["name"] == "No, gracias"
             assert card["usable"] == False
         elif card["cardID"] == 19:
-            assert card["name"] == "Seducción"
+            assert card["name"] == "Seduccion"
             assert card["usable"] == False
 
     # Review cards defend for player 3
@@ -422,7 +422,7 @@ def test_get_targets_card(get_info_card_game_creation_with_dead_players):
         ]
     }
 
-    # Player2 uses Seducción
+    # Player2 uses Seduccion
     player_id = get_info_card_game_creation_with_dead_players["players"][1]["id"]
     card_id = get_info_card_game_creation_with_dead_players["cards"][1][4]["id"]
 
