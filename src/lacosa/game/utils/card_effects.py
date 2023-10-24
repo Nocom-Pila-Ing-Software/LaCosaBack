@@ -41,7 +41,7 @@ def apply_anticipate_trade_effect(current_player: Player, target_player: Player,
     game.events.create(player1=current_player, player2=target_player, card1=None, card2=None, is_completed=False, is_successful=False, type="trade")
 
 
-def apply_vigila_tus_espaldas_effect(current_player: Player, target_player: Player, game: Game) -> None: 
+def apply_vigila_tus_espaldas_effect(current_player: Player, target_player: Player, game: Game) -> None:
     players = game.players.order_by(Player.position)
     # jugadores vivos
     alive_players = [player for player in players if player.is_alive]
@@ -63,7 +63,7 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "Vigila tus espaldas": apply_vigila_tus_espaldas_effect,
         "Aqui estoy bien": do_nothing,
         "Nada de barbacoas": do_nothing,
-        "No gracias": do_nothing
+        "No gracias": do_nothing,
         "Seduccion": apply_anticipate_trade_effect
     }
 
