@@ -248,6 +248,11 @@ class CardTargetsInformer(ResponseInterface):
             targets = self.get_adjacent_players()
         elif self.get_target(self.card.name) == "global":
             targets = self.get_global_players()
+        elif self.get_target(self.card.name) == "self":
+            targets = [TargetsInfo(
+                playerID=self.player.id,
+                name=self.player.username
+            )]
 
         return targets
 
