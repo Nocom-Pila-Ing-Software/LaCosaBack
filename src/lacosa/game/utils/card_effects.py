@@ -33,6 +33,16 @@ def apply_switch_position_cards_effect(current_player: Player, target_player: Pl
     switch_player_positions(current_player, target_player)
 
 
+def apply_vigila_tus_espaldas_effect(current_player: Player, target_player: Player, game: Game) -> None: 
+    players = game.players.order_by(Player.position)
+    # jugadores vivos
+    alive_players = [player for player in players if player.is_alive]
+    player_len = len(alive_players)
+
+    for i in range(player_len):
+        alive_players[i].position = player_len - i + 1
+
+
 def do_nothing(*args, **kwargs) -> None:
     pass
 
@@ -42,6 +52,7 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "Lanzallamas": apply_lanzallamas_effect,
         "Cambio de lugar": apply_switch_position_cards_effect,
         "Más vale que corras": apply_switch_position_cards_effect,
+        "Vigila tus espaldas": apply_vigila_tus_espaldas_effect,
         "Aquí estoy bien": do_nothing,
         "Nada de barbacoas": do_nothing,
         "No, gracias": do_nothing
