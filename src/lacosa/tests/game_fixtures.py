@@ -240,7 +240,6 @@ def discard_card_game_creation():
         for player, cards in zip(ordered_players, discard_card_game_data["cards"]):
             for card in cards:
                 card = player.cards.create(**card)
-                print(card.player, card.name)
         commit()
 
     return discard_card_game_data
@@ -625,9 +624,11 @@ def db_game_creation_with_trade_event_2():
             players=room.players,
             **data["game"]
         )
-        for player, cards in zip(game.players, data["cards"]):
+        ordered_players = game.players.order_by(lambda p: p.id)
+        for player, cards in zip(ordered_players, data["cards"]):
             for card in cards:
-                player.cards.create(**card)
+                card = player.cards.create(**card)
+        commit()
 
     return data
 
