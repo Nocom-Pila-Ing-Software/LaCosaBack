@@ -497,58 +497,68 @@ def test_use_no_gracias_as_tradeable_card(db_game_creation_with_trade_event_2):
             card_player_2_id), select_card(card_player_1_id))
 
 
-# def test_succesful_contagion(db_game_creation_with_trade_event_2):
-#    player1_id = None
-#    player2_id = None
-#    card_player_1_id = None
-#    card_player_2_id = None
-#    with db_session:
-#        game = Game.get(id=1)
-#        players = select(p for p in game.players)[:]
-#        delete(e for e in game.events)
-#        commit()
-#        game.events.create(
-#            type="trade", player1=players[1], player2=players[4])
-#        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
-#
-#        player1_id = game_event.player1.id
-#        player2_id = game_event.player2.id
-#
-#        card_player_1_id = cards_player_1[1].id
-#        card_player_2_id = cards_player_2[1].id
-#
-#        game.current_player = game_event.player1.id
-#
-#    response1 = client.put(
-#        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
-#
-#    assert response1.status_code == 200
-#
-#    with db_session:
-#        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
-#
-#        assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
-#                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
-#
-#        assert_game_cards(game, game_event, select_card(
-#            card_player_1_id), select_card(card_player_2_id))
-#
-#    response2 = client.put(
-#        "/game/1/trade-card", json={"playerID": player2_id, "cardID": card_player_2_id})
-#
-#    assert response2.status_code == 200
-#
-#    with db_session:
-#        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
-#
-#        assert select(p for p in game.players if p.id ==
-#                      player1_id).first().role == "Infeccion"
-#
-#        assert_game_state(game, game_event, is_completed=True, player1=game_event.player1,
-#                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=select_card(card_player_2_id), action="draw", current_player=player1_id, is_successful=True)
-#
-#        assert_game_cards(game, game_event, select_card(
-#            card_player_2_id), select_card(card_player_1_id))
+def test_succesful_contagion(db_game_creation_with_trade_event_2):
+    player1_id = None
+    player2_id = None
+    card_player_1_id = None
+    card_player_2_id = None
+    with db_session:
+        game = Game.get(id=1)
+        players = list(select(p for p in game.players))
+        delete(e for e in game.events)
+        game.events.create(
+            type="trade", player1=players[1], player2=players[4])
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        player1_id = game_event.player1.id
+        player2_id = game_event.player2.id
+
+        card_player_1_id = cards_player_1[0].id
+        card_player_2_id = cards_player_2[1].id
+
+        game.current_player = game_event.player1.id
+        commit()
+
+    response1 = client.put(
+        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
+
+    assert response1.status_code == 200
+
+    with db_session:
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+
+        assert_game_cards(game, game_event, select_card(
+            card_player_1_id), select_card(card_player_2_id))
+
+    response2 = client.put(
+        "/game/1/trade-card", json={"playerID": player2_id, "cardID": card_player_2_id})
+
+    assert response2.status_code == 200
+
+    with db_session:
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        assert select(p for p in game.players if p.id ==
+                      player2_id).first().role == "infected"
+
+        assert_game_state(
+            game,
+            game_event,
+            is_completed=True,
+            player1=game_event.player1,
+            player2=game_event.player2,
+            card1=select_card(card_player_1_id),
+            card2=select_card(card_player_2_id),
+            action="draw",
+            current_player=players[3].id,
+            is_successful=True
+        )
+
+        assert_game_cards(game, game_event, select_card(
+            card_player_2_id), select_card(card_player_1_id))
 
 
 # def test_try_trade_card_la_cosa_infeccion(db_game_creation_with_trade_event_2):

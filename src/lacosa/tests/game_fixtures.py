@@ -595,7 +595,6 @@ def db_game_creation_with_trade_event_2():
                 {"id": 6, "name": "La cosa", "type": "especial"},
                 {"id": 7, "name": "Lanzallamas", "type": "action"},
                 {"id": 8, "name": "No gracias", "type": "defense"},
-                {"id": 19, "name": "Seduccion", "type": "action"}
             ],
             [],
             [
