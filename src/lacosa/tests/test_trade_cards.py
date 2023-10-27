@@ -21,8 +21,10 @@ def next_player(game, game_event):
 def get_game_and_cards():
     game = Game.get(id=1)
     game_event = select(e for e in game.events).first()
-    cards_player_1 = select(e for e in game_event.player1.cards)[:]
-    cards_player_2 = select(e for e in game_event.player2.cards)[:]
+    cards_player_1 = list(
+        select(e for e in game_event.player1.cards).sort_by(lambda x: x.id))
+    cards_player_2 = list(
+        select(e for e in game_event.player2.cards).sort_by(lambda x: x.id))
     return game, game_event, cards_player_1, cards_player_2
 
 
@@ -446,53 +448,53 @@ def test_trade_in_invalid_turn_state(db_game_creation_with_trade_event):
         assert_game_cards(game, game_event, select_card(
             card_player_2_id), select_card(card_player_1_id))
 
-# def test_use_no_gracias_as_tradeable_card(db_game_creation_with_trade_event_2):
-#    player1_id = None
-#    player2_id = None
-#    card_player_1_id = None
-#    card_player_2_id = None
-#    with db_session:
-#        game = Game.get(id=1)
-#        players = select(p for p in game.players)[:]
-#        delete(e for e in game.events)
-#        commit()
-#        game.events.create(type="trade", player1=players[2], player2=players[4])
-#        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
-#
-#        player1_id = game_event.player1.id
-#        player2_id = game_event.player2.id
-#
-#        card_player_1_id = cards_player_1[1].id
-#        card_player_2_id = cards_player_2[3].id
-#
-#    response1 = client.put(
-#        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
-#
-#    assert response1.status_code == 200
-#
-#    with db_session:
-#        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
-#
-#        assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
-#                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
-#
-#        assert_game_cards(game, game_event, select_card(
-#            card_player_1_id), select_card(card_player_2_id))
-#
-#    response2 = client.put(
-#        "/game/1/trade-card", json={"playerID": player2_id, "cardID": card_player_2_id})
-#
-#    assert response2.status_code == 200
-#
-#    with db_session:
-#        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
-#        next_position = next_player(game, game_event)
-#
-#        assert_game_state(game, game_event, is_completed=True, player1=game_event.player1,
-#                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=select_card(card_player_2_id), action="draw", current_player=next_position, is_successful=True)
-#
-#        assert_game_cards(game, game_event, select_card(
-#            card_player_2_id), select_card(card_player_1_id))
+
+def test_use_no_gracias_as_tradeable_card(db_game_creation_with_trade_event_2):
+    player1_id = None
+    player2_id = None
+    card_player_1_id = None
+    card_player_2_id = None
+    with db_session:
+        game = Game.get(id=1)
+        players = list(select(p for p in game.players))
+        delete(e for e in game.events)
+        game.events.create(
+            type="trade", player1=players[0], player2=players[4])
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        player1_id = game_event.player1.id
+        player2_id = game_event.player2.id
+        card_player_1_id = cards_player_1[1].id
+        card_player_2_id = cards_player_2[3].id
+
+    response1 = client.put(
+        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
+
+    assert response1.status_code == 200
+
+    with db_session:
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+
+        assert_game_cards(game, game_event, select_card(
+            card_player_1_id), select_card(card_player_2_id))
+
+    response2 = client.put(
+        "/game/1/trade-card", json={"playerID": player2_id, "cardID": card_player_2_id})
+
+    assert response2.status_code == 200
+
+    with db_session:
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+        next_position = next_player(game, game_event)
+
+        assert_game_state(game, game_event, is_completed=True, player1=game_event.player1,
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=select_card(card_player_2_id), action="draw", current_player=next_position, is_successful=True)
+
+        assert_game_cards(game, game_event, select_card(
+            card_player_2_id), select_card(card_player_1_id))
 
 
 # def test_succesful_contagion(db_game_creation_with_trade_event_2):
@@ -614,7 +616,7 @@ def test_trade_in_invalid_turn_state(db_game_creation_with_trade_event):
 #    assert response1.status_code == 403
 
 
-#def test_try_infected_to_the_thing_send_card(db_game_creation_with_trade_event_2):
+# def test_try_infected_to_the_thing_send_card(db_game_creation_with_trade_event_2):
 #    player1_id = None
 #    player2_id = None
 #    card_player_1_id = None
@@ -750,4 +752,3 @@ def test_get_defense_cards_info(get_defend_trade_card_game_creation):
 
         assert_game_cards(game, game_event, select_card(
             card_player_2_id), select_card(card_player_1_id))
-
