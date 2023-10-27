@@ -4,7 +4,12 @@ from fastapi.testclient import TestClient
 from models import Game, Card
 from pony.orm import db_session, select, commit, delete
 import pytest
-from .game_fixtures import db_game_creation_with_trade_event, db_game_creation_with_trade_event_2, get_defend_trade_card_game_creation
+from .game_fixtures import (
+    db_game_creation_with_trade_event,
+    db_game_creation_with_trade_event_2,
+    db_game_creation_with_trade_event_3,
+    get_defend_trade_card_game_creation,
+)
 
 client = TestClient(app)
 
@@ -561,143 +566,143 @@ def test_succesful_contagion(db_game_creation_with_trade_event_2):
             card_player_2_id), select_card(card_player_1_id))
 
 
-# def test_try_trade_card_la_cosa_infeccion(db_game_creation_with_trade_event_2):
-#    player1_id = None
-#    player2_id = None
-#    card_player_1_id = None
-#    card_player_2_id = None
-#
-#    # infected to human trade card Infeccion
-#    with db_session:
-#        game = Game.get(id=1)
-#        players = select(p for p in game.players)[:]
-#        game.events.create(
-#            type="trade", player1=players[3], player2=players[4])
-#        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
-#
-#        player1_id = game_event.player1.id
-#        player2_id = game_event.player2.id
-#        card_player_1_id = cards_player_1[0].id
-#        card_player_2_id = cards_player_2[1].id
-#
-#    response1 = client.put(
-#        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
-#
-#    assert response1.status_code == 403
-#
-#    # human to infected trade card Infeccion
-#    with db_session:
-#        game = Game.get(id=1)
-#        delete(e for e in game.events)
-#        commit()
-#        players = select(p for p in game.players)[:]
-#        game.events.create(
-#            type="trade", player1=players[4], player2=players[3])
-#        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
-#
-#        player1_id = game_event.player1.id
-#        player2_id = game_event.player2.id
-#        card_player_1_id = cards_player_1[1].id
-#        card_player_2_id = cards_player_2[0].id
-#
-#    response1 = client.put(
-#        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
-#
-#    assert response1.status_code == 403
-#
-#    # thing try to trade card thing
-#    with db_session:
-#        game = Game.get(id=1)
-#        delete(e for e in game.events)
-#        commit()
-#        players = select(p for p in game.players)[:]
-#        game.events.create(
-#            type="trade", player1=players[1], player2=players[0])
-#        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
-#
-#        player1_id = game_event.player1.id
-#        player2_id = game_event.player2.id
-#        card_player_1_id = cards_player_1[1].id
-#        card_player_2_id = cards_player_2[1].id
-#
-#    response1 = client.put(
-#        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
-#
-#    assert response1.status_code == 403
+def test_try_trade_card_la_cosa_infeccion(db_game_creation_with_trade_event_2):
+    player1_id = None
+    player2_id = None
+    card_player_1_id = None
+    card_player_2_id = None
+
+    # infected to human trade card Infeccion
+    with db_session:
+        game = Game.get(id=1)
+        players = select(p for p in game.players)[:]
+        game.events.create(
+            type="trade", player1=players[3], player2=players[4])
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        player1_id = game_event.player1.id
+        player2_id = game_event.player2.id
+        card_player_1_id = cards_player_1[0].id
+        card_player_2_id = cards_player_2[1].id
+
+    response1 = client.put(
+        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
+
+    assert response1.status_code == 403
+
+    # human to infected trade card Infeccion
+    with db_session:
+        game = Game.get(id=1)
+        delete(e for e in game.events)
+        commit()
+        players = select(p for p in game.players)[:]
+        game.events.create(
+            type="trade", player1=players[4], player2=players[3])
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        player1_id = game_event.player1.id
+        player2_id = game_event.player2.id
+        card_player_1_id = cards_player_1[1].id
+        card_player_2_id = cards_player_2[0].id
+
+    response1 = client.put(
+        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
+
+    assert response1.status_code == 403
+
+    # thing try to trade card thing
+    with db_session:
+        game = Game.get(id=1)
+        delete(e for e in game.events)
+        commit()
+        players = select(p for p in game.players)[:]
+        game.events.create(
+            type="trade", player1=players[1], player2=players[0])
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        player1_id = game_event.player1.id
+        player2_id = game_event.player2.id
+        card_player_1_id = cards_player_1[1].id
+        card_player_2_id = cards_player_2[1].id
+
+    response1 = client.put(
+        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
+
+    assert response1.status_code == 403
 
 
-# def test_try_infected_to_the_thing_send_card(db_game_creation_with_trade_event_2):
-#    player1_id = None
-#    player2_id = None
-#    card_player_1_id = None
-#    card_player_2_id = None
-#
-#    # infected to thing trade card Infeccion
-#    with db_session:
-#        game = Game.get(id=1)
-#        players = select(p for p in game.players)[:]
-#        game.events.create(
-#            type="trade", player1=players[2], player2=players[1])
-#        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
-#
-#        player1_id = game_event.player1.id
-#        player2_id = game_event.player2.id
-#
-#        card_player_1_id = cards_player_1[0].id
-#        card_player_2_id = cards_player_2[2].id
-#
-#        game.current_player = game_event.player1.id
-#
-#    response1 = client.put(
-#        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
-#
-#    assert response1.status_code == 200
-#
-#    with db_session:
-#        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
-#
-#        assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
-#                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
-#
-#        assert_game_cards(game, game_event, select_card(
-#            card_player_1_id), select_card(card_player_2_id))
-#
-#    response2 = client.put(
-#        "/game/1/trade-card", json={"playerID": player2_id, "cardID": card_player_2_id})
-#
-#    assert response2.status_code == 200
-#
-#    with db_session:
-#        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
-#
-#        next_player_id = next_player(game, game_event)
-#
-#        assert_game_state(game, game_event, is_completed=True, player1=game_event.player1,
-#                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=select_card(card_player_2_id), action="draw", current_player=next_player_id, is_successful=True)
-#
-#        assert_game_cards(game, game_event, select_card(
-#            card_player_2_id), select_card(card_player_1_id))
-#
-#    # thing to infected trade card Infeccion
-#    with db_session:
-#        game = Game.get(id=1)
-#        delete(e for e in game.events)
-#        commit()
-#        players = select(p for p in game.players)[:]
-#        game.events.create(
-#            type="trade", player1=players[1], player2=players[0])
-#        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
-#
-#        player1_id = game_event.player1.id
-#        player2_id = game_event.player2.id
-#
-#        card_player_1_id = cards_player_1[0].id
-#        card_player_2_id = cards_player_2[0].id
-#
-#    response1 = client.put(
-#        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
-#
-#    assert response1.status_code == 403
+def test_try_infected_to_the_thing_send_card(db_game_creation_with_trade_event_3):
+    player1_id = None
+    player2_id = None
+    card_player_1_id = None
+    card_player_2_id = None
+
+    # infected to thing trade card Infeccion
+    with db_session:
+        game = Game.get(id=1)
+        players = select(p for p in game.players)[:]
+        game.events.create(
+            type="trade", player1=players[0], player2=players[1])
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        player1_id = game_event.player1.id
+        player2_id = game_event.player2.id
+
+        card_player_1_id = cards_player_1[0].id
+        card_player_2_id = cards_player_2[2].id
+
+        game.current_player = game_event.player1.id
+
+    response1 = client.put(
+        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
+
+    assert response1.status_code == 200
+
+    with db_session:
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        assert_game_state(game, game_event, is_completed=False, player1=game_event.player1,
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=None, action="trade", current_player=game_event.player2.id)
+
+        assert_game_cards(game, game_event, select_card(
+            card_player_1_id), select_card(card_player_2_id))
+
+    response2 = client.put(
+        "/game/1/trade-card", json={"playerID": player2_id, "cardID": card_player_2_id})
+
+    assert response2.status_code == 200
+
+    with db_session:
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        next_player_id = next_player(game, game_event)
+
+        assert_game_state(game, game_event, is_completed=True, player1=game_event.player1,
+                          player2=game_event.player2, card1=select_card(card_player_1_id), card2=select_card(card_player_2_id), action="draw", current_player=next_player_id, is_successful=True)
+
+        assert_game_cards(game, game_event, select_card(
+            card_player_2_id), select_card(card_player_1_id))
+
+    # thing to infected trade card Infeccion
+    with db_session:
+        game = Game.get(id=1)
+        delete(e for e in game.events)
+        commit()
+        players = select(p for p in game.players)[:]
+        game.events.create(
+            type="trade", player1=players[1], player2=players[0])
+        game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
+
+        player1_id = game_event.player1.id
+        player2_id = game_event.player2.id
+
+        card_player_1_id = cards_player_1[0].id
+        card_player_2_id = cards_player_2[0].id
+
+    response1 = client.put(
+        "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
+
+    assert response1.status_code == 403
 
 
 def test_get_defense_cards_info(get_defend_trade_card_game_creation):
