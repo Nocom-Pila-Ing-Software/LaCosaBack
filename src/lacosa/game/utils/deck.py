@@ -4,6 +4,7 @@ import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
 import json
 from pathlib import Path
+from settings import settings
 
 
 class Deck:
@@ -17,10 +18,7 @@ class Deck:
         """
         player_count = max(4, min(12, game.players.count()))
 
-        config_path = Path(__file__).resolve().parent.parent / \
-            'utils' / 'config_deck.json'
-
-        with open(config_path) as config_file:
+        with open(settings.DECK_CONFIG_PATH) as config_file:
             config = json.load(config_file)
 
         for card_name, card_data in config["cards"].items():

@@ -8,8 +8,9 @@ from lacosa.player.schemas import UsabilityActionResponse, UsabilityActionInfoCa
 from fastapi import status
 from models import Event
 from pony.orm import select
+from settings import settings
 
-_CONFIG_PATH = Path(__file__).resolve().parent.parent / 'config_deck.json'
+
 
 
 class CardUsabilityInformer(ResponseInterface):
@@ -63,8 +64,7 @@ class CardUsabilityInformer(ResponseInterface):
         """
         Returns the type of the card
         """
-        print(_CONFIG_PATH)
-        with open(_CONFIG_PATH) as config_file:
+        with open(settings.DECK_CONFIG_PATH) as config_file:
             config = json.load(config_file)
 
         return config["cards"][card_name]["type"]
@@ -135,7 +135,7 @@ class CardDefenseInformer(ResponseInterface):
         """
         Returns the type of the card
         """
-        with open(_CONFIG_PATH) as config_file:
+        with open(settings.DECK_CONFIG_PATH) as config_file:
             config = json.load(config_file)
 
         return config["cards"][card_name]["defensible_by"]
@@ -259,7 +259,7 @@ class CardTargetsInformer(ResponseInterface):
         """
         Returns the type of the card
         """
-        with open(_CONFIG_PATH) as config_file:
+        with open(settings.DECK_CONFIG_PATH) as config_file:
             config = json.load(config_file)
 
         targets = config["cards"][card_name]["target"]

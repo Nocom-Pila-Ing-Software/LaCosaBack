@@ -11,6 +11,7 @@ import lacosa.game.utils.turn_handler as turn_handler
 from pathlib import Path
 import json
 from pony.orm import commit, select
+from settings import settings
 
 
 class CardPlayer(ActionInterface):
@@ -77,11 +78,7 @@ class CardPlayer(ActionInterface):
         return next_player.id
 
     def check_card_is_defensible(self, card) -> bool:
-        config_path = Path(__file__).resolve(
-        ).parent.parent / 'config_deck.json'
-
-
-        with open(config_path) as config_file:
+        with open(settings.DECK_CONFIG_PATH) as config_file:
             config = json.load(config_file)
 
         if card.name in config['cards']:
