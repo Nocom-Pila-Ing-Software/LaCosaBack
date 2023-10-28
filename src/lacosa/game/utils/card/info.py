@@ -9,6 +9,8 @@ from fastapi import status
 from models import Event
 from pony.orm import select
 
+_CONFIG_PATH = Path(__file__).resolve().parent.parent / 'config_deck.json'
+
 
 class CardUsabilityInformer(ResponseInterface):
     def __init__(self, player_id: int):
@@ -61,10 +63,8 @@ class CardUsabilityInformer(ResponseInterface):
         """
         Returns the type of the card
         """
-        config_path = Path(__file__).resolve().parent.parent / \
-            'utils' / 'config_deck.json'
-
-        with open(config_path) as config_file:
+        print(_CONFIG_PATH)
+        with open(_CONFIG_PATH) as config_file:
             config = json.load(config_file)
 
         return config["cards"][card_name]["type"]
@@ -106,7 +106,8 @@ class CardDefenseInformer(ResponseInterface):
         cards_info = []
         # Get the cards that only are usable if the player is the target of the trade event (and only in a trade event)
         if self.card is None:
-            event = select(e for e in Event if e.type == "trade" and (e.player1 == self.player or e.player2 == self.player) and e.is_completed == False).first()
+            event = select(e for e in Event if e.type == "trade" and (
+                e.player1 == self.player or e.player2 == self.player) and e.is_completed == False).first()
             # Verify if the player is the target of the trade event and not the trader generating the event
             if event is not None and event.player2 == self.player:
                 for card in self.player.cards:
@@ -134,10 +135,7 @@ class CardDefenseInformer(ResponseInterface):
         """
         Returns the type of the card
         """
-        config_path = Path(__file__).resolve().parent.parent / \
-            'utils' / 'config_deck.json'
-
-        with open(config_path) as config_file:
+        with open(_CONFIG_PATH) as config_file:
             config = json.load(config_file)
 
         return config["cards"][card_name]["defensible_by"]
@@ -153,6 +151,7 @@ class CardDefenseInformer(ResponseInterface):
         if self.card is not None:
             exceptions.validate_correct_type(
                 self.card, "action")
+
 
 class CardTradeInformer(ResponseInterface):
     def __init__(self, player_id: int):
@@ -260,10 +259,7 @@ class CardTargetsInformer(ResponseInterface):
         """
         Returns the type of the card
         """
-        config_path = Path(__file__).resolve().parent.parent / \
-            'utils' / 'config_deck.json'
-
-        with open(config_path) as config_file:
+        with open(_CONFIG_PATH) as config_file:
             config = json.load(config_file)
 
         targets = config["cards"][card_name]["target"]

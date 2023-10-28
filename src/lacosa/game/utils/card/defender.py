@@ -1,11 +1,11 @@
 from models import Event
-from ..schemas import PlayCardRequest, EventTypes, GenericCardRequest, EventCreationRequest
+from ...schemas import PlayCardRequest, EventTypes, GenericCardRequest, EventCreationRequest
 from lacosa.game.utils.deck import Deck
 from lacosa.game.utils.event_creator import EventCreator
-from .card_effects import execute_card_effect
+from .effects import execute_card_effect
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
-from .deck import Deck
+from ..deck import Deck
 from lacosa.interfaces import ActionInterface
 import lacosa.game.utils.turn_handler as turn_handler
 from pathlib import Path

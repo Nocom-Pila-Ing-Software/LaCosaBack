@@ -1,16 +1,17 @@
 from models import Event
-from ..schemas import PlayCardRequest, EventTypes, GenericCardRequest, EventCreationRequest
+from ...schemas import PlayCardRequest, EventTypes, GenericCardRequest, EventCreationRequest
 from lacosa.game.utils.deck import Deck
 from lacosa.game.utils.event_creator import EventCreator
-from .card_effects import execute_card_effect
+from .effects import execute_card_effect
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
-from .deck import Deck
+from ..deck import Deck
 from lacosa.interfaces import ActionInterface
 import lacosa.game.utils.turn_handler as turn_handler
 from pathlib import Path
 import json
 from pony.orm import commit, select
+
 
 class CardPlayer(ActionInterface):
     def __init__(self, play_request: PlayCardRequest, game_id: int):
@@ -76,8 +77,9 @@ class CardPlayer(ActionInterface):
         return next_player.id
 
     def check_card_is_defensible(self, card) -> bool:
-        config_path = Path(__file__).resolve().parent.parent / \
-            'utils' / 'config_deck.json'
+        config_path = Path(__file__).resolve(
+        ).parent.parent / 'config_deck.json'
+
 
         with open(config_path) as config_file:
             config = json.load(config_file)

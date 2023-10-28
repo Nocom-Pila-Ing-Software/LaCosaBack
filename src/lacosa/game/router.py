@@ -10,9 +10,10 @@ from lacosa.schemas import PlayerID, GameID
 from lacosa.game.utils.game_creator import GameCreator
 from .utils.deck import Deck
 from lacosa.game.utils.game_status import GameStatusHandler
-from lacosa.game.utils.game_actions import CardDefender, CardPlayer, CardTrader
-from lacosa.game.utils.game_actions import CardPlayer
-from lacosa.game.utils.discard_card import discard_card_util
+from lacosa.game.utils.card.player import CardPlayer
+from lacosa.game.utils.card.trader import CardTrader
+from lacosa.game.utils.card.defender import CardDefender
+from lacosa.game.utils.card.discarder import discard_card_util
 from lacosa.game.utils.error_responses import error_responses
 from lacosa.game.utils.game_ender import end_game_if_conditions_are_met
 
@@ -59,7 +60,6 @@ async def discard_card(discard_request: GenericCardRequest, room_id: int) -> Non
     """Discards a card from a player's hand"""
     with db_session:
         discard_card_util(discard_request, room_id)
-
 
 
 @game_router.put(path="/{room_id}/play-card", status_code=status.HTTP_200_OK,
