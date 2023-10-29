@@ -3,15 +3,10 @@ from lacosa import utils
 import lacosa.game.utils.exceptions as exceptions
 from lacosa.interfaces import ResponseInterface
 from lacosa.player.schemas import (
-    UsabilityActionResponse,
-    UsabilityActionInfoCard,
-    UsabilityResponse,
-    UsabilityInfoCard,
     TargetsResponse,
     TargetsInfo,
 )
 from fastapi import status
-from models import Event
 from pony.orm import select
 from settings import settings
 
