@@ -1,7 +1,7 @@
 from models import Player
-from ..schemas import GameStatus, PublicPlayerInfo
+from ...schemas import GameStatus, PublicPlayerInfo
 from lacosa.schemas import PlayerID, CardInfo
-from ...room.utils.room_operations import delete_room
+from lacosa.room.utils.room_operations import delete_room
 import lacosa.utils as utils
 from lacosa.interfaces import ResponseInterface
 

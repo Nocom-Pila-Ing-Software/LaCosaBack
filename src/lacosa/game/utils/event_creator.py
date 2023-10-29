@@ -1,9 +1,9 @@
 from models import Event
 from pony.orm import select
-from ..schemas import GameEvent, EventTypes, Action
+from lacosa.game.schemas import GameEvent, EventTypes, Action
 import lacosa.utils as utils
 from lacosa.interfaces import CreatorInterface
-from ..schemas import EventTypes
+
 
 class EventCreator(CreatorInterface):
     def __init__(self, event_request: GameEvent):
@@ -36,5 +36,3 @@ class EventCreator(CreatorInterface):
             self.game.current_action = Action.action
         elif self.event_request.type == EventTypes.trade:
             self.game.current_action = Action.trade
-
-    

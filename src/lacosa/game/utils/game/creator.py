@@ -1,9 +1,9 @@
 import random
 from pony.orm import select
-from ..schemas import GameCreationRequest
+from ...schemas import GameCreationRequest
 from lacosa.schemas import GameID
 from models import Game
-from .deck import Deck
+from ..deck import Deck
 import lacosa.utils as utils
 from lacosa.interfaces import ResponseInterface, CreatorInterface
 
@@ -23,7 +23,6 @@ class GameCreator(ResponseInterface, CreatorInterface):
     def get_response(self):
         response = GameID(gameID=self.game.id)
         return response
-
 
     def _randomize_players_positions(self, creation_request: GameCreationRequest) -> None:
         """
@@ -52,10 +51,10 @@ class GameCreator(ResponseInterface, CreatorInterface):
         game = Game(
             waiting_room=room,
             players=room.players,
-            current_player=room.players.select().order_by(lambda p: random.random())[:][0].id
+            current_player=room.players.select().order_by(
+                lambda p: random.random())[:][0].id
         )
         return game
-
 
     def _assign_roles(self) -> None:
         """

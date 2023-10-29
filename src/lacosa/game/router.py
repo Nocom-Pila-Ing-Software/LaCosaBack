@@ -7,15 +7,15 @@ from pony.orm import db_session
 from pony.orm import db_session
 from lacosa.game.schemas import GameCreationRequest, GameStatus, GenericCardRequest, PlayCardRequest
 from lacosa.schemas import PlayerID, GameID
-from lacosa.game.utils.game_creator import GameCreator
+from lacosa.game.utils.game.creator import GameCreator
 from .utils.deck import Deck
-from lacosa.game.utils.game_status import GameStatusHandler
+from lacosa.game.utils.game.status import GameStatusHandler
 from lacosa.game.utils.card.player import CardPlayer
 from lacosa.game.utils.card.trader import CardTrader
 from lacosa.game.utils.card.defender import CardDefender
 from lacosa.game.utils.card.discarder import discard_card_util
 from lacosa.game.utils.error_responses import error_responses
-from lacosa.game.utils.game_ender import end_game_if_conditions_are_met
+from lacosa.game.utils.game.ender import end_game_if_conditions_are_met
 
 game_router = APIRouter()
 
