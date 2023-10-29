@@ -20,13 +20,14 @@ def validate_player_alive(player):
         )
 
 
+def validate_player_has_game(player: Player, default_status_code=status.HTTP_404_NOT_FOUND):
+    if player.game is None:
+        raise HTTPException(status_code=default_status_code,
+                            detail="Player not in game")
+
+
 def validate_player_in_game(game: Game, player: Player, default_status_code=status.HTTP_404_NOT_FOUND):
-    if game is None:
-        # Verify that the player is in a game
-        if player.game is None:
-            raise HTTPException(status_code=default_status_code,
-                                detail="Player not in game")
-    elif player not in game.players:
+    if player not in game.players:
         raise HTTPException(status_code=default_status_code,
                             detail="Player not in game")
 

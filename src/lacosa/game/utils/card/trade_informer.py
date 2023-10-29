@@ -62,9 +62,9 @@ class CardTradeInformer(ResponseInterface):
         Checks for errors and raises HTTPException if needed
         """
 
-        exceptions.validate_player_in_game(
-            None, self.player, status.HTTP_400_BAD_REQUEST)
-        exceptions.validate_player_in_game(
-            None, self.target, status.HTTP_400_BAD_REQUEST)
+        exceptions.validate_player_has_game(
+            self.player, status.HTTP_400_BAD_REQUEST)
+        exceptions.validate_player_has_game(
+            self.target, status.HTTP_400_BAD_REQUEST)
         exceptions.validate_player_alive(self.player)
         exceptions.validate_player_alive(self.target)
