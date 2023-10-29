@@ -3,7 +3,6 @@ import random
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
 import json
-from pathlib import Path
 from settings import settings
 
 

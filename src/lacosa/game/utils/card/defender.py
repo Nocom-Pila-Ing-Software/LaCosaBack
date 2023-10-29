@@ -1,6 +1,4 @@
-from models import Event
-from ...schemas import PlayCardRequest, EventTypes, GenericCardRequest, EventCreationRequest
-from lacosa.game.utils.deck import Deck
+from ...schemas import EventTypes, GenericCardRequest, EventCreationRequest
 from lacosa.game.utils.event_creator import EventCreator
 from .effects import execute_card_effect
 import lacosa.utils as utils
@@ -8,9 +6,6 @@ import lacosa.game.utils.exceptions as exceptions
 from ..deck import Deck
 from lacosa.interfaces import ActionInterface
 import lacosa.game.utils.turn_handler as turn_handler
-from pathlib import Path
-import json
-from pony.orm import commit, select
 
 
 class CardDefender(ActionInterface):
@@ -93,7 +88,8 @@ class CardDefender(ActionInterface):
         game_id (int): The id of the game to validate
 
         Raises:
-        HTTPException(status_code=400): If the player is not found or the card is not in the player's hand
+        HTTPException(status_code=400): If the player is not found or the card
+        is not in the player's hand
         HTTPException(status_code=403): If the player is not allowed to defend
         HTTPException(status_code=404): If the game is not found
         """

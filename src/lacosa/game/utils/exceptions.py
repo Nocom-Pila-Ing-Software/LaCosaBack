@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 from fastapi import HTTPException, status
 from models import Game, Player, Card
 from settings import settings

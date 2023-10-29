@@ -1,5 +1,4 @@
 from models import Event
-from pony.orm import select
 from lacosa.game.schemas import GameEvent, EventTypes, Action
 import lacosa.utils as utils
 from lacosa.interfaces import CreatorInterface

@@ -1,16 +1,19 @@
 import json
-from pathlib import Path
 from lacosa import utils
-from lacosa.game.utils.deck import Deck
 import lacosa.game.utils.exceptions as exceptions
 from lacosa.interfaces import ResponseInterface
-from lacosa.player.schemas import UsabilityActionResponse, UsabilityActionInfoCard, UsabilityResponse, UsabilityInfoCard, TargetsResponse, TargetsInfo
+from lacosa.player.schemas import (
+    UsabilityActionResponse,
+    UsabilityActionInfoCard,
+    UsabilityResponse,
+    UsabilityInfoCard,
+    TargetsResponse,
+    TargetsInfo,
+)
 from fastapi import status
 from models import Event
 from pony.orm import select
 from settings import settings
-
-
 
 
 class CardUsabilityInformer(ResponseInterface):
@@ -107,7 +110,7 @@ class CardDefenseInformer(ResponseInterface):
         # Get the cards that only are usable if the player is the target of the trade event (and only in a trade event)
         if self.card is None:
             event = select(e for e in Event if e.type == "trade" and (
-                e.player1 == self.player or e.player2 == self.player) and e.is_completed == False).first()
+                e.player1 == self.player or e.player2 == self.player) and e.is_completed is False).first()
             # Verify if the player is the target of the trade event and not the trader generating the event
             if event is not None and event.player2 == self.player:
                 for card in self.player.cards:
@@ -276,7 +279,7 @@ class CardTargetsInformer(ResponseInterface):
                 before_position = self.player.position - 1
                 after_position = self.player.position + 1
                 total_positions = len(
-                    select(p for p in self.player.game.players if p.is_alive == True)[:])
+                    select(p for p in self.player.game.players if p.is_alive is True)[:])
                 if self.player.position == 1:
                     before_position = total_positions
                 if self.player.position == total_positions:
@@ -296,7 +299,7 @@ class CardTargetsInformer(ResponseInterface):
 
         players = []
         for player in self.player.game.players.sort_by(lambda p: p.id):
-            if player != self.player and player.is_alive == True:
+            if player != self.player and player.is_alive is True:
                 players.append(TargetsInfo(
                     playerID=player.id,
                     name=player.username
