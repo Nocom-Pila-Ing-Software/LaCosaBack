@@ -29,7 +29,7 @@ class CardTrader(ActionInterface):
             self.game.current_player = self.event.player2.id
         else:
             events_completed = select(
-                e for e in self.game.events if e.is_completed == True)[:]
+                e for e in self.game.events if e.is_completed is True)[:]
             last_event = None
             if len(events_completed) > 0:
                 last_event = sorted(events_completed, key=lambda e: e.id)[-1]

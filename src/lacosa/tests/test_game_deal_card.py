@@ -40,7 +40,7 @@ def test_draw_card_success(setup_test_environment):
     mock_draw_request = PlayerID(playerID=1).model_dump()
     response = client.put("/game/0/deal-card", json=mock_draw_request)
     assert response.status_code == 200
-    assert response.json() == None
+    assert response.json() is None
 
 def test_draw_card_invalid_game_id(setup_test_environment):
     mock_draw_request = PlayerID(playerID=1).model_dump()

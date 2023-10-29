@@ -5,7 +5,6 @@ from lacosa.game.utils.event_creator import EventCreator
 from .effects import execute_card_effect
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
-from ..deck import Deck
 from lacosa.interfaces import ActionInterface
 import lacosa.game.utils.turn_handler as turn_handler
 import json
@@ -51,7 +50,7 @@ class CardPlayer(ActionInterface):
             event.is_successful = True
 
             self.game.current_action = "trade"
-            if select(e for e in Event if (e.player1.id == self.player.id or e.player2.id == self.target_player.id) and e.is_completed == False).get() is None:
+            if select(e for e in Event if (e.player1.id == self.player.id or e.player2.id == self.target_player.id) and e.is_completed is False).get() is None:
                 event_request = EventCreationRequest(
                     gameID=self.game.id,
                     playerID=self.player.id,
