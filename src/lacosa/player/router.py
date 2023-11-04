@@ -3,10 +3,10 @@ from lacosa.player.schemas import PlayerResponse, UsabilityResponse, UsabilityAc
 from pony.orm import db_session
 import lacosa.player.utils.player_status as player_stat
 from lacosa.player.utils.error_responses import error_responses
-from lacosa.game.utils.card.playability_informer import CardUsabilityInformer
-from lacosa.game.utils.card.defense_informer import CardDefenseInformer
-from lacosa.game.utils.card.targets_informer import CardTargetsInformer
-from lacosa.game.utils.card.trade_informer import CardTradeInformer
+from lacosa.player.utils.playability_informer import CardUsabilityInformer
+from lacosa.player.utils.defense_informer import CardDefenseInformer
+from lacosa.player.utils.targets_informer import CardTargetsInformer
+from lacosa.player.utils.trade_informer import CardTradeInformer
 
 player_router = APIRouter()
 
