@@ -184,8 +184,14 @@ def test_play_vigila_tus_espaldas_card_no_defended(db_game_creation_with_cards_2
     # The target player is dead
     assert response.json()["players"] == [
         {
-            "playerID": 4,
-            "username": "Player4",
+            "playerID": 1,
+            "username": "Player1",
+            "is_host": True,
+            "is_alive": True
+        },
+        {
+            "playerID": 2,
+            "username": "Player2",
             "is_host": False,
             "is_alive": True
         },
@@ -196,18 +202,16 @@ def test_play_vigila_tus_espaldas_card_no_defended(db_game_creation_with_cards_2
             "is_alive": True
         },
         {
-            "playerID": 2,
-            "username": "Player2",
+            "playerID": 4,
+            "username": "Player4",
             "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
             "is_alive": True
         }
     ]
+
+    with db_session:
+        game_record = select(g for g in Game if g.id == 5).get()
+        assert game_record.game_order == "left"
 
 
 def test_play_cambio_de_lugar_card_no_defended(db_game_creation_with_cards):
