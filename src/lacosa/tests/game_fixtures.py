@@ -1,6 +1,6 @@
 import random
 from models import Event, Game, WaitingRoom, Player, Card, db
-from pony.orm import db_session, select
+from pony.orm import db_session, select, commit
 from lacosa.game.schemas import PublicPlayerInfo, GameStatus
 from lacosa.schemas import PlayerID, CardInfo
 import pytest
@@ -114,14 +114,14 @@ def db_game_creation_with_cards():
         player1.cards.create(id=4, name="Lanzallamas",
                              description="Esta que arde")
         player1.cards.create(id=5, name="Cambio de lugar",
-                                description="Cambio de lugar")
+                             description="Cambio de lugar")
         player1.cards.create(id=6, name="Mas vale que corras",
-                                description="Mas vale que corras")
+                             description="Mas vale que corras")
 
         player2.cards.create(id=7, name="Aqui estoy bien",
-                                description="Aqui estoy bien")
+                             description="Aqui estoy bien")
         player2.cards.create(id=8, name="Nada de barbacoas",
-                                description="Nada de barbacoas")
+                             description="Nada de barbacoas")
         player2.cards.create()
         player2.cards.create()
 
@@ -163,24 +163,23 @@ def db_game_creation_with_cards_2():
         player1.cards.create(id=4, name="Lanzallamas",
                              description="Está que arde")
         player1.cards.create(id=5, name="Cambio de lugar",
-                                description="Cambio de lugar")
+                             description="Cambio de lugar")
         player1.cards.create(id=6, name="Más vale que corras",
-                                description="Más vale que corras")
+                             description="Más vale que corras")
 
         player2.cards.create(id=7, name="Aquí estoy bien",
-                                description="Aquí estoy bien")
+                             description="Aquí estoy bien")
         player2.cards.create(id=8, name="Nada de barbacoas",
-                                description="Nada de barbacoas")
+                             description="Nada de barbacoas")
 
-        player2.cards.create(id=9, name="Seducción", description="Seducción", type="action")
+        player2.cards.create(id=9, name="Seduccion",
+                             description="Seducción", type="action")
 
-
-        player3.cards.create(id=10, name="Vigila tus espaldas", 
+        player3.cards.create(id=10, name="Vigila tus espaldas",
                              description="Vigila tus espaldas")
         player3.cards.create(id=60, name="Lanzallamas",
                              description="Está que arde")
         player4.cards.create()
-                             
 
 
 @pytest.fixture(scope="module")
@@ -237,9 +236,11 @@ def discard_card_game_creation():
             players=room.players,
             **discard_card_game_data["game"]
         )
-        for player, cards in zip(game.players, discard_card_game_data["cards"]):
+        ordered_players = game.players.order_by(lambda p: p.id)
+        for player, cards in zip(ordered_players, discard_card_game_data["cards"]):
             for card in cards:
-                player.cards.create(**card)
+                card = player.cards.create(**card)
+        commit()
 
     return discard_card_game_data
 
@@ -283,7 +284,8 @@ def db_game_creation_without_cards_dead_players_and_event():
         Game(id=0, waiting_room=room, players=room.players, current_player=1)
 
         game = Game.get(id=0)
-        event = Event(id=1, game=game, type="trade", player1=player, player2=player)
+        event = Event(id=1, game=game, type="trade",
+                      player1=player, player2=player)
 
 
 @pytest.fixture()
@@ -340,23 +342,23 @@ def get_info_card_game_creation():
         "game": {"id": 1, "current_player": 1, "current_action": "draw"},
         "cards": [
             [
-                {"id": 1, "name": "Infeccion", "type": "contagio" },
-                {"id": 2, "name": "Lanzallamas", "type": "action" },
-                {"id": 3, "name": "Lanzallamas", "type": "action" },
-                {"id": 4, "name": "Lanzallamas", "type": "action" }
+                {"id": 1, "name": "Infeccion", "type": "contagio"},
+                {"id": 2, "name": "Lanzallamas", "type": "action"},
+                {"id": 3, "name": "Lanzallamas", "type": "action"},
+                {"id": 4, "name": "Lanzallamas", "type": "action"}
             ],
             [
-                {"id": 5, "name": "Infeccion", "type": "contagio" },
-                {"id": 6, "name": "La cosa", "type": "especial" },
-                {"id": 7, "name": "Lanzallamas", "type": "action" },
-                {"id": 8, "name": "No gracias", "type": "defense" },
-                {"id": 19, "name": "Seduccion", "type": "action" }
+                {"id": 5, "name": "Infeccion", "type": "contagio"},
+                {"id": 6, "name": "La cosa", "type": "especial"},
+                {"id": 7, "name": "Lanzallamas", "type": "action"},
+                {"id": 8, "name": "No gracias", "type": "defense"},
+                {"id": 19, "name": "Seduccion", "type": "action"}
             ],
             [
-                {"id": 9, "name": "Infeccion", "type": "contagio" },
-                {"id": 10, "name": "Aterrador", "type": "defense" },
-                {"id": 11, "name": "Infeccion", "type": "contagio" },
-                {"id": 12, "name": "Cambio de lugar", "type": "action" }
+                {"id": 9, "name": "Infeccion", "type": "contagio"},
+                {"id": 10, "name": "Aterrador", "type": "defense"},
+                {"id": 11, "name": "Infeccion", "type": "contagio"},
+                {"id": 12, "name": "Cambio de lugar", "type": "action"}
             ],
         ]
     }
@@ -494,6 +496,7 @@ def get_tradeable_info_card_game_creation():
 
     return data
 
+
 @pytest.fixture()
 def get_info_card_game_creation_with_dead_players():
     db.drop_all_tables(with_all_data=True)
@@ -508,9 +511,9 @@ def get_info_card_game_creation_with_dead_players():
             {"id": 3, "username": "Player3", "is_host": False,
                 "position": -1, "role": "infected", "is_alive": False},
             {"id": 4, "username": "Player4", "is_host": False,
-                "position": 3, "role": "human"}, 
+                "position": 3, "role": "human"},
             {"id": 5, "username": "Player5", "is_host": False,
-                 "position": 4, "role": "human"},               
+             "position": 4, "role": "human"},
         ],
         "game": {"id": 1, "current_player": 1, "current_action": "draw"},
         "cards": [
@@ -560,6 +563,7 @@ def get_info_card_game_creation_with_dead_players():
 
     return data
 
+
 @pytest.fixture()
 def db_game_creation_with_trade_event_2():
     db.drop_all_tables(with_all_data=True)
@@ -574,9 +578,9 @@ def db_game_creation_with_trade_event_2():
             {"id": 3, "username": "Player3", "is_host": False,
                 "position": -1, "role": "infected"},
             {"id": 4, "username": "Player4", "is_host": False,
-                "position": 3, "role": "human"}, 
+                "position": 3, "role": "human"},
             {"id": 5, "username": "Player5", "is_host": False,
-                 "position": 4, "role": "human"},               
+             "position": 4, "role": "human"},
         ],
         "game": {"id": 1, "current_player": 1, "current_action": "trade"},
         "cards": [
@@ -591,7 +595,6 @@ def db_game_creation_with_trade_event_2():
                 {"id": 6, "name": "La cosa", "type": "especial"},
                 {"id": 7, "name": "Lanzallamas", "type": "action"},
                 {"id": 8, "name": "No gracias", "type": "defense"},
-                {"id": 19, "name": "Seduccion", "type": "action"}
             ],
             [],
             [
@@ -620,12 +623,83 @@ def db_game_creation_with_trade_event_2():
             players=room.players,
             **data["game"]
         )
-        for player, cards in zip(game.players, data["cards"]):
+        ordered_players = game.players.order_by(lambda p: p.id)
+        for player, cards in zip(ordered_players, data["cards"]):
             for card in cards:
-                player.cards.create(**card)
+                card = player.cards.create(**card)
+        commit()
 
     return data
-  
+
+
+@pytest.fixture()
+def db_game_creation_with_trade_event_3():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+    data = {
+        "room": {"id": 1, "name": "Test room"},
+        "players": [
+            {"id": 1, "username": "Player1", "is_host": True,
+                "position": 1, "role": "infected"},
+            {"id": 2, "username": "Player2", "is_host": False,
+                "position": 2, "role": "thing"},
+            {"id": 3, "username": "Player3", "is_host": False,
+                "position": -1, "role": "infected"},
+            {"id": 4, "username": "Player4", "is_host": False,
+                "position": 3, "role": "human"},
+            {"id": 5, "username": "Player5", "is_host": False,
+             "position": 4, "role": "human"},
+        ],
+        "game": {"id": 1, "current_player": 1, "current_action": "trade"},
+        "cards": [
+            [
+                {"id": 1, "name": "Infeccion", "type": "contagio"},
+                {"id": 2, "name": "Infeccion", "type": "contagio"},
+                {"id": 3, "name": "Lanzallamas", "type": "action"},
+                {"id": 4, "name": "Lanzallamas", "type": "action"}
+            ],
+            [
+                {"id": 5, "name": "Infeccion", "type": "contagio"},
+                {"id": 6, "name": "La cosa", "type": "especial"},
+                {"id": 7, "name": "Lanzallamas", "type": "action"},
+                {"id": 8, "name": "No gracias", "type": "defense"},
+            ],
+            [],
+            [
+                {"id": 9, "name": "Infeccion", "type": "contagio"},
+                {"id": 10, "name": "Aterrador", "type": "defense"},
+                {"id": 11, "name": "Infeccion", "type": "contagio"},
+                {"id": 12, "name": "Cambio de lugar", "type": "action"},
+            ],
+            [
+                {"id": 13, "name": "Infeccion", "type": "contagio"},
+                {"id": 14, "name": "Aterrador", "type": "defense"},
+                {"id": 15, "name": "Lanzallamas", "type": "action"},
+                {"id": 16, "name": "No gracias", "type": "defense"},
+            ],
+        ]
+    }
+
+    # second half
+    with db_session:
+        room = WaitingRoom(**data["room"])
+        for player_data in data["players"]:
+            room.players.create(**player_data)
+
+        game = Game(
+            waiting_room=room,
+            players=room.players,
+            **data["game"]
+        )
+        ordered_players = game.players.order_by(lambda p: p.id)
+        for player, cards in zip(ordered_players, data["cards"]):
+            for card in cards:
+                card = player.cards.create(**card)
+        commit()
+
+    return data
+
+
 @pytest.fixture()
 def get_defend_trade_card_game_creation():
     db.drop_all_tables(with_all_data=True)
@@ -675,4 +749,4 @@ def get_defend_trade_card_game_creation():
             for card in cards:
                 player.cards.create(**card)
 
-    return data 
+    return data
