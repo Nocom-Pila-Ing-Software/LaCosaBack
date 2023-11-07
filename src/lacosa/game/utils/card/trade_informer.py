@@ -45,6 +45,8 @@ class CardTradeInformer(ResponseInterface):
                 usable = False
             if card.name == "Infeccion" and self.target.role != "human" and self.player.role == "thing":
                 usable = False
+            if card.name == "Infeccion" and self.target.role != "thing" and self.player.role == "infected":
+                usable = False
             if card.name == "Infeccion" and self.player.role == "human":
                 usable = False
 

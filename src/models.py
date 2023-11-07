@@ -40,6 +40,7 @@ class Game(db.Entity):
     last_played_card = Optional('Card', reverse="played_on_game")
     current_player = Required(int)
     current_action = Required(str, default="draw")
+    game_order = Optional(str, default="right")
     is_game_over = Required(bool, default=False)
     have_humans_won = Required(bool, default=False)
     events = Set(Event)
