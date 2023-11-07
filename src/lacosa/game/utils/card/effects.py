@@ -25,19 +25,24 @@ def switch_player_positions(player1: Player, player2: Player) -> None:
     player1.position, player2.position = player2.position, player1.position
 
 
-def apply_lanzallamas_effect(current_player: Player, target_player: Player, game: Game) -> None:
+def apply_lanzallamas_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
     target_player.is_alive = False
     add_player_hand_to_deck(target_player, game)
     update_player_positions_after_death(target_player, game)
 
 
-def apply_switch_position_cards_effect(current_player: Player, target_player: Player, game: Game) -> None:
+def apply_switch_position_cards_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
     switch_player_positions(current_player, target_player)
 
 
-def apply_anticipate_trade_effect(current_player: Player, target_player: Player, game: Game) -> None:
-    event = select(
-        event for event in game.events if event.player1 == current_player)
+def apply_anticipate_trade_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
+    event = select(event for event in game.events if event.player1 == current_player)
     event.is_completed = True
     event.is_successful = True
     game.events.create(
@@ -47,11 +52,13 @@ def apply_anticipate_trade_effect(current_player: Player, target_player: Player,
         card2=None,
         is_completed=False,
         is_successful=False,
-        type="trade"
+        type="trade",
     )
 
 
-def apply_vigila_tus_espaldas_effect(current_player: Player, target_player: Player, game: Game) -> None:
+def apply_vigila_tus_espaldas_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
     game.game_order = "left" if game.game_order == "right" else "right"
 
 
@@ -68,7 +75,7 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "Aqui estoy bien": do_nothing,
         "Nada de barbacoas": do_nothing,
         "No gracias": do_nothing,
-        "Seduccion": apply_anticipate_trade_effect
+        "Seduccion": apply_anticipate_trade_effect,
     }
 
     return _card_effects.get(card_name, do_nothing)

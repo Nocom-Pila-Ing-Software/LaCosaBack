@@ -33,7 +33,7 @@ class CardPlayer(ActionInterface):
             targetCardID=-1,
             type=EventTypes.action,
             isCompleted=False,
-            isSuccessful=False
+            isSuccessful=False,
         )
         event_create = EventCreator(event_request)
         event_create.create()
@@ -43,14 +43,25 @@ class CardPlayer(ActionInterface):
 
         check_card_is_defensible = self.check_card_is_defensible(self.card)
         if not check_card_is_defensible:
-            execute_card_effect(self.card, self.player,
-                                self.target_player, self.game)
+            execute_card_effect(self.card, self.player, self.target_player, self.game)
 
             event.is_completed = True
             event.is_successful = True
 
-            self.game.current_action = "trade"
-            if select(e for e in Event if (e.player1.id == self.player.id or e.player2.id == self.target_player.id) and e.is_completed is False).get() is None:
+            self.game.current_action = "defense"
+            self.game.current_player = self.target_player.id
+            if (
+                select(
+                    e
+                    for e in Event
+                    if (
+                        e.player1.id == self.player.id
+                        or e.player2.id == self.target_player.id
+                    )
+                    and e.is_completed is False
+                ).get()
+                is None
+            ):
                 event_request = EventCreationRequest(
                     gameID=self.game.id,
                     playerID=self.player.id,
@@ -59,7 +70,7 @@ class CardPlayer(ActionInterface):
                     targetCardID=-1,
                     type=EventTypes.trade,
                     isCompleted=False,
-                    isSuccessful=False
+                    isSuccessful=False,
                 )
 
                 event_create = EventCreator(event_request)
@@ -69,18 +80,15 @@ class CardPlayer(ActionInterface):
             self.game.current_player = self.target_player.id
 
     def get_next_player_id(self):
-        next_player = turn_handler.get_next_player(
-            self.game,
-            self.player.position
-        )
+        next_player = turn_handler.get_next_player(self.game, self.player.position)
         return next_player.id
 
     def check_card_is_defensible(self, card) -> bool:
         with open(settings.DECK_CONFIG_PATH) as config_file:
             config = json.load(config_file)
 
-        if card.name in config['cards']:
-            if 'defensible_by' in config['cards'][card.name]:
+        if card.name in config["cards"]:
+            if "defensible_by" in config["cards"][card.name]:
                 return True
         return False
 
