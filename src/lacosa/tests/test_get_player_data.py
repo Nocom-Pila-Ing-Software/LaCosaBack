@@ -41,7 +41,8 @@ def test_get_player_sucesfully(db_game_creation_with_cards_player_data):
                 }
             ], key=lambda x: x["cardID"]),
             "role": "human",
-            "is_alive": True
+            "is_alive": True,
+            "shownCards": [],
         }
 
 
@@ -61,5 +62,6 @@ def test_get_card_not_found(db_game_creation_without_cards):
         assert response.json() == {
             "hand": [],
             "role": "human",
-            "is_alive": True
+            "is_alive": True,
+            "shownCards": [],
         }
