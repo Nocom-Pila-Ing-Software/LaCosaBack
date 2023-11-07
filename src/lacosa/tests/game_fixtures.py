@@ -191,7 +191,7 @@ def db_game_creation_with_cards_player_data():
         room = WaitingRoom(id=0, name="Test room")
         player = Player(id=1, username="Player", room=room)
         room.players.add(player)
-        game = Game(id=0, waiting_room=room,
+        Game(id=0, waiting_room=room,
                     players=room.players, current_player=1)
         for _ in range(5):
             player.cards.create(name="Carta_test", description="Carta test")
@@ -284,7 +284,7 @@ def db_game_creation_without_cards_dead_players_and_event():
         Game(id=0, waiting_room=room, players=room.players, current_player=1)
 
         game = Game.get(id=0)
-        event = Event(id=1, game=game, type="trade",
+        Event(id=1, game=game, type="trade",
                       player1=player, player2=player)
 
 
@@ -313,12 +313,11 @@ def db_game_creation_with_trade_event():
 
         for i in range(8):
             for j in range(4):
-                card = None
                 if players_in_game[i] == events_in_game[0].player2:
-                    card = players_in_game[i].cards.create(
+                    players_in_game[i].cards.create(
                         name="No gracias", description="Carta test defensa")
                 else:
-                    card = players_in_game[i].cards.create(
+                    players_in_game[i].cards.create(
                         name="Carta"+str(i*5+j), description="Carta test")
 
         for _ in range(10):

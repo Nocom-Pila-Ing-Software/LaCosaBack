@@ -1,7 +1,7 @@
 import json
-from pathlib import Path
 from fastapi import HTTPException, status
 from models import Game, Player, Card
+from settings import settings
 
 
 def validate_player_has_card(player, card_id):
@@ -20,13 +20,14 @@ def validate_player_alive(player):
         )
 
 
+def validate_player_has_game(player: Player, default_status_code=status.HTTP_404_NOT_FOUND):
+    if player.game is None:
+        raise HTTPException(status_code=default_status_code,
+                            detail="Player not in game")
+
+
 def validate_player_in_game(game: Game, player: Player, default_status_code=status.HTTP_404_NOT_FOUND):
-    if game is None:
-        # Verify that the player is in a game
-        if player.game is None:
-            raise HTTPException(status_code=default_status_code,
-                                detail="Player not in game")
-    elif player not in game.players:
+    if player not in game.players:
         raise HTTPException(status_code=default_status_code,
                             detail="Player not in game")
 
@@ -70,10 +71,7 @@ def validate_current_player(game: Game, player: Player):
 
 
 def validate_correct_defense_card(card, event):
-    config_path = Path(__file__).resolve().parent.parent / \
-        'utils' / 'config_deck.json'
-
-    with open(config_path) as config_file:
+    with open(settings.DECK_CONFIG_PATH) as config_file:
         config = json.load(config_file)
 
     if (event.type == "action" and card.name not in config["cards"][event.card1.name]["defensible_by"]) or (event.type == "trade" and card.name != "No gracias"):
@@ -85,16 +83,17 @@ def validate_correct_type(card, type, type2=None):
     if card.type != type and card.type != type2:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
-    
+
+
 def validate_card_allowed_to_trade(card, event, player):
     if card.name == "La cosa":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
-    
+
     if card.name == "Infeccion" and player.role == "human":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
-    
+
     amount_Infeccion_cards_in_hand = 0
     for cardi in player.cards:
         if cardi.name == "Infeccion":
@@ -113,4 +112,3 @@ def validate_card_allowed_to_trade(card, event, player):
     if card.name == "Infeccion" and player.role == "human":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Player not has permission to execute this action")
-

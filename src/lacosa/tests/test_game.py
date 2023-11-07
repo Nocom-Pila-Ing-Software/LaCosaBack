@@ -128,8 +128,8 @@ def test_play_Lanzallamas_card_no_defended(db_game_creation_with_cards):
         assert event_record.player2.id == 2
         assert event_record.card1.id == 4
         assert event_record.type == "action"
-        assert event_record.is_completed == False
-        assert event_record.is_successful == False
+        assert event_record.is_completed is False
+        assert event_record.is_successful is False
 
     # no defenderse de la carta
     mock_play_request = GenericCardRequest(
@@ -254,8 +254,8 @@ def test_play_cambio_de_lugar_card_no_defended(db_game_creation_with_cards):
         assert event_record.player2.id == 2
         assert event_record.card1.id == 5
         assert event_record.type == "action"
-        assert event_record.is_completed == False
-        assert event_record.is_successful == False
+        assert event_record.is_completed is False
+        assert event_record.is_successful is False
 
     # no defenderse de la carta
     mock_play_request = GenericCardRequest(
@@ -337,8 +337,8 @@ def test_play_mas_vale_que_corras_card_no_defended(db_game_creation_with_cards):
         assert event_record.player2.id == 2
         assert event_record.card1.id == 6
         assert event_record.type == "action"
-        assert event_record.is_completed == False
-        assert event_record.is_successful == False
+        assert event_record.is_completed is False
+        assert event_record.is_successful is False
 
     # no defenderse de la carta
     mock_play_request = GenericCardRequest(
@@ -420,8 +420,8 @@ def test_play_cambio_de_lugar_card_defended(db_game_creation_with_cards):
         assert event_record.player2.id == 2
         assert event_record.card1.id == 5
         assert event_record.type == "action"
-        assert event_record.is_completed == False
-        assert event_record.is_successful == False
+        assert event_record.is_completed is False
+        assert event_record.is_successful is False
 
     # defenderse de la carta con aqui estoy bien
     mock_play_request = GenericCardRequest(
@@ -460,15 +460,15 @@ def test_play_cambio_de_lugar_card_defended(db_game_creation_with_cards):
     with db_session:
         game_record = select(g for g in Game if g.id == 5).get()
         event_record = select(
-            e for e in game_record.events if e.type == "action" and e.is_completed == True
+            e for e in game_record.events if e.type == "action" and e.is_completed is True
         ).order_by(lambda e: e.id).first()
         assert event_record.player1.id == 1
         assert event_record.player2.id == 2
         assert event_record.card1.id == 5
         assert event_record.card2.id == 7
         assert event_record.type == "action"
-        assert event_record.is_completed == True
-        assert event_record.is_successful == False
+        assert event_record.is_completed is True
+        assert event_record.is_successful is False
 
 
 def test_play_seduccion(db_game_creation_with_cards_2):
@@ -496,8 +496,8 @@ def test_play_seduccion(db_game_creation_with_cards_2):
         assert event_record.player2.id == 1
         assert event_record.card1.id == 9
         assert event_record.type == "action"
-        assert event_record.is_completed == True
-        assert event_record.is_successful == True
+        assert event_record.is_completed is True
+        assert event_record.is_successful is True
 
         event_trade = select(
             e for e in game_record.events if e.type == "trade").get()
@@ -505,8 +505,8 @@ def test_play_seduccion(db_game_creation_with_cards_2):
         assert event_trade.player1.id == 2
         assert event_trade.player2.id == 1
         assert event_trade.type == "trade"
-        assert event_trade.is_completed == False
-        assert event_trade.is_successful == False
+        assert event_trade.is_completed is False
+        assert event_trade.is_successful is False
 
         assert game_record.last_played_card.id == 9
         assert game_record.current_player == 2
@@ -540,8 +540,8 @@ def test_play_seduccion(db_game_creation_with_cards_2):
         assert event_trade.card1.id == 8
         assert event_trade.card2.id == 5
         assert event_trade.type == "trade"
-        assert event_trade.is_completed == True
-        assert event_trade.is_successful == True
+        assert event_trade.is_completed is True
+        assert event_trade.is_successful is True
 
         assert game_record.current_player == 3
         assert game_record.current_action == "draw"
@@ -591,8 +591,8 @@ def test_play_mas_vale_que_corras_card_defended(db_game_creation_with_cards):
         assert event_record.player2.id == 2
         assert event_record.card1.id == 6
         assert event_record.type == "action"
-        assert event_record.is_completed == False
-        assert event_record.is_successful == False
+        assert event_record.is_completed is False
+        assert event_record.is_successful is False
 
     # defenderse de la carta con aqui estoy bien
     mock_play_request = GenericCardRequest(
@@ -631,15 +631,15 @@ def test_play_mas_vale_que_corras_card_defended(db_game_creation_with_cards):
     with db_session:
         game_record = select(g for g in Game if g.id == 5).get()
         event_record = select(
-            e for e in game_record.events if e.type == "action" and e.is_completed == True
+            e for e in game_record.events if e.type == "action" and e.is_completed is True
         ).order_by(lambda e: e.id).first()
         assert event_record.player1.id == 1
         assert event_record.player2.id == 2
         assert event_record.card1.id == 6
         assert event_record.card2.id == 7
         assert event_record.type == "action"
-        assert event_record.is_completed == True
-        assert event_record.is_successful == False
+        assert event_record.is_completed is True
+        assert event_record.is_successful is False
 
 
 def test_play_Lanzallamas_card_defended(db_game_creation_with_cards):
@@ -686,8 +686,8 @@ def test_play_Lanzallamas_card_defended(db_game_creation_with_cards):
         assert event_record.player2.id == 2
         assert event_record.card1.id == 4
         assert event_record.type == "action"
-        assert event_record.is_completed == False
-        assert event_record.is_successful == False
+        assert event_record.is_completed is False
+        assert event_record.is_successful is False
 
     # defenderse de la carta con aqui estoy bien
     mock_play_request = GenericCardRequest(
@@ -726,15 +726,15 @@ def test_play_Lanzallamas_card_defended(db_game_creation_with_cards):
     with db_session:
         game_record = select(g for g in Game if g.id == 5).get()
         event_record = select(
-            e for e in game_record.events if e.type == "action" and e.is_completed == True
+            e for e in game_record.events if e.type == "action" and e.is_completed is True
         ).order_by(lambda e: e.id).first()
         assert event_record.player1.id == 1
         assert event_record.player2.id == 2
         assert event_record.card1.id == 4
         assert event_record.card2.id == 8
         assert event_record.type == "action"
-        assert event_record.is_completed == True
-        assert event_record.is_successful == False
+        assert event_record.is_completed is True
+        assert event_record.is_successful is False
         assert event_record.game.last_played_card.id == 8
 
 
@@ -815,7 +815,7 @@ def test_game_is_over(db_game_creation_with_cards):
     assert response.status_code == 200
     response = client.get("/game/5")
 
-    assert response.json()["result"]["isGameOver"] == True
+    assert response.json()["result"]["isGameOver"] is True
 
     mock_play_request = PlayCardRequest(
         playerID=3,

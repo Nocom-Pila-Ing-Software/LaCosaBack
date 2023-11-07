@@ -211,14 +211,12 @@ def test_trade_with_invalid_room_id(db_game_creation_with_trade_event):
 
 def test_trade_with_invalid_player_id(db_game_creation_with_trade_event):
     player1_id = None
-    player2_id = None
     card_player_1_id = None
     card_player_2_id = None
     with db_session:
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
 
         player1_id = game_event.player1.id
-        player2_id = game_event.player2.id
 
         card_player_1_id = cards_player_1[1].id
         card_player_2_id = cards_player_2[3].id
@@ -568,9 +566,7 @@ def test_succesful_contagion(db_game_creation_with_trade_event_2):
 
 def test_try_trade_card_la_cosa_infeccion(db_game_creation_with_trade_event_2):
     player1_id = None
-    player2_id = None
     card_player_1_id = None
-    card_player_2_id = None
 
     # infected to human trade card Infeccion
     with db_session:
@@ -581,9 +577,8 @@ def test_try_trade_card_la_cosa_infeccion(db_game_creation_with_trade_event_2):
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
 
         player1_id = game_event.player1.id
-        player2_id = game_event.player2.id
         card_player_1_id = cards_player_1[0].id
-        card_player_2_id = cards_player_2[1].id
+        cards_player_2[1].id
 
     response1 = client.put(
         "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
@@ -601,9 +596,8 @@ def test_try_trade_card_la_cosa_infeccion(db_game_creation_with_trade_event_2):
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
 
         player1_id = game_event.player1.id
-        player2_id = game_event.player2.id
         card_player_1_id = cards_player_1[1].id
-        card_player_2_id = cards_player_2[0].id
+        cards_player_2[0].id
 
     response1 = client.put(
         "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})
@@ -621,9 +615,8 @@ def test_try_trade_card_la_cosa_infeccion(db_game_creation_with_trade_event_2):
         game, game_event, cards_player_1, cards_player_2 = get_game_and_cards()
 
         player1_id = game_event.player1.id
-        player2_id = game_event.player2.id
         card_player_1_id = cards_player_1[1].id
-        card_player_2_id = cards_player_2[1].id
+        cards_player_2[1].id
 
     response1 = client.put(
         "/game/1/trade-card", json={"playerID": player1_id, "cardID": card_player_1_id})

@@ -24,7 +24,7 @@ def test_discard_card_success(discard_card_game_creation):
         f"/game/{room_id}/discard-card", json=discard_request)
 
     assert response.status_code == 200
-    assert response.json() == None
+    assert response.json() is None
 
     with db_session:
         game = Game.get(id=room_id)

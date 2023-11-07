@@ -19,20 +19,20 @@ def test_get_card_usability_sucesfully(get_info_card_game_creation):
     for card in response.json()["cards"]:
         if card["cardID"] == 1:
             assert card["name"] == "Infeccion"
-            assert card["playable"] == False
-            assert card["discardable"] == False
+            assert card["playable"] is False
+            assert card["discardable"] is False
         elif card["cardID"] == 2:
             assert card["name"] == "Lanzallamas"
-            assert card["playable"] == True
-            assert card["discardable"] == True
+            assert card["playable"] is True
+            assert card["discardable"] is True
         elif card["cardID"] == 3:
             assert card["name"] == "Lanzallamas"
-            assert card["playable"] == True
-            assert card["discardable"] == True
+            assert card["playable"] is True
+            assert card["discardable"] is True
         elif card["cardID"] == 4:
             assert card["name"] == "Lanzallamas"
-            assert card["playable"] == True
-            assert card["discardable"] == True
+            assert card["playable"] is True
+            assert card["discardable"] is True
 
     # Review cards usability for player 2
     player_id = get_info_card_game_creation["players"][1]["id"]
@@ -44,24 +44,24 @@ def test_get_card_usability_sucesfully(get_info_card_game_creation):
     for card in response.json()["cards"]:
         if card["cardID"] == 5:
             assert card["name"] == "Infeccion"
-            assert card["playable"] == False
-            assert card["discardable"] == True
+            assert card["playable"] is False
+            assert card["discardable"] is True
         elif card["cardID"] == 6:
             assert card["name"] == "La cosa"
-            assert card["playable"] == False
-            assert card["discardable"] == False
+            assert card["playable"] is False
+            assert card["discardable"] is False
         elif card["cardID"] == 7:
             assert card["name"] == "Lanzallamas"
-            assert card["playable"] == True
-            assert card["discardable"] == True
+            assert card["playable"] is True
+            assert card["discardable"] is True
         elif card["cardID"] == 8:
             assert card["name"] == "No gracias"
-            assert card["playable"] == False
-            assert card["discardable"] == True
+            assert card["playable"] is False
+            assert card["discardable"] is True
         elif card["cardID"] == 19:
             assert card["name"] == "Seduccion"
-            assert card["playable"] == True
-            assert card["discardable"] == True
+            assert card["playable"] is True
+            assert card["discardable"] is True
 
     # Review cards usability for player 3
     player_id = get_info_card_game_creation["players"][2]["id"]
@@ -73,38 +73,38 @@ def test_get_card_usability_sucesfully(get_info_card_game_creation):
     for card in response.json()["cards"]:
         if card["cardID"] == 9:
             assert card["name"] == "Infeccion"
-            assert card["playable"] == False
-            assert card["discardable"] == True
+            assert card["playable"] is False
+            assert card["discardable"] is True
         elif card["cardID"] == 10:
             assert card["name"] == "Aterrador"
-            assert card["playable"] == False
-            assert card["discardable"] == True
+            assert card["playable"] is False
+            assert card["discardable"] is True
         elif card["cardID"] == 11:
             assert card["name"] == "Infeccion"
-            assert card["playable"] == False
-            assert card["discardable"] == True
+            assert card["playable"] is False
+            assert card["discardable"] is True
         elif card["cardID"] == 12:
             assert card["name"] == "Cambio de lugar"
-            assert card["playable"] == True
-            assert card["discardable"] == True
+            assert card["playable"] is True
+            assert card["discardable"] is True
 
 
 def test_get_card_usability_wrong_player_id():
-    response = client.get(f"/player/809/cards-usability")
+    response = client.get("/player/809/cards-usability")
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Player not found"
 
 
 def test_get_card_usability_player_not_in_game(db_room_creation_with_players):
-    response = client.get(f"/player/1/cards-usability")
+    response = client.get("/player/1/cards-usability")
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Player not in game"
 
 
 def test_get_card_usability_player_dead(db_game_creation_without_cards_dead_players):
-    response = client.get(f"/player/1/cards-usability")
+    response = client.get("/player/1/cards-usability")
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Player is dead"
@@ -121,16 +121,16 @@ def test_get_cards_defend(get_defend_card_game_creation):
     for card in response.json()["cards"]:
         if card["cardID"] == 1:
             assert card["name"] == "Infeccion"
-            assert card["usable"] == False
+            assert card["usable"] is False
         elif card["cardID"] == 2:
             assert card["name"] == "Nada de Barbacoas"
-            assert card["usable"] == True
+            assert card["usable"] is True
         elif card["cardID"] == 3:
             assert card["name"] == "Nada de Barbacoas"
-            assert card["usable"] == True
+            assert card["usable"] is True
         elif card["cardID"] == 4:
             assert card["name"] == "Nada de Barbacoas"
-            assert card["usable"] == True
+            assert card["usable"] is True
 
     # Review cards defend for player 2
     player_id = get_defend_card_game_creation["players"][1]["id"]
@@ -143,19 +143,19 @@ def test_get_cards_defend(get_defend_card_game_creation):
     for card in response.json()["cards"]:
         if card["cardID"] == 5:
             assert card["name"] == "Infeccion"
-            assert card["usable"] == False
+            assert card["usable"] is False
         elif card["cardID"] == 6:
             assert card["name"] == "La cosa"
-            assert card["usable"] == False
+            assert card["usable"] is False
         elif card["cardID"] == 7:
             assert card["name"] == "Lanzallamas"
-            assert card["usable"] == False
+            assert card["usable"] is False
         elif card["cardID"] == 8:
             assert card["name"] == "No gracias"
-            assert card["usable"] == False
+            assert card["usable"] is False
         elif card["cardID"] == 19:
             assert card["name"] == "Seduccion"
-            assert card["usable"] == False
+            assert card["usable"] is False
 
     # Review cards defend for player 3
     player_id = get_defend_card_game_creation["players"][2]["id"]
@@ -168,19 +168,19 @@ def test_get_cards_defend(get_defend_card_game_creation):
     for card in response.json()["cards"]:
         if card["cardID"] == 9:
             assert card["name"] == "Infeccion"
-            assert card["usable"] == False
+            assert card["usable"] is False
         elif card["cardID"] == 10:
             assert card["name"] == "Aterrador"
-            assert card["usable"] == False
+            assert card["usable"] is False
         elif card["cardID"] == 11:
             assert card["name"] == "Nada de Barbacoas"
-            assert card["usable"] == True
+            assert card["usable"] is True
         elif card["cardID"] == 12:
             assert card["name"] == "Cambio de lugar"
-            assert card["usable"] == False
+            assert card["usable"] is False
 
 def test_get_cards_defend_wrong_player_id():
-    response = client.get(f"/player/809/cards-defend/1")
+    response = client.get("/player/809/cards-defend/1")
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Player not found"
@@ -364,13 +364,13 @@ def test_get_cards_defend_wrong_card_id(get_defend_card_game_creation):
 #            assert card["usable"] == True
 
 def test_get_cards_tradeable_wrong_player_id():
-    response = client.get(f"/player/809/cards-trade")
+    response = client.get("/player/809/cards-trade")
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Player not found"
 
 def test_get_cards_tradeable_player_dead(db_game_creation_without_cards_dead_players_and_event):
-    response = client.get(f"/player/1/cards-trade")
+    response = client.get("/player/1/cards-trade")
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Player is dead"
@@ -473,7 +473,7 @@ def test_get_targets_card(get_info_card_game_creation_with_dead_players):
     }
 
 def test_get_targets_card_wrong_player_id():
-    response = client.get(f"/player/809/targets/1")
+    response = client.get("/player/809/targets/1")
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Player not found"

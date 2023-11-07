@@ -1,8 +1,8 @@
-from .deck import Deck
+from ..deck import Deck
 from lacosa.game.schemas import GenericCardRequest
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
-from models import Game, Player, Card, Event
+from models import Game, Player, Card
 
 
 def discard_card_util(discard_request: GenericCardRequest, room_id: int):

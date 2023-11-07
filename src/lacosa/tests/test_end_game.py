@@ -1,9 +1,6 @@
 from models import Game, WaitingRoom, db
-from pony.orm import db_session, commit
-from lacosa.game.utils.game_ender import _get_winner, _update_game_state, end_game_if_conditions_are_met
-import lacosa.game.utils.game_ender as game_ender
-import asyncio
-import pytest
+from pony.orm import db_session
+from lacosa.game.utils.game.ender import _get_winner, _update_game_state, end_game_if_conditions_are_met
 
 
 def create_game_with_custom_players(custom_players):
@@ -88,7 +85,7 @@ def test_one_player_left_is_human():
 
 
 # Mock _get_winner, _update_game_state, and asyncio.sleep
-#async def mock_sleep(seconds):
+# async def mock_sleep(seconds):
 #    pass
 
 

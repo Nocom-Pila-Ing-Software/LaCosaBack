@@ -1,6 +1,4 @@
 from models import Game
-from lacosa.room.utils.room_operations import delete_room
-import asyncio
 
 
 def _is_the_thing_dead(game: Game):
@@ -63,5 +61,5 @@ def end_game_if_conditions_are_met(game: Game, time_before_close=30) -> None:
 
     if winner is not None:
         _update_game_state(game, winner)
-        #await asyncio.sleep(time_before_close)
-        #delete_room(game.waiting_room)
+        # await asyncio.sleep(time_before_close)
+        # delete_room(game.waiting_room)

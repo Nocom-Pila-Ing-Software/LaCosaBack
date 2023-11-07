@@ -1,4 +1,4 @@
-from models import WaitingRoom, Game, db
+from models import WaitingRoom, db
 from pony.orm import db_session
 import pytest
 
@@ -48,7 +48,6 @@ def create_rooms_and_return_expected():
         "minPlayers": 2,
         "maxPlayers": 4
     }
-    ignore_keys_for_db = {"player_amount"}
 
     db.drop_all_tables(with_all_data=True)
     db.create_tables()
