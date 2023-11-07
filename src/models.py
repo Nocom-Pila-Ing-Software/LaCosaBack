@@ -14,6 +14,7 @@ class CardType(str, Enum):
     defense = "defense"
     special = "special"
 
+
 class Role(str, Enum):
     human = "human"
     infected = "infected"
@@ -69,6 +70,7 @@ class Player(db.Entity):
     # I dont know if this is the best way to do this
     events = Set(Event)
     events2 = Set(Event, reverse="player2")
+    shown_cards = Set('Card')
 
 
 class Card(db.Entity):
@@ -87,3 +89,4 @@ class Card(db.Entity):
     # I dont know if this is the best way to do this
     events = Set(Event)
     events2 = Set(Event, reverse="card2")
+    playerShownTo = Optional(Player, reverse="shown_cards")
