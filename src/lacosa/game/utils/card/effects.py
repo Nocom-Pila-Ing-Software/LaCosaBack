@@ -52,13 +52,7 @@ def apply_anticipate_trade_effect(current_player: Player, target_player: Player,
 
 
 def apply_vigila_tus_espaldas_effect(current_player: Player, target_player: Player, game: Game) -> None:
-    players = game.players.order_by(Player.position)
-    # jugadores vivos
-    alive_players = [player for player in players if player.is_alive]
-    player_len = len(alive_players)
-
-    for i in range(player_len):
-        alive_players[i].position = player_len - i + 1
+    game.game_order = "left" if game.game_order == "right" else "right"
 
 
 def do_nothing(*args, **kwargs) -> None:
