@@ -3,21 +3,21 @@ from models import Game, Player
 
 def _get_next_position(current_position: int, game: Game):
     alive_players = game.players.filter(lambda p: p.is_alive)
-    
+
     if game.game_order == "right":
         next_position = current_position % len(alive_players) + 1
     elif game.game_order == "left":
-        next_position = current_position % len(alive_players) - 1
-    
+        next_position = (
+            current_position - 1 if current_position > 1 else len(alive_players)
+        )
+
     return next_position
 
 
 def get_next_player(game: Game, current_position: int) -> Player:
     next_position = _get_next_position(current_position, game)
 
-    next_player = game.players.select(
-        lambda p: p.position == next_position
-    ).first()
+    next_player = game.players.select(lambda p: p.position == next_position).first()
 
     return next_player
 
