@@ -2,6 +2,7 @@ from main import app
 from fastapi.testclient import TestClient
 from pony.orm import db_session
 from models import Game, Player, Card
+
 # from lacosa.schemas import PlayerID, GameID, CardInfo
 # from lacosa.game.schemas import GameCreationRequest, PublicPlayerInfo, GameStatus, PlayCardRequest
 from .game_fixtures import discard_card_game_creation
@@ -20,8 +21,7 @@ def test_discard_card_success(discard_card_game_creation):
         "cardID": card_id,
     }
 
-    response = client.put(
-        f"/game/{room_id}/discard-card", json=discard_request)
+    response = client.put(f"/game/{room_id}/discard-card", json=discard_request)
 
     assert response.status_code == 200
     assert response.json() is None
@@ -42,8 +42,7 @@ def test_discard_card_invalid_player(discard_card_game_creation):
         "cardID": discard_card_game_creation["cards"][0][0]["id"],
     }
 
-    response = client.put(
-        f"/game/{room_id}/discard-card", json=discard_request)
+    response = client.put(f"/game/{room_id}/discard-card", json=discard_request)
 
     assert response.status_code == 400
 
@@ -56,14 +55,14 @@ def test_discard_card_invalid_card(discard_card_game_creation):
         "cardID": 666,
     }
 
-    response = client.put(
-        f"/game/{room_id}/discard-card", json=discard_request)
+    response = client.put(f"/game/{room_id}/discard-card", json=discard_request)
 
     assert response.status_code == 400
 
 
 def test_discard_card_invalid_player_turn(discard_card_game_creation):
     room_id = discard_card_game_creation["room"]["id"]
+
     # Mock data with a player who is not in turn
     discard_request = {
         "playerID": discard_card_game_creation["players"][1]["id"],
@@ -71,9 +70,7 @@ def test_discard_card_invalid_player_turn(discard_card_game_creation):
     }
 
     # Implement a method to change the player's turn in the game here if needed
-
-    response = client.put(
-        f"/game/{room_id}/discard-card", json=discard_request)
+    response = client.put(f"/game/{room_id}/discard-card", json=discard_request)
 
     assert response.status_code == 403
-    assert response.json() == {'detail': "Can't discard card, it's not your turn"}
+    assert response.json() == {"detail": "Can't discard card, it's not your turn"}
