@@ -7,3 +7,9 @@ def show_cards_to_players(cards: List[Card], players: List[Player]):
     for player in players:
         player.shown_cards = cards
     commit()
+
+
+def clear_shown_cards(players: List[Player]):
+    for player in players:
+        player.shown_cards = []
+    commit()

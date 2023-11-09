@@ -3,6 +3,7 @@ from lacosa.interfaces import ActionInterface
 from lacosa.utils import find_game, find_partial_event, find_player, find_card
 from lacosa.game.utils import exceptions, turn_handler
 from pony.orm import select
+from lacosa.game.utils.card_shower import clear_shown_cards
 
 
 class CardTrader(ActionInterface):
@@ -41,6 +42,8 @@ class CardTrader(ActionInterface):
         self.game.current_player = self.get_next_player_id(last_event)
         self.game.current_action = "draw"
 
+        clear_shown_cards(self.game.players)
+
         self.swap_cards()
         self.update_infection_status()
 
@@ -49,16 +52,18 @@ class CardTrader(ActionInterface):
             return last_event.player2.id
         else:
             next_player = turn_handler.get_next_player(
-                self.game,
-                self.event.player1.position
+                self.game, self.event.player1.position
             )
             return next_player.id
 
     def should_continue_with_last_event_player(self, last_event):
-        should_continue = (last_event and last_event.type == "action"
-                           and last_event.is_successful
-                           and last_event.card1.name in self.POSITION_SWITCHING_CARDS
-                           and last_event.player1.id == self.event.player1.id)
+        should_continue = (
+            last_event
+            and last_event.type == "action"
+            and last_event.is_successful
+            and last_event.card1.name in self.POSITION_SWITCHING_CARDS
+            and last_event.player1.id == self.event.player1.id
+        )
         return should_continue
 
     def swap_cards(self):
@@ -98,5 +103,4 @@ class CardTrader(ActionInterface):
         exceptions.validate_current_player(self.game, self.player)
         exceptions.validate_player_alive(self.player)
         exceptions.validate_player_has_card(self.player, self.card.id)
-        exceptions.validate_card_allowed_to_trade(
-            self.card, self.event, self.player)
+        exceptions.validate_card_allowed_to_trade(self.card, self.event, self.player)

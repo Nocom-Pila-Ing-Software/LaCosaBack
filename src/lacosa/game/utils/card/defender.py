@@ -4,6 +4,7 @@ from .effects import execute_card_effect
 from ..deck import Deck
 from lacosa.interfaces import ActionInterface
 import lacosa.utils as utils
+from lacosa.game.utils.card_shower import clear_shown_cards
 
 
 class CardDefender(ActionInterface):
@@ -27,8 +28,7 @@ class CardDefender(ActionInterface):
 
     def get_next_player_id(self):
         next_player = turn_handler.get_next_player(
-            self.game,
-            self.event.player1.position
+            self.game, self.event.player1.position
         )
         return next_player.id
 
@@ -48,14 +48,11 @@ class CardDefender(ActionInterface):
         Deck.draw_card(self.game.id, self.event.player2.id)
         Deck.discard_card(self.card, self.event.player2, self.game)
 
+        clear_shown_cards(self.game.players)
+
     def handle_action_event(self):
         card = self.event.card2 if self.card else self.event.card1
-        execute_card_effect(
-            card,
-            self.event.player1,
-            self.event.player2,
-            self.game
-        )
+        execute_card_effect(card, self.event.player1, self.event.player2, self.game)
         if self.card:
             self.event.is_successful = False
             Deck.draw_card(self.game.id, self.event.player2.id)
@@ -75,7 +72,7 @@ class CardDefender(ActionInterface):
             targetCardID=-1,
             type=EventTypes.trade,
             isCompleted=False,
-            isSuccessful=False
+            isSuccessful=False,
         )
         event_create = event_creator.EventCreator(event_request)
         event_create.create()

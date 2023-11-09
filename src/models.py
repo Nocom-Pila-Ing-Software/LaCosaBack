@@ -23,22 +23,22 @@ class Role(str, Enum):
 
 class Event(db.Entity):
     id = PrimaryKey(int, auto=True)
-    game = Required('Game')
+    game = Required("Game")
     type = Required(EventType)
-    player1 = Required('Player')
-    player2 = Required('Player')
-    card1 = Optional('Card')
-    card2 = Optional('Card')
+    player1 = Required("Player")
+    player2 = Required("Player")
+    card1 = Optional("Card")
+    card2 = Optional("Card")
     is_completed = Required(bool, default=False)
     is_successful = Required(bool, default=False)
 
 
 class Game(db.Entity):
     id = PrimaryKey(int, auto=True)
-    waiting_room = Required('WaitingRoom')
-    players = Set('Player')
-    cards = Set('Card')
-    last_played_card = Optional('Card', reverse="played_on_game")
+    waiting_room = Required("WaitingRoom")
+    players = Set("Player")
+    cards = Set("Card")
+    last_played_card = Optional("Card", reverse="played_on_game")
     current_player = Required(int)
     current_action = Required(str, default="draw")
     game_order = Optional(str, default="right")
@@ -51,7 +51,7 @@ class WaitingRoom(db.Entity):
     id = PrimaryKey(int, auto=True)
     name = Required(str)
     game = Optional(Game, cascade_delete=True)
-    players = Set('Player')
+    players = Set("Player")
     min_players = Required(int, default=2)
     max_players = Required(int, default=8)
 
@@ -64,13 +64,13 @@ class Player(db.Entity):
     role = Required(Role, default="human")
     is_host = Required(bool, default=False)
     is_alive = Required(bool, default=True)
-    cards = Set('Card')
+    cards = Set("Card")
     position = Optional(int)  # becomes 0 when dead
 
     # I dont know if this is the best way to do this
     events = Set(Event)
     events2 = Set(Event, reverse="player2")
-    shown_cards = Set('Card')
+    shown_cards = Set("Card")
 
 
 class Card(db.Entity):
@@ -89,4 +89,4 @@ class Card(db.Entity):
     # I dont know if this is the best way to do this
     events = Set(Event)
     events2 = Set(Event, reverse="card2")
-    playerShownTo = Optional(Player, reverse="shown_cards")
+    playerShownTo = Set(Player, reverse="shown_cards")

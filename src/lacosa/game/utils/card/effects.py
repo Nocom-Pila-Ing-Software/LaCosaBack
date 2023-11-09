@@ -2,6 +2,7 @@ from models import Player, Game
 from collections.abc import Callable
 from typing import Dict
 from pony.orm import select, commit
+from lacosa.game.utils.card_shower import show_cards_to_players
 
 CardEffectFunc = Callable[[Player, Game], None]
 
@@ -25,19 +26,24 @@ def switch_player_positions(player1: Player, player2: Player) -> None:
     player1.position, player2.position = player2.position, player1.position
 
 
-def apply_lanzallamas_effect(current_player: Player, target_player: Player, game: Game) -> None:
+def apply_lanzallamas_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
     target_player.is_alive = False
     add_player_hand_to_deck(target_player, game)
     update_player_positions_after_death(target_player, game)
 
 
-def apply_switch_position_cards_effect(current_player: Player, target_player: Player, game: Game) -> None:
+def apply_switch_position_cards_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
     switch_player_positions(current_player, target_player)
 
 
-def apply_anticipate_trade_effect(current_player: Player, target_player: Player, game: Game) -> None:
-    event = select(
-        event for event in game.events if event.player1 == current_player)
+def apply_anticipate_trade_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
+    event = select(event for event in game.events if event.player1 == current_player)
     event.is_completed = True
     event.is_successful = True
     game.events.create(
@@ -47,12 +53,27 @@ def apply_anticipate_trade_effect(current_player: Player, target_player: Player,
         card2=None,
         is_completed=False,
         is_successful=False,
-        type="trade"
+        type="trade",
     )
 
 
-def apply_vigila_tus_espaldas_effect(current_player: Player, target_player: Player, game: Game) -> None:
+def apply_vigila_tus_espaldas_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
     game.game_order = "left" if game.game_order == "right" else "right"
+
+
+def apply_whisky_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
+    # crear lista de players concatenados
+    players_to_show = [
+        player
+        for player in game.players
+        if player != current_player and player.is_alive
+    ]
+    cards_to_show = [card for card in current_player.cards]
+    show_cards_to_players(cards_to_show, players_to_show)
 
 
 def do_nothing(*args, **kwargs) -> None:
@@ -68,7 +89,8 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "Aqui estoy bien": do_nothing,
         "Nada de barbacoas": do_nothing,
         "No gracias": do_nothing,
-        "Seduccion": apply_anticipate_trade_effect
+        "Seduccion": apply_anticipate_trade_effect,
+        "Whisky": apply_whisky_effect,
     }
 
     return _card_effects.get(card_name, do_nothing)

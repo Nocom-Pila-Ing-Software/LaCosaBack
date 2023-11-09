@@ -5,7 +5,12 @@ from pony.orm import db_session, select
 from lacosa.schemas import PlayerID, GameID, CardInfo
 from lacosa.game.schemas import GameCreationRequest, PlayCardRequest, GenericCardRequest
 import pytest
-from .game_fixtures import db_game_creation, db_game_status, db_game_creation_with_cards, db_game_creation_with_cards_2
+from .game_fixtures import (
+    db_game_creation,
+    db_game_status,
+    db_game_creation_with_cards,
+    db_game_creation_with_cards_2,
+)
 import pdb
 
 client = TestClient(app)
@@ -17,7 +22,7 @@ def test_create_game_success(db_game_creation):
         players=[
             PlayerID(playerID=1),
             PlayerID(playerID=2),
-        ]
+        ],
     ).model_dump()
 
     creation_response = GameID(gameID=1).model_dump()
@@ -26,12 +31,11 @@ def test_create_game_success(db_game_creation):
     data = response.json()
 
     with db_session:
-        game_record = select(g for g in Game if g.id ==
-                             int(data["gameID"])).get()
+        game_record = select(g for g in Game if g.id == int(data["gameID"])).get()
         the_thing = select(p for p in game_record.players if p.role == "thing")
-        current_players = list(select(
-            p for p in game_record.players if p.role == "thing"
-        ))
+        current_players = list(
+            select(p for p in game_record.players if p.role == "thing")
+        )
 
         # Game was created
         assert game_record is not None
@@ -46,11 +50,7 @@ def test_create_game_success(db_game_creation):
         assert the_thing.exists()
 
         # The thing has 'La cosa' card
-        assert (
-            the_thing.get().cards
-            .select(lambda c: c.name == "La cosa")
-            .exists()
-        )
+        assert the_thing.get().cards.select(lambda c: c.name == "La cosa").exists()
 
         # all players have 4 cards
         assert all(p.cards.count() == 4 for p in current_players)
@@ -65,7 +65,7 @@ def test_invalid_room_id(db_game_creation):
         players=[
             PlayerID(playerID=1),
             PlayerID(playerID=2),
-        ]
+        ],
     ).model_dump()
     response = client.post("/game", json=mock_creation_request)
     assert response.status_code == 404
@@ -86,9 +86,7 @@ def test_get_game_status_invalid_id():
 
 def test_play_Lanzallamas_card_no_defended(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
-        playerID=1,
-        targetPlayerID=2,
-        cardID=4
+        playerID=1, targetPlayerID=2, cardID=4
     ).model_dump()
 
     response = client.put("/game/5/play-card", json=mock_play_request)
@@ -97,27 +95,10 @@ def test_play_Lanzallamas_card_no_defended(db_game_creation_with_cards):
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
-
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
-        {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 3,
-            "username": "Player3",
-            "is_host": False,
-            "is_alive": True
-        }
+        {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
+        {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
+        {"playerID": 3, "username": "Player3", "is_host": False, "is_alive": True},
     ]
 
     # Check event was created
@@ -132,10 +113,7 @@ def test_play_Lanzallamas_card_no_defended(db_game_creation_with_cards):
         assert event_record.is_successful is False
 
     # no defenderse de la carta
-    mock_play_request = GenericCardRequest(
-        playerID=2,
-        cardID=-1
-    ).model_dump()
+    mock_play_request = GenericCardRequest(playerID=2, cardID=-1).model_dump()
 
     response = client.put("/game/5/defend-card", json=mock_play_request)
     assert response.status_code == 200
@@ -143,36 +121,18 @@ def test_play_Lanzallamas_card_no_defended(db_game_creation_with_cards):
     response = client.get("/game/5")
 
     assert response.json()["players"] == [
-
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
-        {
-            "playerID": 3,
-            "username": "Player3",
-            "is_host": False,
-            "is_alive": True
-        }
+        {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
+        {"playerID": 3, "username": "Player3", "is_host": False, "is_alive": True},
     ]
 
     assert response.json()["deadPlayers"] == [
-        {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": False
-        }
+        {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": False}
     ]
 
 
 def test_play_vigila_tus_espaldas_card_no_defended(db_game_creation_with_cards_2):
     mock_play_request = PlayCardRequest(
-        playerID=3,
-        targetPlayerID=3,
-        cardID=10
+        playerID=3, targetPlayerID=3, cardID=10
     ).model_dump()
 
     response = client.put("/game/5/play-card", json=mock_play_request)
@@ -181,32 +141,11 @@ def test_play_vigila_tus_espaldas_card_no_defended(db_game_creation_with_cards_2
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
-        {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 3,
-            "username": "Player3",
-            "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 4,
-            "username": "Player4",
-            "is_host": False,
-            "is_alive": True
-        }
+        {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
+        {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
+        {"playerID": 3, "username": "Player3", "is_host": False, "is_alive": True},
+        {"playerID": 4, "username": "Player4", "is_host": False, "is_alive": True},
     ]
 
     with db_session:
@@ -214,11 +153,27 @@ def test_play_vigila_tus_espaldas_card_no_defended(db_game_creation_with_cards_2
         assert game_record.game_order == "left"
 
 
+def test_play_whisky_card_no_defended(db_game_creation_with_cards_2):
+    mock_play_request = PlayCardRequest(
+        playerID=3, targetPlayerID=3, cardID=11
+    ).model_dump()
+
+    response = client.put("/game/5/play-card", json=mock_play_request)
+
+    assert response.status_code == 200
+
+    with db_session:
+        player_record = select(p for p in Player if p.id == 3).get()
+        cards = [c for c in player_record.cards]
+        game_record = select(g for g in Game if g.id == 5).get()
+        for player in game_record.players:
+            if player.id != 3 and player.is_alive:
+                assert player.shown_cards == cards
+
+
 def test_play_cambio_de_lugar_card_no_defended(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
-        playerID=1,
-        targetPlayerID=2,
-        cardID=5
+        playerID=1, targetPlayerID=2, cardID=5
     ).model_dump()
 
     response = client.put("/game/5/play-card", json=mock_play_request)
@@ -227,27 +182,10 @@ def test_play_cambio_de_lugar_card_no_defended(db_game_creation_with_cards):
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
-
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
-        {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 3,
-            "username": "Player3",
-            "is_host": False,
-            "is_alive": True
-        }
+        {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
+        {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
+        {"playerID": 3, "username": "Player3", "is_host": False, "is_alive": True},
     ]
 
     # Check event was created
@@ -262,10 +200,7 @@ def test_play_cambio_de_lugar_card_no_defended(db_game_creation_with_cards):
         assert event_record.is_successful is False
 
     # no defenderse de la carta
-    mock_play_request = GenericCardRequest(
-        playerID=2,
-        cardID=-1
-    ).model_dump()
+    mock_play_request = GenericCardRequest(playerID=2, cardID=-1).model_dump()
 
     response = client.put("/game/5/defend-card", json=mock_play_request)
     assert response.status_code == 200
@@ -273,25 +208,9 @@ def test_play_cambio_de_lugar_card_no_defended(db_game_creation_with_cards):
     response = client.get("/game/5")
 
     assert response.json()["players"] == [
-
-        {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
-        {
-            "playerID": 3,
-            "username": "Player3",
-            "is_host": False,
-            "is_alive": True
-        }
+        {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
+        {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
+        {"playerID": 3, "username": "Player3", "is_host": False, "is_alive": True},
     ]
 
     assert response.json()["deadPlayers"] == []
@@ -299,9 +218,7 @@ def test_play_cambio_de_lugar_card_no_defended(db_game_creation_with_cards):
 
 def test_play_mas_vale_que_corras_card_no_defended(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
-        playerID=1,
-        targetPlayerID=2,
-        cardID=6
+        playerID=1, targetPlayerID=2, cardID=6
     ).model_dump()
 
     response = client.put("/game/5/play-card", json=mock_play_request)
@@ -310,27 +227,10 @@ def test_play_mas_vale_que_corras_card_no_defended(db_game_creation_with_cards):
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
-
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
-        {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 3,
-            "username": "Player3",
-            "is_host": False,
-            "is_alive": True
-        }
+        {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
+        {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
+        {"playerID": 3, "username": "Player3", "is_host": False, "is_alive": True},
     ]
 
     # Check event was created
@@ -345,10 +245,7 @@ def test_play_mas_vale_que_corras_card_no_defended(db_game_creation_with_cards):
         assert event_record.is_successful is False
 
     # no defenderse de la carta
-    mock_play_request = GenericCardRequest(
-        playerID=2,
-        cardID=-1
-    ).model_dump()
+    mock_play_request = GenericCardRequest(playerID=2, cardID=-1).model_dump()
 
     response = client.put("/game/5/defend-card", json=mock_play_request)
     assert response.status_code == 200
@@ -356,25 +253,9 @@ def test_play_mas_vale_que_corras_card_no_defended(db_game_creation_with_cards):
     response = client.get("/game/5")
 
     assert response.json()["players"] == [
-
-        {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
-        {
-            "playerID": 3,
-            "username": "Player3",
-            "is_host": False,
-            "is_alive": True
-        }
+        {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
+        {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
+        {"playerID": 3, "username": "Player3", "is_host": False, "is_alive": True},
     ]
 
     assert response.json()["deadPlayers"] == []
@@ -382,9 +263,7 @@ def test_play_mas_vale_que_corras_card_no_defended(db_game_creation_with_cards):
 
 def test_play_cambio_de_lugar_card_defended(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
-        playerID=1,
-        targetPlayerID=2,
-        cardID=5
+        playerID=1, targetPlayerID=2, cardID=5
     ).model_dump()
 
     response = client.put("/game/5/play-card", json=mock_play_request)
@@ -393,27 +272,10 @@ def test_play_cambio_de_lugar_card_defended(db_game_creation_with_cards):
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
-
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
-        {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 3,
-            "username": "Player3",
-            "is_host": False,
-            "is_alive": True
-        }
+        {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
+        {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
+        {"playerID": 3, "username": "Player3", "is_host": False, "is_alive": True},
     ]
 
     # Check event was created
@@ -428,10 +290,7 @@ def test_play_cambio_de_lugar_card_defended(db_game_creation_with_cards):
         assert event_record.is_successful is False
 
     # defenderse de la carta con aqui estoy bien
-    mock_play_request = GenericCardRequest(
-        playerID=2,
-        cardID=7
-    ).model_dump()
+    mock_play_request = GenericCardRequest(playerID=2, cardID=7).model_dump()
 
     response = client.put("/game/5/defend-card", json=mock_play_request)
     assert response.status_code == 200
@@ -439,33 +298,23 @@ def test_play_cambio_de_lugar_card_defended(db_game_creation_with_cards):
     response = client.get("/game/5")
 
     assert response.json()["players"] == [
-
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
-        {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 3,
-            "username": "Player3",
-            "is_host": False,
-            "is_alive": True
-        }
+        {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
+        {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
+        {"playerID": 3, "username": "Player3", "is_host": False, "is_alive": True},
     ]
 
     # Check event was completed correctly
     with db_session:
         game_record = select(g for g in Game if g.id == 5).get()
-        event_record = select(
-            e for e in game_record.events if e.type == "action" and e.is_completed is True
-        ).order_by(lambda e: e.id).first()
+        event_record = (
+            select(
+                e
+                for e in game_record.events
+                if e.type == "action" and e.is_completed is True
+            )
+            .order_by(lambda e: e.id)
+            .first()
+        )
         assert event_record.player1.id == 1
         assert event_record.player2.id == 2
         assert event_record.card1.id == 5
@@ -477,9 +326,7 @@ def test_play_cambio_de_lugar_card_defended(db_game_creation_with_cards):
 
 def test_play_seduccion(db_game_creation_with_cards_2):
     mock_play_request = PlayCardRequest(
-        playerID=2,
-        targetPlayerID=1,
-        cardID=9
+        playerID=2, targetPlayerID=1, cardID=9
     ).model_dump()
 
     with db_session:
@@ -494,8 +341,7 @@ def test_play_seduccion(db_game_creation_with_cards_2):
     # Check event was created
     with db_session:
         game_record = select(g for g in Game if g.id == 5).get()
-        event_record = select(
-            e for e in game_record.events if e.type == "action").get()
+        event_record = select(e for e in game_record.events if e.type == "action").get()
         assert event_record.player1.id == 2
         assert event_record.player2.id == 1
         assert event_record.card1.id == 9
@@ -503,8 +349,7 @@ def test_play_seduccion(db_game_creation_with_cards_2):
         assert event_record.is_completed is True
         assert event_record.is_successful is True
 
-        event_trade = select(
-            e for e in game_record.events if e.type == "trade").get()
+        event_trade = select(e for e in game_record.events if e.type == "trade").get()
 
         assert event_trade.player1.id == 2
         assert event_trade.player2.id == 1
@@ -516,19 +361,13 @@ def test_play_seduccion(db_game_creation_with_cards_2):
         assert game_record.current_player == 2
         assert game_record.current_action == "trade"
 
-    mock_trade_request = GenericCardRequest(
-        playerID=2,
-        cardID=8
-    ).model_dump()
+    mock_trade_request = GenericCardRequest(playerID=2, cardID=8).model_dump()
 
     response = client.put("/game/5/trade-card", json=mock_trade_request)
 
     assert response.status_code == 200
 
-    mock_trade_request = GenericCardRequest(
-        playerID=1,
-        cardID=5
-    ).model_dump()
+    mock_trade_request = GenericCardRequest(playerID=1, cardID=5).model_dump()
 
     response = client.put("/game/5/trade-card", json=mock_trade_request)
 
@@ -536,8 +375,7 @@ def test_play_seduccion(db_game_creation_with_cards_2):
 
     with db_session:
         game_record = select(g for g in Game if g.id == 5).get()
-        event_trade = select(
-            e for e in game_record.events if e.type == "trade").get()
+        event_trade = select(e for e in game_record.events if e.type == "trade").get()
 
         assert event_trade.player1.id == 2
         assert event_trade.player2.id == 1
@@ -553,9 +391,7 @@ def test_play_seduccion(db_game_creation_with_cards_2):
 
 def test_play_mas_vale_que_corras_card_defended(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
-        playerID=1,
-        targetPlayerID=2,
-        cardID=6
+        playerID=1, targetPlayerID=2, cardID=6
     ).model_dump()
 
     response = client.put("/game/5/play-card", json=mock_play_request)
@@ -564,27 +400,10 @@ def test_play_mas_vale_que_corras_card_defended(db_game_creation_with_cards):
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
-
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
-        {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 3,
-            "username": "Player3",
-            "is_host": False,
-            "is_alive": True
-        }
+        {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
+        {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
+        {"playerID": 3, "username": "Player3", "is_host": False, "is_alive": True},
     ]
 
     # Check event was created
@@ -599,10 +418,7 @@ def test_play_mas_vale_que_corras_card_defended(db_game_creation_with_cards):
         assert event_record.is_successful is False
 
     # defenderse de la carta con aqui estoy bien
-    mock_play_request = GenericCardRequest(
-        playerID=2,
-        cardID=7
-    ).model_dump()
+    mock_play_request = GenericCardRequest(playerID=2, cardID=7).model_dump()
 
     response = client.put("/game/5/defend-card", json=mock_play_request)
     assert response.status_code == 200
@@ -610,33 +426,23 @@ def test_play_mas_vale_que_corras_card_defended(db_game_creation_with_cards):
     response = client.get("/game/5")
 
     assert response.json()["players"] == [
-
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
-        {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 3,
-            "username": "Player3",
-            "is_host": False,
-            "is_alive": True
-        }
+        {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
+        {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
+        {"playerID": 3, "username": "Player3", "is_host": False, "is_alive": True},
     ]
 
     # Check event was completed correctly
     with db_session:
         game_record = select(g for g in Game if g.id == 5).get()
-        event_record = select(
-            e for e in game_record.events if e.type == "action" and e.is_completed is True
-        ).order_by(lambda e: e.id).first()
+        event_record = (
+            select(
+                e
+                for e in game_record.events
+                if e.type == "action" and e.is_completed is True
+            )
+            .order_by(lambda e: e.id)
+            .first()
+        )
         assert event_record.player1.id == 1
         assert event_record.player2.id == 2
         assert event_record.card1.id == 6
@@ -648,9 +454,7 @@ def test_play_mas_vale_que_corras_card_defended(db_game_creation_with_cards):
 
 def test_play_Lanzallamas_card_defended(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
-        playerID=1,
-        targetPlayerID=2,
-        cardID=4
+        playerID=1, targetPlayerID=2, cardID=4
     ).model_dump()
 
     response = client.put("/game/5/play-card", json=mock_play_request)
@@ -659,27 +463,10 @@ def test_play_Lanzallamas_card_defended(db_game_creation_with_cards):
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
-
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
-        {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 3,
-            "username": "Player3",
-            "is_host": False,
-            "is_alive": True
-        }
+        {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
+        {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
+        {"playerID": 3, "username": "Player3", "is_host": False, "is_alive": True},
     ]
 
     # Check event was created
@@ -694,10 +481,7 @@ def test_play_Lanzallamas_card_defended(db_game_creation_with_cards):
         assert event_record.is_successful is False
 
     # defenderse de la carta con aqui estoy bien
-    mock_play_request = GenericCardRequest(
-        playerID=2,
-        cardID=8
-    ).model_dump()
+    mock_play_request = GenericCardRequest(playerID=2, cardID=8).model_dump()
 
     response = client.put("/game/5/defend-card", json=mock_play_request)
     assert response.status_code == 200
@@ -705,33 +489,23 @@ def test_play_Lanzallamas_card_defended(db_game_creation_with_cards):
     response = client.get("/game/5")
 
     assert response.json()["players"] == [
-
-        {
-            "playerID": 1,
-            "username": "Player1",
-            "is_host": True,
-            "is_alive": True
-        },
-        {
-            "playerID": 2,
-            "username": "Player2",
-            "is_host": False,
-            "is_alive": True
-        },
-        {
-            "playerID": 3,
-            "username": "Player3",
-            "is_host": False,
-            "is_alive": True
-        }
+        {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
+        {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
+        {"playerID": 3, "username": "Player3", "is_host": False, "is_alive": True},
     ]
 
     # Check event was completed correctly
     with db_session:
         game_record = select(g for g in Game if g.id == 5).get()
-        event_record = select(
-            e for e in game_record.events if e.type == "action" and e.is_completed is True
-        ).order_by(lambda e: e.id).first()
+        event_record = (
+            select(
+                e
+                for e in game_record.events
+                if e.type == "action" and e.is_completed is True
+            )
+            .order_by(lambda e: e.id)
+            .first()
+        )
         assert event_record.player1.id == 1
         assert event_record.player2.id == 2
         assert event_record.card1.id == 4
@@ -744,9 +518,7 @@ def test_play_Lanzallamas_card_defended(db_game_creation_with_cards):
 
 def test_play_card_invalid_player(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
-        playerID=666,
-        targetPlayerID=2,
-        cardID=0
+        playerID=666, targetPlayerID=2, cardID=0
     ).model_dump()
 
     response = client.put("/game/5/play-card", json=mock_play_request)
@@ -757,9 +529,7 @@ def test_play_card_invalid_player(db_game_creation_with_cards):
 
 def test_play_card_invalid_card(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
-        playerID=1,
-        targetPlayerID=2,
-        cardID=666
+        playerID=1, targetPlayerID=2, cardID=666
     ).model_dump()
 
     response = client.put("/game/5/play-card", json=mock_play_request)
@@ -770,9 +540,7 @@ def test_play_card_invalid_card(db_game_creation_with_cards):
 
 def test_play_card_invalid_target(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
-        playerID=1,
-        targetPlayerID=666,
-        cardID=0
+        playerID=1, targetPlayerID=666, cardID=0
     ).model_dump()
 
     response = client.put("/game/5/play-card", json=mock_play_request)
@@ -782,10 +550,7 @@ def test_play_card_invalid_target(db_game_creation_with_cards):
 
 
 def test_defense_card_invalid_phase(db_game_creation_with_cards):
-    mock_play_request = GenericCardRequest(
-        playerID=1,
-        cardID=5
-    ).model_dump()
+    mock_play_request = GenericCardRequest(playerID=1, cardID=5).model_dump()
 
     with db_session:
         # create event to defend
@@ -796,23 +561,23 @@ def test_defense_card_invalid_phase(db_game_creation_with_cards):
             card1=game_record.cards.select(lambda c: c.id == 5).get(),
             type="action",
             is_completed=False,
-            is_successful=False
+            is_successful=False,
         )
 
     response = client.put("/game/5/defend-card", json=mock_play_request)
 
     assert response.status_code == 403
     assert response.json() == {
-        "detail": "Player not has permission to execute this action"}
+        "detail": "Player not has permission to execute this action"
+    }
+
 
 # no se actualiza la base de datos por cada modulo
 
 
 def test_game_is_over(db_game_creation_with_cards):
     mock_play_request = PlayCardRequest(
-        playerID=1,
-        targetPlayerID=2,
-        cardID=4
+        playerID=1, targetPlayerID=2, cardID=4
     ).model_dump()
     response = client.put("/game/5/play-card", json=mock_play_request)
 
@@ -822,9 +587,7 @@ def test_game_is_over(db_game_creation_with_cards):
     assert response.json()["result"]["isGameOver"] is True
 
     mock_play_request = PlayCardRequest(
-        playerID=3,
-        targetPlayerID=1,
-        cardID=60
+        playerID=3, targetPlayerID=1, cardID=60
     ).model_dump()
 
     response = client.put("/game/5/play-card", json=mock_play_request)
