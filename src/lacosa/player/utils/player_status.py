@@ -1,7 +1,6 @@
 from fastapi import status
 from lacosa.player.schemas import PlayerResponse
 from lacosa.schemas import PlayerID, CardInfo
-from models import Player
 from typing import List
 import lacosa.utils as utils
 
@@ -22,13 +21,14 @@ def get_player_info(player_id: PlayerID) -> PlayerResponse:
     )
 
     return PlayerResponse(
-        hand=get_player_hand(player),
+        hand=get_schemas_from_cards(player.cards),
         role=player.role,
-        is_alive=player.is_alive
+        is_alive=player.is_alive,
+        shownCards=get_schemas_from_cards(player.shown_cards)
     )
 
 
-def get_player_hand(player: Player) -> List[CardInfo]:
+def get_schemas_from_cards(cards) -> List[CardInfo]:
     """
     Get the list of cards of a player
 
@@ -39,13 +39,13 @@ def get_player_hand(player: Player) -> List[CardInfo]:
     list[CardInfo]: The list of cards of the player
     """
 
-    player_hand = [
-        get_card_schema(card) for card in player.cards
+    card_schemas = [
+        get_card_schema(card) for card in cards
     ]
 
-    player_hand.sort(key=lambda x: x.cardID)
+    card_schemas.sort(key=lambda x: x.cardID)
 
-    return player_hand
+    return card_schemas
 
 
 def get_card_schema(card) -> CardInfo:
