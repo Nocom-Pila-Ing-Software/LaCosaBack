@@ -10,6 +10,7 @@ from .game_fixtures import (
     db_game_status,
     db_game_creation_with_cards,
     db_game_creation_with_cards_2,
+    game_with_events
 )
 import pdb
 
@@ -31,7 +32,8 @@ def test_create_game_success(db_game_creation):
     data = response.json()
 
     with db_session:
-        game_record = select(g for g in Game if g.id == int(data["gameID"])).get()
+        game_record = select(g for g in Game if g.id ==
+                             int(data["gameID"])).get()
         the_thing = select(p for p in game_record.players if p.role == "thing")
         current_players = list(
             select(p for p in game_record.players if p.role == "thing")
@@ -341,7 +343,8 @@ def test_play_seduccion(db_game_creation_with_cards_2):
     # Check event was created
     with db_session:
         game_record = select(g for g in Game if g.id == 5).get()
-        event_record = select(e for e in game_record.events if e.type == "action").get()
+        event_record = select(
+            e for e in game_record.events if e.type == "action").get()
         assert event_record.player1.id == 2
         assert event_record.player2.id == 1
         assert event_record.card1.id == 9
@@ -349,7 +352,8 @@ def test_play_seduccion(db_game_creation_with_cards_2):
         assert event_record.is_completed is True
         assert event_record.is_successful is True
 
-        event_trade = select(e for e in game_record.events if e.type == "trade").get()
+        event_trade = select(
+            e for e in game_record.events if e.type == "trade").get()
 
         assert event_trade.player1.id == 2
         assert event_trade.player2.id == 1
@@ -379,7 +383,8 @@ def test_play_seduccion(db_game_creation_with_cards_2):
 
     with db_session:
         game_record = select(g for g in Game if g.id == 5).get()
-        event_trade = select(e for e in game_record.events if e.type == "trade").get()
+        event_trade = select(
+            e for e in game_record.events if e.type == "trade").get()
 
         assert event_trade.player1.id == 2
         assert event_trade.player2.id == 1
@@ -613,3 +618,15 @@ def test_game_is_over(db_game_creation_with_cards):
         assert not Card.exists(id=4)
         assert not Card.exists(id=60)
     """
+
+
+def test_event_logs(game_with_events):
+    response = client.get("/game/1")
+    json = response.json()
+    assert response.status_code == 200
+    assert json["events"] == [
+        'Player1 realizó un intercambio con Player2',
+        'Player1 inicio un intercambio con Player2 pero Player2 se defendio con No gracias',
+        'Player1 jugó Lanzallamas sobre Player2',
+        'Player1 jugó Lanzallamas sobre Player2 pero Player2 se defendio con Nada de barbacoas',
+    ]

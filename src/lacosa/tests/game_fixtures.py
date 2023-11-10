@@ -120,7 +120,8 @@ def db_game_creation_with_cards():
         game.cards.create()
 
         # Add cards to players
-        player1.cards.create(id=4, name="Lanzallamas", description="Esta que arde")
+        player1.cards.create(id=4, name="Lanzallamas",
+                             description="Esta que arde")
         player1.cards.create(
             id=5, name="Cambio de lugar", description="Cambio de lugar"
         )
@@ -137,7 +138,8 @@ def db_game_creation_with_cards():
         player2.cards.create()
         player2.cards.create()
 
-        player3.cards.create(id=60, name="Lanzallamas", description="Esta que arde")
+        player3.cards.create(id=60, name="Lanzallamas",
+                             description="Esta que arde")
 
 
 @pytest.fixture(scope="function")
@@ -182,7 +184,8 @@ def db_game_creation_with_cards_2():
         game.cards.create()
 
         # Add cards to players
-        player1.cards.create(id=4, name="Lanzallamas", description="Está que arde")
+        player1.cards.create(id=4, name="Lanzallamas",
+                             description="Está que arde")
         player1.cards.create(
             id=5, name="Cambio de lugar", description="Cambio de lugar"
         )
@@ -204,9 +207,12 @@ def db_game_creation_with_cards_2():
         player3.cards.create(
             id=10, name="Vigila tus espaldas", description="Vigila tus espaldas"
         )
-        player3.cards.create(id=11, name="Whisky", description="Whisky", type="action")
-        player3.cards.create(id=60, name="Lanzallamas", description="Está que arde")
-        player4.cards.create(id=12, name="No gracias", description="No gracias")
+        player3.cards.create(id=11, name="Whisky",
+                             description="Whisky", type="action")
+        player3.cards.create(id=60, name="Lanzallamas",
+                             description="Está que arde")
+        player4.cards.create(id=12, name="No gracias",
+                             description="No gracias")
 
 
 @pytest.fixture(scope="module")
@@ -276,7 +282,8 @@ def db_game_creation_without_cards():
 
     with db_session:
         room = WaitingRoom(id=0, name="Test room")
-        player = Player(id=1, username="Player", room=room, is_host=True, position=1)
+        player = Player(id=1, username="Player", room=room,
+                        is_host=True, position=1)
         room.players.add(player)
         Game(id=0, waiting_room=room, players=room.players, current_player=1)
 
@@ -818,5 +825,79 @@ def get_defend_trade_card_game_creation():
     # second half
     with db_session:
         set_db_from_dict(data)
+
+    return data
+
+
+@pytest.fixture()
+def game_with_events():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+    data = {
+        "room": {"id": 1, "name": "Test room"},
+        "players": [
+            {"id": 1, "username": "Player1", "is_host": True, "position": 1},
+            {"id": 2, "username": "Player2", "is_host": False, "position": 2},
+        ],
+        "game": {"id": 1, "current_player": 1},
+        "cards": [
+            [
+                {"id": 1, "name": "Lanzallamas", "type": "action"},
+            ],
+            [
+                {"id": 2, "name": "Nada de barbacoas", "type": "action"},
+                {"id": 3, "name": "No gracias", "type": "defense"},
+            ],
+        ],
+    }
+
+    # second half
+    with db_session:
+        set_db_from_dict(data)
+        game = Game.get(id=data["game"]["id"])
+        p1 = Player.get(id=data["players"][0]["id"])
+        p2 = Player.get(id=data["players"][1]["id"])
+        lanzallamas = Card.get(id=data["cards"][0][0]["id"])
+        barbacoa = Card.get(id=data["cards"][1][0]["id"])
+        nogracias = Card.get(id=data["cards"][1][1]["id"])
+        game.events.create(
+            type="trade",
+            player1=p1,
+            player2=p2,
+            card1=lanzallamas,
+            card2=barbacoa,
+            is_completed=True,
+            is_successful=True,
+        )
+
+        game.events.create(
+            type="trade",
+            player1=p1,
+            player2=p2,
+            card1=lanzallamas,
+            card2=nogracias,
+            is_completed=True,
+            is_successful=False,
+        )
+
+        game.events.create(
+            type="action",
+            player1=p1,
+            player2=p2,
+            card1=lanzallamas,
+            card2=None,
+            is_completed=True,
+            is_successful=True,
+        )
+
+        game.events.create(
+            type="action",
+            player1=p1,
+            player2=p2,
+            card1=lanzallamas,
+            card2=barbacoa,
+            is_completed=True,
+            is_successful=False,
+        )
 
     return data
