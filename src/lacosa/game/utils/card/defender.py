@@ -18,11 +18,11 @@ class CardDefender(ActionInterface):
 
     def execute_action(self) -> None:
         self.event.card2 = self.card if self.card else None
-        self.event.is_completed = True
 
         if self.event.type == "trade":
             self.handle_trade_event()
         elif self.event.type == "action":
+            self.event.is_completed = True
             self.handle_action_event()
 
     def get_next_player_id(self):
@@ -41,17 +41,25 @@ class CardDefender(ActionInterface):
             exceptions.validate_correct_defense_card(self.card, self.event)
 
     def handle_trade_event(self):
-        self.game.current_player = self.get_next_player_id()
-        self.game.current_action = "draw"
-        self.game.last_played_card = self.card
-        Deck.draw_card(self.game.id, self.event.player2.id)
-        Deck.discard_card(self.card, self.event.player2, self.game)
+        if self.card:
+            self.event.is_successful = False
+            self.event.is_completed = True
+
+            self.game.current_player = self.get_next_player_id()
+            self.game.current_action = "draw"
+            self.game.last_played_card = self.card
+            Deck.draw_card(self.game.id, self.event.player2.id)
+            Deck.discard_card(self.card, self.event.player2, self.game)
+        else:
+            self.game.current_action = "trade"
+            self.game.current_player = self.event.player1.id
 
     def handle_action_event(self):
         card = self.event.card2 if self.card else self.event.card1
         execute_card_effect(card, self.event.player1, self.event.player2, self.game)
         if self.card:
             self.event.is_successful = False
+            Deck.discard_card(self.card, self.event.player2, self.game)
             Deck.draw_card(self.game.id, self.event.player2.id)
         else:
             self.event.is_successful = True

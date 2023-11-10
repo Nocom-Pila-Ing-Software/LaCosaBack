@@ -4,6 +4,8 @@ import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
 from models import Game, Player, Card
 from lacosa.game.utils.card_shower import clear_shown_cards
+from lacosa.game.utils import turn_handler
+
 
 
 def discard_card_util(discard_request: GenericCardRequest, room_id: int):
@@ -15,16 +17,10 @@ def discard_card_util(discard_request: GenericCardRequest, room_id: int):
 
     Deck.discard_card(card, player, game)
 
-    clear_shown_cards(game.players)
+    next_player = turn_handler.get_next_player(game, player.position)
 
-    game.current_action = "trade"
-
-    next_player = game.players.select(
-        lambda p: p.position == player.position + 1
-    ).first()
-    if next_player is None:
-        next_player = game.players.select(lambda p: p.position == 1).first()
-
+    game.current_action = "defense"
+    game.current_player = next_player.id
     game.events.create(type="trade", player1=player, player2=next_player)
 
 

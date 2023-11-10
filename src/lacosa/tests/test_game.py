@@ -358,8 +358,12 @@ def test_play_seduccion(db_game_creation_with_cards_2):
         assert event_trade.is_successful is False
 
         assert game_record.last_played_card.id == 9
-        assert game_record.current_player == 2
-        assert game_record.current_action == "trade"
+        assert game_record.current_player == 1
+        assert game_record.current_action == "defense"
+
+    mock_play_request = GenericCardRequest(playerID=1, cardID=-1).model_dump()
+
+    response = client.put("/game/5/defend-card", json=mock_play_request)
 
     mock_trade_request = GenericCardRequest(playerID=2, cardID=8).model_dump()
 

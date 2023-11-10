@@ -236,7 +236,7 @@ def set_db_from_dict(data):
     commit()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def discard_card_game_creation():
     db.drop_all_tables(with_all_data=True)
     db.create_tables()
