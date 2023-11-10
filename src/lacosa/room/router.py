@@ -12,7 +12,6 @@ from lacosa.room.utils.player_creator import PlayerCreator
 from lacosa.room.utils.error_responses import error_responses
 from lacosa.room.utils.player_remover import PlayerRemover
 from lacosa.schemas import PlayerID
-import lacosa.utils as utils
 
 room_router = APIRouter()
 
