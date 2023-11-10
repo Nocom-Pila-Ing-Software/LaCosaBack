@@ -51,9 +51,8 @@ class CardPlayer(ActionInterface):
             event.is_completed = True
             event.is_successful = True
 
-            self.game.current_action = "defense"
-            self.game.current_player = self.target_player.id
-            
+            self.game.current_action = "trade"
+
             if (
                 select(
                     e

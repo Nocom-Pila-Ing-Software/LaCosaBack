@@ -25,6 +25,7 @@ class CardTrader(ActionInterface):
         """
         if self.event.card1 is None:
             self.event.card1 = self.card
+            self.game.current_action = "defense"
             self.game.current_player = self.event.player2.id
         else:
             self.trade_cards()

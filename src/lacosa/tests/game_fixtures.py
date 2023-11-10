@@ -353,9 +353,14 @@ def db_game_creation_with_trade_event():
         for i in range(8):
             for j in range(4):
                 if players_in_game[i] == events_in_game[0].player2:
-                    players_in_game[i].cards.create(
-                        name="No gracias", description="Carta test defensa"
-                    )
+                    if j > 2: 
+                        players_in_game[i].cards.create(
+                            name="No gracias", description="Carta test defensa"
+                        )
+                    else:
+                        players_in_game[i].cards.create(
+                            name="Aterrador", description="Carta test defensa"
+                        )
                 else:
                     players_in_game[i].cards.create(
                         name="Carta" + str(i * 5 + j), description="Carta test"
@@ -405,7 +410,7 @@ def get_info_card_game_creation():
             [
                 {"id": 5, "name": "Infeccion", "type": "contagio"},
                 {"id": 6, "name": "La cosa", "type": "especial"},
-                {"id": 7, "name": "Lanzallamas", "type": "action"},
+                {"id": 7, "name": "Aterrador", "type": "defense"},
                 {"id": 8, "name": "No gracias", "type": "defense"},
                 {"id": 19, "name": "Seduccion", "type": "action"},
             ],
