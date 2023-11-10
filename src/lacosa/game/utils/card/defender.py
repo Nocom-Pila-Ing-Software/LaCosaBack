@@ -4,7 +4,6 @@ from .effects import execute_card_effect
 from ..deck import Deck
 from lacosa.interfaces import ActionInterface
 import lacosa.utils as utils
-from lacosa.game.utils.card_shower import clear_shown_cards
 
 
 class CardDefender(ActionInterface):
@@ -47,8 +46,6 @@ class CardDefender(ActionInterface):
         self.game.last_played_card = self.card
         Deck.draw_card(self.game.id, self.event.player2.id)
         Deck.discard_card(self.card, self.event.player2, self.game)
-
-        clear_shown_cards(self.game.players)
 
     def handle_action_event(self):
         card = self.event.card2 if self.card else self.event.card1

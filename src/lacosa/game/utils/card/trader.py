@@ -3,7 +3,6 @@ from lacosa.interfaces import ActionInterface
 from lacosa.utils import find_game, find_partial_event, find_player, find_card
 from lacosa.game.utils import exceptions, turn_handler
 from pony.orm import select
-from lacosa.game.utils.card_shower import clear_shown_cards
 
 
 class CardTrader(ActionInterface):
@@ -41,8 +40,6 @@ class CardTrader(ActionInterface):
         self.event.is_successful = True
         self.game.current_player = self.get_next_player_id(last_event)
         self.game.current_action = "draw"
-
-        clear_shown_cards(self.game.players)
 
         self.swap_cards()
         self.update_infection_status()
