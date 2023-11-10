@@ -43,7 +43,8 @@ def apply_switch_position_cards_effect(
 def apply_anticipate_trade_effect(
     current_player: Player, target_player: Player, game: Game
 ) -> None:
-    event = select(event for event in game.events if event.player1 == current_player)
+    event = select(
+        event for event in game.events if event.player1 == current_player)
     event.is_completed = True
     event.is_successful = True
     game.events.create(
@@ -76,6 +77,13 @@ def apply_whisky_effect(
     show_cards_to_players(cards_to_show, players_to_show)
 
 
+def apply_analysis_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
+    cards_to_show = [card for card in target_player.cards]
+    show_cards_to_players(cards_to_show, [current_player])
+
+
 def do_nothing(*args, **kwargs) -> None:
     pass
 
@@ -91,6 +99,7 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "No gracias": do_nothing,
         "Seduccion": apply_anticipate_trade_effect,
         "Whisky": apply_whisky_effect,
+        "Analisis": apply_analysis_effect,
     }
 
     return _card_effects.get(card_name, do_nothing)
