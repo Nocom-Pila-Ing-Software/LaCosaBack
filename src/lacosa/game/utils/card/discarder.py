@@ -3,7 +3,6 @@ from lacosa.game.schemas import GenericCardRequest
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
 from models import Game, Player, Card
-from lacosa.game.utils.card_shower import clear_shown_cards
 from lacosa.game.utils import turn_handler
 
 
