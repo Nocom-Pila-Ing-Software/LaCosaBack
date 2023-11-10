@@ -75,4 +75,4 @@ class GameStatus(BaseModel):
     deadPlayers: List[PublicPlayerInfo]
     lastPlayedCard: CardInfo
     result: GameResult
-    events: List[GameEvent]
+    events: List[str]
