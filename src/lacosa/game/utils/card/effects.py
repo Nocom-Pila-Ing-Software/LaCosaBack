@@ -2,6 +2,7 @@ from models import Player, Game
 from collections.abc import Callable
 from typing import Dict
 from pony.orm import select, commit
+from lacosa.game.utils.card_shower import show_cards_to_players
 
 CardEffectFunc = Callable[[Player, Game], None]
 
@@ -62,6 +63,19 @@ def apply_vigila_tus_espaldas_effect(
     game.game_order = "left" if game.game_order == "right" else "right"
 
 
+def apply_whisky_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
+    # crear lista de players concatenados
+    players_to_show = [
+        player
+        for player in game.players
+        if player != current_player and player.is_alive
+    ]
+    cards_to_show = [card for card in current_player.cards]
+    show_cards_to_players(cards_to_show, players_to_show)
+
+
 def do_nothing(*args, **kwargs) -> None:
     pass
 
@@ -76,6 +90,7 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "Nada de barbacoas": do_nothing,
         "No gracias": do_nothing,
         "Seduccion": apply_anticipate_trade_effect,
+        "Whisky": apply_whisky_effect,
     }
 
     return _card_effects.get(card_name, do_nothing)

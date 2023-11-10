@@ -95,7 +95,6 @@ def test_play_Lanzallamas_card_no_defended(db_game_creation_with_cards):
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
         {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
         {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
@@ -142,7 +141,6 @@ def test_play_vigila_tus_espaldas_card_no_defended(db_game_creation_with_cards_2
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
         {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
         {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
@@ -153,6 +151,24 @@ def test_play_vigila_tus_espaldas_card_no_defended(db_game_creation_with_cards_2
     with db_session:
         game_record = select(g for g in Game if g.id == 5).get()
         assert game_record.game_order == "left"
+
+
+def test_play_whisky_card_no_defended(db_game_creation_with_cards_2):
+    mock_play_request = PlayCardRequest(
+        playerID=3, targetPlayerID=3, cardID=11
+    ).model_dump()
+
+    response = client.put("/game/5/play-card", json=mock_play_request)
+
+    assert response.status_code == 200
+
+    with db_session:
+        player_record = select(p for p in Player if p.id == 3).get()
+        cards = [c for c in player_record.cards]
+        game_record = select(g for g in Game if g.id == 5).get()
+        for player in game_record.players:
+            if player.id != 3 and player.is_alive:
+                assert player.shown_cards == cards
 
 
 def test_play_cambio_de_lugar_card_no_defended(db_game_creation_with_cards):
@@ -166,7 +182,6 @@ def test_play_cambio_de_lugar_card_no_defended(db_game_creation_with_cards):
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
         {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
         {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
@@ -212,7 +227,6 @@ def test_play_mas_vale_que_corras_card_no_defended(db_game_creation_with_cards):
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
         {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
         {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
@@ -258,7 +272,6 @@ def test_play_cambio_de_lugar_card_defended(db_game_creation_with_cards):
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
         {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
         {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
@@ -391,7 +404,6 @@ def test_play_mas_vale_que_corras_card_defended(db_game_creation_with_cards):
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
         {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
         {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},
@@ -455,7 +467,6 @@ def test_play_Lanzallamas_card_defended(db_game_creation_with_cards):
 
     response = client.get("/game/5")
 
-    # The target player is dead
     assert response.json()["players"] == [
         {"playerID": 1, "username": "Player1", "is_host": True, "is_alive": True},
         {"playerID": 2, "username": "Player2", "is_host": False, "is_alive": True},

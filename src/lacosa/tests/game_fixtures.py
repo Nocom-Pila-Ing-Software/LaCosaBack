@@ -204,8 +204,9 @@ def db_game_creation_with_cards_2():
         player3.cards.create(
             id=10, name="Vigila tus espaldas", description="Vigila tus espaldas"
         )
+        player3.cards.create(id=11, name="Whisky", description="Whisky", type="action")
         player3.cards.create(id=60, name="Lanzallamas", description="Está que arde")
-        player4.cards.create()
+        player4.cards.create(id=12, name="No gracias", description="No gracias")
 
 
 @pytest.fixture(scope="module")

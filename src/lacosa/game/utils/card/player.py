@@ -7,6 +7,7 @@ import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
 from lacosa.interfaces import ActionInterface
 import lacosa.game.utils.turn_handler as turn_handler
+from lacosa.game.utils.card_shower import clear_shown_cards
 import json
 from pony.orm import select
 from settings import settings
@@ -41,6 +42,8 @@ class CardPlayer(ActionInterface):
 
         Deck.discard_card(self.card, self.player, self.game)
 
+        clear_shown_cards(self.game.players)
+
         check_card_is_defensible = self.check_card_is_defensible(self.card)
         if not check_card_is_defensible:
             execute_card_effect(self.card, self.player, self.target_player, self.game)
@@ -50,6 +53,7 @@ class CardPlayer(ActionInterface):
 
             self.game.current_action = "defense"
             self.game.current_player = self.target_player.id
+            
             if (
                 select(
                     e
