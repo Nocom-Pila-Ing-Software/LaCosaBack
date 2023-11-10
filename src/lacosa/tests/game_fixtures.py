@@ -217,56 +217,22 @@ def db_game_creation_with_cards_player_data():
         room = WaitingRoom(id=0, name="Test room")
         player = Player(id=1, username="Player", room=room)
         room.players.add(player)
-<<<<<<< HEAD
         Game(id=0, waiting_room=room, players=room.players, current_player=1)
-=======
-        Game(id=0, waiting_room=room,
-             players=room.players, current_player=1)
->>>>>>> ea824c82a8f075db96125500e7bd537dcbbcf5a6
         for _ in range(5):
             player.cards.create(name="Carta_test", description="Carta test")
 
 
-<<<<<<< HEAD
-discard_card_game_data = {
-    "room": {"id": 1, "name": "Test room"},
-    "players": [
-        {"id": 1, "username": "Player1", "is_host": True, "position": 1},
-        {"id": 2, "username": "Player2", "is_host": False, "position": 2},
-    ],
-    "game": {"id": 1, "current_player": 1},
-    "cards": [
-        [
-            {"id": 1, "name": "card1"},
-            {"id": 2, "name": "card2"},
-            {"id": 3, "name": "card3"},
-            {"id": 4, "name": "card4"},
-        ],
-        [
-            {"id": 5, "name": "card5"},
-            {"id": 6, "name": "card6"},
-            {"id": 7, "name": "card7"},
-            {"id": 8, "name": "card8"},
-        ],
-    ],
-}
-=======
 def set_db_from_dict(data):
     room = WaitingRoom(**data["room"])
     for player_data in data["players"]:
         room.players.create(**player_data)
 
-    game = Game(
-        waiting_room=room,
-        players=room.players,
-        **data["game"]
-    )
+    game = Game(waiting_room=room, players=room.players, **data["game"])
     ordered_players = game.players.order_by(lambda p: p.id)
     for player, cards in zip(ordered_players, data["cards"]):
         for card in cards:
             card = player.cards.create(**card)
     commit()
->>>>>>> ea824c82a8f075db96125500e7bd537dcbbcf5a6
 
 
 @pytest.fixture()
@@ -278,7 +244,7 @@ def discard_card_game_creation():
         "room": {"id": 1, "name": "Test room"},
         "players": [
             {"id": 1, "username": "Player1", "is_host": True, "position": 1},
-            {"id": 2, "username": "Player2", "is_host": False, "position": 2}
+            {"id": 2, "username": "Player2", "is_host": False, "position": 2},
         ],
         "game": {"id": 1, "current_player": 1},
         "cards": [
@@ -293,26 +259,11 @@ def discard_card_game_creation():
                 {"id": 6, "name": "card6"},
                 {"id": 7, "name": "card7"},
                 {"id": 8, "name": "card8"},
-            ]
-        ]
+            ],
+        ],
     }
     with db_session:
-<<<<<<< HEAD
-        room = WaitingRoom(**discard_card_game_data["room"])
-        for player_data in discard_card_game_data["players"]:
-            room.players.create(**player_data)
-
-        game = Game(
-            waiting_room=room, players=room.players, **discard_card_game_data["game"]
-        )
-        ordered_players = game.players.order_by(lambda p: p.id)
-        for player, cards in zip(ordered_players, discard_card_game_data["cards"]):
-            for card in cards:
-                card = player.cards.create(**card)
-        commit()
-=======
         set_db_from_dict(discard_card_game_data)
->>>>>>> ea824c82a8f075db96125500e7bd537dcbbcf5a6
 
     return discard_card_game_data
 
@@ -357,12 +308,7 @@ def db_game_creation_without_cards_dead_players_and_event():
         Game(id=0, waiting_room=room, players=room.players, current_player=1)
 
         game = Game.get(id=0)
-<<<<<<< HEAD
         Event(id=1, game=game, type="trade", player1=player, player2=player)
-=======
-        Event(id=1, game=game, type="trade",
-              player1=player, player2=player)
->>>>>>> ea824c82a8f075db96125500e7bd537dcbbcf5a6
 
 
 @pytest.fixture()
@@ -473,18 +419,7 @@ def get_info_card_game_creation():
 
     # second half
     with db_session:
-<<<<<<< HEAD
-        room = WaitingRoom(**data["room"])
-        for player_data in data["players"]:
-            room.players.create(**player_data)
-
-        game = Game(waiting_room=room, players=room.players, **data["game"])
-        for player, cards in zip(game.players, data["cards"]):
-            for card in cards:
-                player.cards.create(**card)
-=======
         set_db_from_dict(data)
->>>>>>> ea824c82a8f075db96125500e7bd537dcbbcf5a6
 
     return data
 
@@ -526,18 +461,7 @@ def get_defend_card_game_creation():
 
     # second half
     with db_session:
-<<<<<<< HEAD
-        room = WaitingRoom(**data["room"])
-        for player_data in data["players"]:
-            room.players.create(**player_data)
-
-        game = Game(waiting_room=room, players=room.players, **data["game"])
-        for player, cards in zip(game.players, data["cards"]):
-            for card in cards:
-                player.cards.create(**card)
-=======
         set_db_from_dict(data)
->>>>>>> ea824c82a8f075db96125500e7bd537dcbbcf5a6
 
     return data
 
@@ -609,18 +533,7 @@ def get_tradeable_info_card_game_creation():
 
     # second half
     with db_session:
-<<<<<<< HEAD
-        room = WaitingRoom(**data["room"])
-        for player_data in data["players"]:
-            room.players.create(**player_data)
-
-        game = Game(waiting_room=room, players=room.players, **data["game"])
-        for player, cards in zip(game.players, data["cards"]):
-            for card in cards:
-                player.cards.create(**card)
-=======
         set_db_from_dict(data)
->>>>>>> ea824c82a8f075db96125500e7bd537dcbbcf5a6
 
     return data
 
@@ -702,18 +615,7 @@ def get_info_card_game_creation_with_dead_players():
 
     # second half
     with db_session:
-<<<<<<< HEAD
-        room = WaitingRoom(**data["room"])
-        for player_data in data["players"]:
-            room.players.create(**player_data)
-
-        game = Game(waiting_room=room, players=room.players, **data["game"])
-        for player, cards in zip(game.players, data["cards"]):
-            for card in cards:
-                player.cards.create(**card)
-=======
         set_db_from_dict(data)
->>>>>>> ea824c82a8f075db96125500e7bd537dcbbcf5a6
 
     return data
 
@@ -793,20 +695,7 @@ def db_game_creation_with_trade_event_2():
 
     # second half
     with db_session:
-<<<<<<< HEAD
-        room = WaitingRoom(**data["room"])
-        for player_data in data["players"]:
-            room.players.create(**player_data)
-
-        game = Game(waiting_room=room, players=room.players, **data["game"])
-        ordered_players = game.players.order_by(lambda p: p.id)
-        for player, cards in zip(ordered_players, data["cards"]):
-            for card in cards:
-                card = player.cards.create(**card)
-        commit()
-=======
         set_db_from_dict(data)
->>>>>>> ea824c82a8f075db96125500e7bd537dcbbcf5a6
 
     return data
 
@@ -886,20 +775,7 @@ def db_game_creation_with_trade_event_3():
 
     # second half
     with db_session:
-<<<<<<< HEAD
-        room = WaitingRoom(**data["room"])
-        for player_data in data["players"]:
-            room.players.create(**player_data)
-
-        game = Game(waiting_room=room, players=room.players, **data["game"])
-        ordered_players = game.players.order_by(lambda p: p.id)
-        for player, cards in zip(ordered_players, data["cards"]):
-            for card in cards:
-                card = player.cards.create(**card)
-        commit()
-=======
         set_db_from_dict(data)
->>>>>>> ea824c82a8f075db96125500e7bd537dcbbcf5a6
 
     return data
 
@@ -940,17 +816,6 @@ def get_defend_trade_card_game_creation():
 
     # second half
     with db_session:
-<<<<<<< HEAD
-        room = WaitingRoom(**data["room"])
-        for player_data in data["players"]:
-            room.players.create(**player_data)
-
-        game = Game(waiting_room=room, players=room.players, **data["game"])
-        for player, cards in zip(game.players, data["cards"]):
-            for card in cards:
-                player.cards.create(**card)
-=======
         set_db_from_dict(data)
->>>>>>> ea824c82a8f075db96125500e7bd537dcbbcf5a6
 
     return data
