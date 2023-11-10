@@ -1,7 +1,7 @@
 """
 Defines 'room' endpoints
 """
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, WebSocket, WebSocketDisconnect
 from pony.orm import db_session
 
 from lacosa.room.schemas import RoomCreationRequest, RoomCreationResponse, RoomDataResponse, RoomListingList, RoomAddPlayerRequest
@@ -12,6 +12,7 @@ from lacosa.room.utils.player_creator import PlayerCreator
 from lacosa.room.utils.error_responses import error_responses
 from lacosa.room.utils.player_remover import PlayerRemover
 from lacosa.schemas import PlayerID
+import lacosa.utils as utils
 
 room_router = APIRouter()
 
@@ -71,3 +72,41 @@ async def remove_player_from_room(request_data: PlayerID, room_id: int) -> None:
     with db_session:
         game_creator = PlayerRemover(request_data, room_id)
         game_creator.execute_action()
+
+# Store connected clients
+players = {}
+
+
+@room_router.websocket("/ws/{room_id}")
+async def chat_ws(websocket: WebSocket, room_id: int):
+    with db_session:
+        # Accept the WebSocket connection
+        await websocket.accept()
+
+        # Add the client to the list
+        if players.get(room_id) is None:
+            players[room_id] = [websocket]
+        else:
+            players[room_id].append(websocket)
+        print(players)
+
+        try:
+            while True:
+                # Receive JSON message from the client
+                data = await websocket.receive_json()
+                print(data)
+
+                # Broadcast the message to all connected clients
+                for client in players[room_id]:
+                    await client.send_json(data)
+
+        except WebSocketDisconnect:
+            # Handle disconnection here if needed
+            print("WebSocket connection closed")
+        except Exception as e:
+            print("EXCEPTION", e)
+        finally:
+            # Remove the WebSocket from the list on disconnect
+            players[room_id].remove(websocket)
+            print("Connection removed on disconnect")
+            print(players)
