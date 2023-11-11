@@ -43,7 +43,7 @@ def apply_switch_position_cards_effect(
 def apply_anticipate_trade_effect(
     current_player: Player, target_player: Player, game: Game
 ) -> None:
-    event = select(event for event in game.events if event.player1 == current_player)
+    event = select(event for event in game.events if event.is_completed is False).get()
     event.is_completed = True
     event.is_successful = True
     game.events.create(
@@ -66,7 +66,6 @@ def apply_vigila_tus_espaldas_effect(
 def apply_whisky_effect(
     current_player: Player, target_player: Player, game: Game
 ) -> None:
-    # crear lista de players concatenados
     players_to_show = [
         player
         for player in game.players
@@ -74,6 +73,17 @@ def apply_whisky_effect(
     ]
     cards_to_show = [card for card in current_player.cards]
     show_cards_to_players(cards_to_show, players_to_show)
+
+
+def apply_aterrador_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
+    event = select(event for event in game.events if event.is_completed is False).get()
+    event.is_completed = True
+    event.is_successful = False
+    card_to_show = [event.card1]
+    player_to_show = [event.player2]
+    show_cards_to_players(card_to_show, player_to_show)
 
 
 def do_nothing(*args, **kwargs) -> None:
@@ -91,6 +101,7 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "No gracias": do_nothing,
         "Seduccion": apply_anticipate_trade_effect,
         "Whisky": apply_whisky_effect,
+        "Aterrador": apply_aterrador_effect,
     }
 
     return _card_effects.get(card_name, do_nothing)
