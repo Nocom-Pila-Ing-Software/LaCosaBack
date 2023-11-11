@@ -120,7 +120,8 @@ def db_game_creation_with_cards():
         game.cards.create()
 
         # Add cards to players
-        player1.cards.create(id=4, name="Lanzallamas", description="Esta que arde")
+        player1.cards.create(id=4, name="Lanzallamas",
+                             description="Esta que arde")
         player1.cards.create(
             id=5, name="Cambio de lugar", description="Cambio de lugar"
         )
@@ -137,7 +138,8 @@ def db_game_creation_with_cards():
         player2.cards.create()
         player2.cards.create()
 
-        player3.cards.create(id=60, name="Lanzallamas", description="Esta que arde")
+        player3.cards.create(id=60, name="Lanzallamas",
+                             description="Esta que arde")
 
 
 @pytest.fixture(scope="function")
@@ -182,7 +184,8 @@ def db_game_creation_with_cards_2():
         game.cards.create()
 
         # Add cards to players
-        player1.cards.create(id=4, name="Lanzallamas", description="Está que arde")
+        player1.cards.create(id=4, name="Lanzallamas",
+                             description="Está que arde")
         player1.cards.create(
             id=5, name="Cambio de lugar", description="Cambio de lugar"
         )
@@ -204,9 +207,12 @@ def db_game_creation_with_cards_2():
         player3.cards.create(
             id=10, name="Vigila tus espaldas", description="Vigila tus espaldas"
         )
-        player3.cards.create(id=11, name="Whisky", description="Whisky", type="action")
-        player3.cards.create(id=60, name="Lanzallamas", description="Está que arde")
-        player4.cards.create(id=12, name="No gracias", description="No gracias")
+        player3.cards.create(id=11, name="Whisky",
+                             description="Whisky", type="action")
+        player3.cards.create(id=60, name="Lanzallamas",
+                             description="Está que arde")
+        player4.cards.create(id=12, name="No gracias",
+                             description="No gracias")
 
 
 @pytest.fixture(scope="module")
@@ -276,7 +282,8 @@ def db_game_creation_without_cards():
 
     with db_session:
         room = WaitingRoom(id=0, name="Test room")
-        player = Player(id=1, username="Player", room=room, is_host=True, position=1)
+        player = Player(id=1, username="Player", room=room,
+                        is_host=True, position=1)
         room.players.add(player)
         Game(id=0, waiting_room=room, players=room.players, current_player=1)
 
@@ -811,6 +818,37 @@ def get_defend_trade_card_game_creation():
                 {"id": 10, "name": "No, gracias", "type": "defense"},
                 {"id": 11, "name": "No, gracias", "type": "defense"},
                 {"id": 12, "name": "No, gracias", "type": "defense"},
+            ],
+        ],
+    }
+
+    # second half
+    with db_session:
+        set_db_from_dict(data)
+
+    return data
+
+
+@pytest.fixture()
+def game_with_suspicious_card():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+    data = {
+        "room": {"id": 1, "name": "Test room"},
+        "players": [
+            {"id": 1, "username": "Player1", "is_host": True, "position": 1},
+            {"id": 2, "username": "Player2", "is_host": False, "position": 2},
+        ],
+        "game": {"id": 1, "current_player": 1},
+        "cards": [
+            [
+                {"id": 1, "name": "Sospecha", "type": "contagio"},
+            ],
+            [
+                {"id": 5, "name": "Infeccion", "type": "contagio"},
+                {"id": 6, "name": "La cosa", "type": "especial"},
+                {"id": 7, "name": "Lanzallamas", "type": "action"},
+                {"id": 8, "name": "No gracias", "type": "defense"},
             ],
         ],
     }
