@@ -16,8 +16,8 @@ class CardDefenseInformer(ResponseInterface):
     def __init__(self, player_id: int, card_id: int):
         self.player = utils.find_player(player_id, status.HTTP_404_NOT_FOUND)
         self.card = None
-        if self.card != -1:
-            self.card = utils.find_card(card_id, status.HTTP_404_NOT_FOUND)
+        if card_id != -1:
+            utils.find_card(card_id, status.HTTP_404_NOT_FOUND)
         self.handle_errors()
 
     def get_response(self) -> UsabilityResponse:
@@ -35,6 +35,7 @@ class CardDefenseInformer(ResponseInterface):
         event = self.get_trade_event()
         if event is not None and event.player2 == self.player:
             cards_info = self.get_cards_by_name("No gracias")
+            cards_info += self.get_cards_by_name("Aterrador")
         return sorted(cards_info, key=lambda card: card.cardID)
 
     def get_trade_event(self):

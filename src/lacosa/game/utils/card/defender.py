@@ -55,6 +55,7 @@ class CardDefender(ActionInterface):
             Deck.discard_card(self.card, self.event.player2, self.game)
         else:
             self.game.current_action = "trade"
+            self.game.current_player = self.event.player2.id
 
     def handle_action_event(self):
         card = self.event.card2 if self.card else self.event.card1

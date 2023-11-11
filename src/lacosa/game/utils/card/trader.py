@@ -3,6 +3,7 @@ from lacosa.interfaces import ActionInterface
 from lacosa.utils import find_game, find_partial_event, find_player, find_card
 from lacosa.game.utils import exceptions, turn_handler
 from pony.orm import select
+from lacosa.player.utils.playability_informer import CardUsabilityInformer
 
 
 class CardTrader(ActionInterface):
@@ -25,8 +26,11 @@ class CardTrader(ActionInterface):
         """
         if self.event.card1 is None:
             self.event.card1 = self.card
-            self.game.current_action = "defense"
             self.game.current_player = self.event.player2.id
+            for card in self.event.player2.cards:
+                if card.name == "No gracias" or card.name == "Aterrador":
+                    self.game.current_action = "defense"
+                    break
         else:
             self.trade_cards()
 
