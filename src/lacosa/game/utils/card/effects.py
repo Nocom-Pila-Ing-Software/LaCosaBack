@@ -43,7 +43,8 @@ def apply_switch_position_cards_effect(
 def apply_anticipate_trade_effect(
     current_player: Player, target_player: Player, game: Game
 ) -> None:
-    event = select(event for event in game.events if event.is_completed is False).get()
+    event = select(
+        event for event in game.events if event.is_completed is False).get()
     event.is_completed = True
     event.is_successful = True
     game.events.create(
@@ -75,12 +76,12 @@ def apply_whisky_effect(
     show_cards_to_players(cards_to_show, players_to_show)
 
 
-
 def apply_sospecha_effect(
     current_player: Player, target_player: Player, game: Game
 ) -> None:
     card_to_show = target_player.cards.random(1)
     show_cards_to_players(card_to_show, [current_player])
+
 
 def apply_analysis_effect(
     current_player: Player, target_player: Player, game: Game
@@ -88,16 +89,29 @@ def apply_analysis_effect(
     cards_to_show = [card for card in target_player.cards]
     show_cards_to_players(cards_to_show, [current_player])
 
+
 def apply_aterrador_effect(
     current_player: Player, target_player: Player, game: Game
 ) -> None:
-    event = select(event for event in game.events if event.is_completed is False).get()
+    event = select(
+        event for event in game.events if event.is_completed is False).get()
     event.is_completed = True
     event.is_successful = False
     card_to_show = [event.card1]
     player_to_show = [event.player2]
     show_cards_to_players(card_to_show, player_to_show)
 
+
+def apply_puerta_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
+    is_target_at_right = current_player.position < target_player.position
+    obstacle_position = (
+        current_player.position
+        if is_target_at_right
+        else target_player.position
+    )
+    game.obstacles.create(position=obstacle_position)
 
 
 def do_nothing(*args, **kwargs) -> None:
@@ -118,7 +132,7 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "Sospecha": apply_sospecha_effect,
         "Analisis": apply_analysis_effect,
         "Aterrador": apply_aterrador_effect,
-
+        "Puerta Atrancada": apply_puerta_effect,
     }
 
     return _card_effects.get(card_name, do_nothing)
