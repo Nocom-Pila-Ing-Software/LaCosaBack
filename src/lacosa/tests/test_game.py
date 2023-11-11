@@ -10,6 +10,7 @@ from .game_fixtures import (
     db_game_status,
     db_game_creation_with_cards,
     db_game_creation_with_cards_2,
+    game_with_suspicious_card,
     game_with_analysis_card,
     game_with_events
 )
@@ -663,11 +664,31 @@ def test_game_is_over(db_game_creation_with_cards):
     """
 
 
+def test_play_sospecha(game_with_suspicious_card):
+    data = game_with_suspicious_card
+    game_id = data["game"]["id"]
+    player_id = data["players"][0]["id"]
+    p2_card_names = {card["name"] for card in data["cards"][1]}
+    mock_play_request = PlayCardRequest(
+        playerID=player_id,
+        targetPlayerID=data["players"][1]["id"],
+        cardID=data["cards"][0][0]["id"]
+    ).model_dump()
+
+    response = client.put(f"/game/{game_id}/play-card", json=mock_play_request)
+    assert response.status_code == 200
+
+    response = client.get(f"/player/{player_id}")
+    json = response.json()
+    assert response.status_code == 200
+    assert len(json["shownCards"]) == 1
+    assert json["shownCards"][0]["name"] in p2_card_names
 
 def test_play_analysis(game_with_analysis_card):
     data = game_with_analysis_card
     game_id = data["game"]["id"]
     player_id = data["players"][0]["id"]
+
     mock_play_request = PlayCardRequest(
         playerID=player_id,
         targetPlayerID=data["players"][1]["id"],

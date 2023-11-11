@@ -937,3 +937,34 @@ def game_with_analysis_card():
         set_db_from_dict(data)
 
     return data
+
+
+@pytest.fixture()
+def game_with_suspicious_card():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+    data = {
+        "room": {"id": 1, "name": "Test room"},
+        "players": [
+            {"id": 1, "username": "Player1", "is_host": True, "position": 1},
+            {"id": 2, "username": "Player2", "is_host": False, "position": 2},
+        ],
+        "game": {"id": 1, "current_player": 1},
+        "cards": [
+            [
+                {"id": 1, "name": "Sospecha", "type": "contagio"},
+            ],
+            [
+                {"id": 5, "name": "Infeccion", "type": "contagio"},
+                {"id": 6, "name": "La cosa", "type": "especial"},
+                {"id": 7, "name": "Lanzallamas", "type": "action"},
+                {"id": 8, "name": "No gracias", "type": "defense"},
+            ],
+        ],
+    }
+
+    # second half
+    with db_session:
+        set_db_from_dict(data)
+
+    return data

@@ -76,6 +76,12 @@ def apply_whisky_effect(
 
 
 
+def apply_sospecha_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
+    card_to_show = target_player.cards.random(1)
+    show_cards_to_players(card_to_show, [current_player])
+
 def apply_analysis_effect(
     current_player: Player, target_player: Player, game: Game
 ) -> None:
@@ -93,6 +99,7 @@ def apply_aterrador_effect(
     show_cards_to_players(card_to_show, player_to_show)
 
 
+
 def do_nothing(*args, **kwargs) -> None:
     pass
 
@@ -108,8 +115,10 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "No gracias": do_nothing,
         "Seduccion": apply_anticipate_trade_effect,
         "Whisky": apply_whisky_effect,
+        "Sospecha": apply_sospecha_effect,
         "Analisis": apply_analysis_effect,
         "Aterrador": apply_aterrador_effect,
+
     }
 
     return _card_effects.get(card_name, do_nothing)
