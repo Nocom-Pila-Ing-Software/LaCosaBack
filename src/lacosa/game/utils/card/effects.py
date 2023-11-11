@@ -75,6 +75,13 @@ def apply_whisky_effect(
     show_cards_to_players(cards_to_show, players_to_show)
 
 
+
+def apply_analysis_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
+    cards_to_show = [card for card in target_player.cards]
+    show_cards_to_players(cards_to_show, [current_player])
+
 def apply_aterrador_effect(
     current_player: Player, target_player: Player, game: Game
 ) -> None:
@@ -101,6 +108,7 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "No gracias": do_nothing,
         "Seduccion": apply_anticipate_trade_effect,
         "Whisky": apply_whisky_effect,
+        "Analisis": apply_analysis_effect,
         "Aterrador": apply_aterrador_effect,
     }
 

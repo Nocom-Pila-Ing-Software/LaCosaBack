@@ -10,6 +10,7 @@ from .game_fixtures import (
     db_game_status,
     db_game_creation_with_cards,
     db_game_creation_with_cards_2,
+    game_with_analysis_card,
     game_with_events
 )
 import pdb
@@ -662,6 +663,28 @@ def test_game_is_over(db_game_creation_with_cards):
     """
 
 
+
+def test_play_analysis(game_with_analysis_card):
+    data = game_with_analysis_card
+    game_id = data["game"]["id"]
+    player_id = data["players"][0]["id"]
+    mock_play_request = PlayCardRequest(
+        playerID=player_id,
+        targetPlayerID=data["players"][1]["id"],
+        cardID=data["cards"][0][0]["id"]
+    ).model_dump()
+
+    response = client.put(f"/game/{game_id}/play-card", json=mock_play_request)
+    assert response.status_code == 200
+
+    response = client.get(f"/player/{player_id}")
+    json = response.json()
+    assert response.status_code == 200
+    assert json["shownCards"][0]["name"] == "Infeccion"
+    assert json["shownCards"][1]["name"] == "La cosa"
+    assert json["shownCards"][2]["name"] == "Lanzallamas"
+    assert json["shownCards"][3]["name"] == "No gracias"
+
 def test_event_logs(game_with_events):
     response = client.get("/game/1")
     json = response.json()
@@ -672,3 +695,4 @@ def test_event_logs(game_with_events):
         'Player1 jugó Lanzallamas sobre Player2',
         'Player1 jugó Lanzallamas sobre Player2 pero Player2 se defendio con Nada de barbacoas',
     ]
+
