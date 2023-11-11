@@ -42,7 +42,10 @@ class CardDefender(ActionInterface):
 
     def handle_trade_event(self):
         if self.card:
-            self.event.card2 = self.card
+            execute_card_effect(
+                self.card, self.event.player1, self.event.player2, self.game
+            )
+
             self.event.is_successful = False
             self.event.is_completed = True
 
@@ -53,7 +56,7 @@ class CardDefender(ActionInterface):
             Deck.discard_card(self.card, self.event.player2, self.game)
         else:
             self.game.current_action = "trade"
-            self.game.current_player = self.event.player1.id
+            self.game.current_player = self.event.player2.id
 
     def handle_action_event(self):
         card = self.event.card2 if self.card else self.event.card1

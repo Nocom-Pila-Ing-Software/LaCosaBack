@@ -6,7 +6,6 @@ from models import Game, Player, Card
 from lacosa.game.utils import turn_handler
 
 
-
 def discard_card_util(discard_request: GenericCardRequest, room_id: int):
     game = utils.find_game(room_id)
     player = utils.find_player(discard_request.playerID)
@@ -18,8 +17,7 @@ def discard_card_util(discard_request: GenericCardRequest, room_id: int):
 
     next_player = turn_handler.get_next_player(game, player.position)
 
-    game.current_action = "defense"
-    game.current_player = next_player.id
+    game.current_action = "trade"
     game.events.create(type="trade", player1=player, player2=next_player)
 
 
