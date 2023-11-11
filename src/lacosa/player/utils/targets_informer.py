@@ -9,6 +9,7 @@ from lacosa.player.schemas import (
 from fastapi import status
 from pony.orm import select
 from settings import settings
+from lacosa.game.utils import obstacles
 
 
 class CardTargetsInformer(ResponseInterface):
@@ -69,6 +70,11 @@ class CardTargetsInformer(ResponseInterface):
             after_position = 1
         return {after_position, before_position}
 
+    def remove_blocked_positions(self, possible_positions):
+        for position in possible_positions:
+            if obstacles.is_blocked_by_obstacle(self.player.game, self.player.position, position):
+                possible_positions.remove(position)
+
     def get_adjacent_players(self) -> list:
         """
         Returns the adjacent players
@@ -78,6 +84,7 @@ class CardTargetsInformer(ResponseInterface):
             p for p in self.player.game.players if p.is_alive is True)
         total_positions = alive_players.count()
         possible_positions = self.get_possible_positions(total_positions)
+        self.remove_blocked_positions(possible_positions)
         players = alive_players.filter(
             lambda p: p.position in possible_positions).sort_by(lambda p: p.id)
 
