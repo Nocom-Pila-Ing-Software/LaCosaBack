@@ -45,6 +45,7 @@ class CardDefender(ActionInterface):
             execute_card_effect(
                 self.card, self.event.player1, self.event.player2, self.game
             )
+
             self.event.is_successful = False
             self.event.is_completed = True
 
@@ -59,7 +60,8 @@ class CardDefender(ActionInterface):
 
     def handle_action_event(self):
         card = self.event.card2 if self.card else self.event.card1
-        execute_card_effect(card, self.event.player1, self.event.player2, self.game)
+        execute_card_effect(card, self.event.player1,
+                            self.event.player2, self.game)
         if self.card:
             self.event.is_successful = False
             Deck.discard_card(self.card, self.event.player2, self.game)
