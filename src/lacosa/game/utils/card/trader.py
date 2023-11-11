@@ -3,7 +3,6 @@ from lacosa.interfaces import ActionInterface
 from lacosa.utils import find_game, find_partial_event, find_player, find_card
 from lacosa.game.utils import exceptions, turn_handler
 from pony.orm import select
-from lacosa.player.utils.playability_informer import CardUsabilityInformer
 
 
 class CardTrader(ActionInterface):
