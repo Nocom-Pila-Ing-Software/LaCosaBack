@@ -1,5 +1,5 @@
 from pony.orm import select
-from models import Obstacle, Game, Player
+from models import Obstacle, Game
 
 
 def is_blocked_by_obstacle(game: Game, player_position: int, next_player_position: int):
