@@ -13,7 +13,7 @@ def set_turn_state(game, next_player, player):
         game.events.create(type="trade", player1=player, player2=next_player)
     else:
         game.current_action = "draw"
-        game.current_player = next_player
+        game.current_player = next_player.id
 
 
 def discard_card_util(discard_request: GenericCardRequest, room_id: int):

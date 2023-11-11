@@ -68,7 +68,7 @@ class CardTargetsInformer(ResponseInterface):
             before_position = total_positions
         if self.player.position == total_positions:
             after_position = 1
-        return {after_position, before_position}
+        return [after_position, before_position]
 
     def remove_blocked_positions(self, possible_positions):
         for position in possible_positions:
