@@ -34,7 +34,7 @@ class CardDefenseInformer(ResponseInterface):
         cards_info = []
         event = self.get_trade_event()
         if event is not None and event.player2 == self.player:
-            cards_info = self.get_cards_by_name("No, gracias")
+            cards_info = self.get_cards_by_name("No gracias")
         return sorted(cards_info, key=lambda card: card.cardID)
 
     def get_trade_event(self):
