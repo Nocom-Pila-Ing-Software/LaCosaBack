@@ -84,7 +84,7 @@
         },
         "Whisky": {
             "amount_per_player": {
-                "4": 1,
+                "4": 0,
                 "5": 1,
                 "6": 2,
                 "7": 2,
@@ -185,14 +185,14 @@
         "Aterrador": {
             "amount_per_player": {
                 "4": 0,
-                "5": 0,
-                "6": 0,
-                "7": 0,
-                "8": 0,
-                "9": 0,
-                "10": 0,
-                "11": 0,
-                "12": 0
+                "5": 1,
+                "6": 2,
+                "7": 2,
+                "8": 3,
+                "9": 3,
+                "10": 3,
+                "11": 4,
+                "12": 4
             },
             "description": "Solo puedes jugar esta carta como respuesta a un ofrecimiento de intercambio de cartas. Te permite negarte a un intercambio de cartas solicitado por un jugador o por el efecto de una carta. Puedes mirar la carta que te has negado a coger y devolversela a su dueño.",
             "type": "defense"
