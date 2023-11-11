@@ -153,7 +153,7 @@ def validate_card_allowed_to_trade(card, event, player):
 
 
 def validate_free_of_obstacles(game: Game, player: Player, target_player: Player):
-    if obstacles.is_blocked_by_obstacle(game, player, target_player):
+    if obstacles.is_blocked_by_obstacle(game, player.position, target_player.position):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Player can't execute this action",

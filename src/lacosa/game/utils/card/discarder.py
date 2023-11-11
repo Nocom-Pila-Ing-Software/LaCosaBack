@@ -8,7 +8,7 @@ from lacosa.game.utils import obstacles
 
 
 def set_turn_state(game, next_player, player):
-    if not obstacles.is_blocked_by_obstacle(game, player, next_player):
+    if not obstacles.is_blocked_by_obstacle(game, player.position, next_player.position):
         game.current_action = "trade"
         game.events.create(type="trade", player1=player, player2=next_player)
     else:
