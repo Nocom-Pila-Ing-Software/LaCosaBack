@@ -9,7 +9,7 @@ def draw_card_util(player_id: PlayerID, room_id: int):
     player = utils.find_player(player_id.playerID)
     card = Deck.get_card_from_deck(game, player)
     if card.type == "panic":
-        effects.execute_card_effect(card, player, game)
+        effects.execute_card_effect(card, player, None, game)
         # Panic cards should handle game.current_action
         Deck.draw_card_no_panic(game, player)
     else:
