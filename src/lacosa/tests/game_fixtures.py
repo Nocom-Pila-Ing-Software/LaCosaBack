@@ -1117,3 +1117,41 @@ def revelations_setup():
         set_db_from_dict(data)
 
     return data
+
+
+@pytest.fixture()
+def deck_with_panic_card():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+    data = {
+        "room": {"id": 1, "name": "Test room"},
+        "players": [
+            {"id": 1, "username": "Player1", "is_host": True, "position": 1},
+            {"id": 2, "username": "Player2", "is_host": False, "position": 2},
+            {"id": 3, "username": "Player3", "is_host": False, "position": 3},
+        ],
+        "game": {"id": 1, "current_player": 1},
+        "cards": [
+            [
+                {"id": 1, "name": "Lanzallamas", "type": "action"},
+            ],
+            [
+                {"id": 2, "name": "Nada de barbacoas", "type": "action"},
+                {"id": 3, "name": "No gracias", "type": "defense"},
+            ],
+            [
+                {"id": 4, "name": "Nada de barbacoas", "type": "action"},
+                {"id": 5, "name": "No gracias", "type": "defense"},
+            ],
+        ],
+    }
+
+    # second half
+    with db_session:
+        set_db_from_dict(data)
+        game = Game.get(id=data["game"]["id"])
+        game.cards.create(name="Revelaciones", type="panic")
+        game.cards.create()
+        commit()
+
+    return data
