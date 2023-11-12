@@ -1,5 +1,4 @@
 from models import Game, Player, Card
-import random
 import lacosa.utils as utils
 import lacosa.game.utils.exceptions as exceptions
 import json
@@ -45,13 +44,20 @@ class Deck:
                 player.cards.create(
                     name="La cosa", description="Eres La Cosa, infecta o destruye a los Humanos, no puedes descartarla.")
                 for _ in range(3):
-                    cls.draw_card(int(game.id), player.id)
+                    cls.draw_card_no_panic(int(game.id), player.id)
             else:
                 for _ in range(4):
-                    cls.draw_card(int(game.id), player.id)
+                    cls.draw_card_no_panic(int(game.id), player.id)
 
     @classmethod
-    def draw_card(cls, game_id: int, player_id: int) -> None:
+    def get_card_from_deck(cls, game: Game, player: Player):
+        cls._handle_draw_card_errors(game, player)
+
+        card = game.cards.random(1)[0]
+        return card
+
+    @classmethod
+    def draw_card_no_panic(cls, game_: int | Game, player_: int | Player) -> None:
         """
         Draw a card from the game deck and assign it to a player
 
@@ -60,12 +66,17 @@ class Deck:
         player_id (PlayerID): The ID of the player to assign the card to
         """
 
-        game = utils.find_game(game_id)
-        player = utils.find_player(player_id)
+        game = utils.find_game(game_) if type(game_) is int else game_
+        player = (
+            utils.find_player(player_)
+            if type(player_) is int
+            else player_
+        )
 
-        cls._handle_draw_card_errors(game, player)
+        card = cls.get_card_from_deck(game, player)
 
-        card = random.choice(list(game.cards))
+        while card.type == "panic":
+            card = cls.get_card_from_deck(game, player)
 
         card.player = player
         game.cards.remove(card)

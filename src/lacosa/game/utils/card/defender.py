@@ -52,7 +52,7 @@ class CardDefender(ActionInterface):
             self.game.current_player = self.get_next_player_id()
             self.game.current_action = "draw"
             self.game.last_played_card = self.card
-            Deck.draw_card(self.game.id, self.event.player2.id)
+            Deck.draw_card_no_panic(self.game.id, self.event.player2.id)
             Deck.discard_card(self.card, self.event.player2, self.game)
         else:
             self.game.current_action = "trade"
@@ -65,7 +65,7 @@ class CardDefender(ActionInterface):
         if self.card:
             self.event.is_successful = False
             Deck.discard_card(self.card, self.event.player2, self.game)
-            Deck.draw_card(self.game.id, self.event.player2.id)
+            Deck.draw_card_no_panic(self.game.id, self.event.player2.id)
         else:
             self.event.is_successful = True
 

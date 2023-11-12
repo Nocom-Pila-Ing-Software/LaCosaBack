@@ -132,6 +132,7 @@ def do_nothing(*args, **kwargs) -> None:
 
 
 def get_card_effect_function(card_name: str) -> CardEffectFunc:
+    # IMPORTANT: panic cards must handle game.current_action!!
     _card_effects: Dict[str, CardEffectFunc] = {
         "Lanzallamas": apply_lanzallamas_effect,
         "Cambio de lugar": apply_switch_position_cards_effect,
