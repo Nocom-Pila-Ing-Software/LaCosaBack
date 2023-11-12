@@ -9,6 +9,7 @@ class Action(str, Enum):
     action = "action"
     defense = "defense"
     trade = "trade"
+    revelations = "revelations"
 
 
 class EventTypes(str, Enum):

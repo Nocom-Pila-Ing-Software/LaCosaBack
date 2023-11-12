@@ -3,6 +3,7 @@ from collections.abc import Callable
 from typing import Dict
 from pony.orm import select, commit
 from lacosa.game.utils.card_shower import show_cards_to_players
+from lacosa.game.schemas import Action
 
 CardEffectFunc = Callable[[Player, Game], None]
 
@@ -122,9 +123,9 @@ def apply_revelaciones_effect(
         player1=current_player,
         player2=None,
         is_completed=True,
-        type="revelations",
+        type=Action.revelations,
     )
-    game.current_action = "revelations"
+    game.current_action = Action.revelations
 
 
 def do_nothing(*args, **kwargs) -> None:
