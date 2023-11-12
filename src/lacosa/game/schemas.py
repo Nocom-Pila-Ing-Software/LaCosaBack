@@ -1,6 +1,6 @@
 from enum import Enum
 from pydantic import BaseModel
-from typing import List
+from typing import List, Literal
 from lacosa.schemas import PlayerID, CardInfo
 
 
@@ -33,7 +33,7 @@ class PlayCardRequest(BaseModel):
 
 class ShowCardsRequest(BaseModel):
     playerID: int
-    cards: List[CardInfo]
+    cardsToShow: Literal["all", "none", "infection"]
 
 
 class PublicPlayerInfo(BaseModel):

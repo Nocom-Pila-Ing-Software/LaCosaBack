@@ -3,15 +3,15 @@ from lacosa.interfaces import ActionInterface
 from lacosa.game.schemas import ShowCardsRequest
 from lacosa.game.utils import card_shower
 from lacosa.game.utils import turn_handler
-from pony.orm import commit
+from lacosa.game.utils import exceptions
 
 
 class RevelationsHandler(ActionInterface):
     def __init__(self, show_request: ShowCardsRequest, game_id: int):
         self.game = utils.find_game(game_id)
         self.player = utils.find_player(show_request.playerID)
-        self.cards = [utils.find_card(card.cardID)
-                      for card in show_request.cards]
+        self.cards_to_show = show_request.cardsToShow
+        self.handle_errors()
 
     def create_info_event(self, type_):
         self.game.events.create(
@@ -20,25 +20,43 @@ class RevelationsHandler(ActionInterface):
             is_completed=True
         )
 
-    def show_cards(self, ):
-        card_shower.show_cards_to_players(self.cards, list(self.game.players))
+    def get_cards_to_show(self, ):
+        cards = []
+        if self.cards_to_show == "infection":
+            exceptions.validate_infection_in_hand(self.player)
+            cards = [
+                self.player.cards.filter(
+                    lambda c: c.name == "Infeccion").first()
+            ]
+        elif self.cards_to_show == "all":
+            cards = list(self.player.cards)
 
-    def is_infection_shown(self, ):
-        return len(self.cards) == 1 and self.cards[0].name == "Infeccion"
+        return cards
+
+    def show_cards(self):
+        cards = self.get_cards_to_show()
+        card_shower.show_cards_to_players(cards, list(self.game.players))
+
+    def handle_revelations_end(self, ):
+        self.create_info_event("revelations-end")
+        turn_handler.next_turn(self.game, self.player)
+        self.game.current_action = "draw"
 
     def execute_action(self) -> None:
-        if self.is_infection_shown():
+        if self.cards_to_show == "infection":
             self.show_cards()
-            self.create_info_event("revelations-end")
-            turn_handler.next_turn(self.game, self.player)
-            self.game.current_action = "draw"
+            self.handle_revelations_end()
             return
 
-        if not self.cards:
+        if self.cards_to_show == "all":
+            self.show_cards()
+        else:
             # player didn't show
             self.create_info_event("no-show")
-        else:
-            self.show_cards()
 
         turn_handler.next_turn(self.game, self.player)
-        commit()
+
+    def handle_errors(self) -> None:
+        exceptions.validate_player_in_game(self.game, self.player)
+        exceptions.validate_player_alive(self.player)
+        exceptions.validate_player_is_in_turn(self.player, self.game)
