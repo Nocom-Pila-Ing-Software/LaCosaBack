@@ -46,7 +46,8 @@ class CardPlayer(ActionInterface):
 
         check_card_is_defensible = self.check_card_is_defensible(self.card)
         if not check_card_is_defensible:
-            execute_card_effect(self.card, self.player, self.target_player, self.game)
+            execute_card_effect(self.card, self.player,
+                                self.target_player, self.game)
 
             event.is_completed = True
             event.is_successful = True
@@ -83,7 +84,8 @@ class CardPlayer(ActionInterface):
             self.game.current_player = self.target_player.id
 
     def get_next_player_id(self):
-        next_player = turn_handler.get_next_player(self.game, self.player.position)
+        next_player = turn_handler.get_next_player(
+            self.game, self.player.position)
         return next_player.id
 
     def check_card_is_defensible(self, card) -> bool:
@@ -104,3 +106,6 @@ class CardPlayer(ActionInterface):
         exceptions.validate_player_in_game(self.game, self.target_player)
         exceptions.validate_player_has_card(self.player, self.card.id)
         exceptions.validate_player_alive(self.target_player)
+        exceptions.validate_free_of_obstacles(
+            self.game, self.player, self.target_player
+        )
