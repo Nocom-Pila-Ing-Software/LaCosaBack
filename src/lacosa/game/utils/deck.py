@@ -65,7 +65,9 @@ class Deck:
 
         cls._handle_draw_card_errors(game, player)
 
-        card = random.choice(list(game.cards))
+        card = game.cards.random(1)[0]
+        while card.type == "panic":
+            card = game.cards.random(1)[0]
 
         card.player = player
         game.cards.remove(card)
