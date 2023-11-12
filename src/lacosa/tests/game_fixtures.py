@@ -1073,7 +1073,7 @@ def revelations_setup():
                 "is_host": False,
                 "position": 3,
                 "role": "infected",
-                "is_alive": False,
+                "is_alive": True,
             },
             {
                 "id": 4,
@@ -1104,7 +1104,7 @@ def revelations_setup():
                 {"id": 12, "name": "Cambio de lugar", "type": "action"},
             ],
             [
-                {"id": 13, "name": "Infeccion", "type": "contagio"},
+                {"id": 13, "name": "Carta", "type": "contagio"},
                 {"id": 14, "name": "Aterrador", "type": "defense"},
                 {"id": 15, "name": "Lanzallamas", "type": "action"},
                 {"id": 16, "name": "No gracias", "type": "defense"},
