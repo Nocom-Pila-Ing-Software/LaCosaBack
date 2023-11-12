@@ -15,6 +15,7 @@ from lacosa.game.utils.card.player import CardPlayer
 from lacosa.game.utils.card.trader import CardTrader
 from lacosa.game.utils.card.defender import CardDefender
 from lacosa.game.utils.card.discarder import discard_card_util
+from lacosa.game.utils.card.drawer import draw_card_util
 from lacosa.game.utils.error_responses import error_responses
 from lacosa.game.utils.game.ender import end_game_if_conditions_are_met
 
@@ -50,9 +51,7 @@ async def create_game(creation_request: GameCreationRequest) -> GameID:
 async def draw_card(room_id: int, player_id: PlayerID) -> None:
     """Deals a card to a player"""
     with db_session:
-        Deck.draw_card(room_id, player_id.playerID)
-        game = utils.find_game(room_id)
-        game.current_action = "action"
+        draw_card_util(player_id, room_id)
 
 
 @game_router.put(path="/{room_id}/discard-card", status_code=status.HTTP_200_OK,
