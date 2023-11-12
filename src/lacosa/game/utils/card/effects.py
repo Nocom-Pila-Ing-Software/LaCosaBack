@@ -114,6 +114,19 @@ def apply_puerta_effect(
     game.obstacles.create(position=obstacle_position)
 
 
+def apply_revelaciones_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
+    # create info event
+    game.events.create(
+        player1=current_player,
+        player2=None,
+        is_completed=True,
+        type="revelations",
+    )
+    game.current_action = "revelations"
+
+
 def do_nothing(*args, **kwargs) -> None:
     pass
 
@@ -133,6 +146,7 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "Analisis": apply_analysis_effect,
         "Aterrador": apply_aterrador_effect,
         "Puerta Atrancada": apply_puerta_effect,
+        "Revelaciones": apply_revelaciones_effect,
     }
 
     return _card_effects.get(card_name, do_nothing)

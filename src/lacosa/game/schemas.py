@@ -31,6 +31,11 @@ class PlayCardRequest(BaseModel):
     cardID: int
 
 
+class ShowCardsRequest(BaseModel):
+    playerID: int
+    cards: List[CardInfo]
+
+
 class PublicPlayerInfo(BaseModel):
     playerID: int
     username: str
