@@ -284,7 +284,7 @@
                 "11": 1,
                 "12": 1
             },
-            "description": "",
+            "description": "Empezando por ti y siguiendo el orden de juego, cada jugador elige si revela o no su mano. La ronda de 'Revelaciones' termina cuando un jugador muestre una carta 'Infectado', sin que tenga que revelar el rest de su mano.",
             "type": "panic"
         },
         "Puerta atrancada": {
