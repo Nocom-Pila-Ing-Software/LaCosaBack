@@ -121,7 +121,6 @@ async def trade_card(trade_request: GenericCardRequest, room_id: int) -> None:
         trade_handler.execute_action()
 
 
-# salir de la partida si el juego ya termino y borrarla si no hay mas jugadores
 @game_router.delete(
     "/{room_id}/leave-game",
     status_code=status.HTTP_200_OK,
