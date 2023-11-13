@@ -4,6 +4,7 @@ from models import Player, Game
 from pony.orm import db_session
 from main import app
 from fastapi.testclient import TestClient
+from lacosa.game.schemas import EventTypes
 
 client = TestClient(app)
 
@@ -17,7 +18,7 @@ def test_revelations_effect_function(revelations_setup):
         effects.apply_revelaciones_effect(player, None, game)
 
         event = game.events.filter().get()
-        assert event.type == "revelations"
+        assert event.type == EventTypes.revelations_start
         assert game.current_action == "revelations"
 
 

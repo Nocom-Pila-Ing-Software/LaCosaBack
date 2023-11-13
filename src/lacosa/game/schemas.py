@@ -15,6 +15,17 @@ class Action(str, Enum):
 class EventTypes(str, Enum):
     action = "action"
     trade = "trade"
+    revelations_start = "revelations-start"
+    revelations_end = "revelations-end"
+    no_show = "no-show"
+    play_panic = "panic"
+    draw_card = "draw"
+    door = "door"
+    switch_order = "switch-order"
+    death = "death"
+    show_hand = "show-hand"
+    show_card = "show-card"
+    switch_place = "switch-place"
 
 
 class GameCreationRequest(BaseModel):
