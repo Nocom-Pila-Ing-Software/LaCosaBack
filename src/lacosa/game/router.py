@@ -22,6 +22,8 @@ from lacosa.game.utils.error_responses import error_responses
 from lacosa.game.utils.game.ender import (
     end_game_if_conditions_are_met,
     leave_game_if_conditions_are_met,
+    the_thing_declares_victory,
+    handle_errors_declare_victory,
 )
 
 game_router = APIRouter()
@@ -130,3 +132,18 @@ async def remove_player_from_game(room_id: int, player_id: PlayerID) -> None:
     """Removes a player from the game"""
     with db_session:
         leave_game_if_conditions_are_met(player_id.playerID, room_id)
+
+
+# declarar victoria
+@game_router.put(
+    path="/{room_id}/declare-victory",
+    status_code=status.HTTP_200_OK,
+    responses=error_responses["400&403&404"],
+)
+async def declare_victory(player_id: PlayerID, room_id: int) -> None:
+    """Declare victory"""
+    with db_session:
+        game = utils.find_game(room_id)
+        player = utils.find_player(player_id.playerID)
+        handle_errors_declare_victory(game, player)
+        the_thing_declares_victory(game)

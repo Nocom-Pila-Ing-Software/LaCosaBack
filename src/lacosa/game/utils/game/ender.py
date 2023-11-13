@@ -2,6 +2,7 @@ from models import Game
 from pony.orm import db_session, commit
 from lacosa.utils import find_game
 from lacosa.room.utils.room_operations import delete_room
+import lacosa.game.utils.exceptions as exceptions
 
 
 def _is_the_thing_dead(game: Game):
@@ -86,3 +87,17 @@ def delete_if_game_over(game: Game) -> None:
             card.delete()
 
         delete_room(game.waiting_room)
+
+
+# declarar victoria si sos la cosa
+def the_thing_declares_victory(game: Game):
+    winner = _get_winner(game)
+
+    if winner is not None:
+        _update_game_state(game, winner)
+    else:
+        _update_game_state(game, "human")
+
+
+def handle_errors_declare_victory(game: Game, player):
+    exceptions.validate_player_is_the_things(game, player)

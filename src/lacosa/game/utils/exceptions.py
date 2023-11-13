@@ -2,13 +2,13 @@ import json
 from fastapi import HTTPException, status
 from models import Game, Player, Card
 from settings import settings
+import lacosa.utils as utils
 from lacosa.game.utils import obstacles
 
 
 def validate_player_has_card(player, card_id):
     if not player.cards.filter(id=card_id).exists():
-        raise HTTPException(
-            status_code=400, detail="Player does not have that card")
+        raise HTTPException(status_code=400, detail="Player does not have that card")
 
 
 def validate_player_alive(player):
@@ -157,4 +157,12 @@ def validate_free_of_obstacles(game: Game, player: Player, target_player: Player
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Player can't execute this action",
+        )
+
+
+def validate_player_is_the_things(game: Game, player: Player):
+    if player.role != "thing":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Player not has permission to execute this action",
         )

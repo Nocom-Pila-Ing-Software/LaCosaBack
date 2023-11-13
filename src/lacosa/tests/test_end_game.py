@@ -5,7 +5,7 @@ from pony.orm import db_session
 from lacosa.game.utils.game.ender import (
     _get_winner,
     _update_game_state,
-    end_game_if_conditions_are_met,
+    _are_all_humans_dead,
 )
 from lacosa.schemas import PlayerID
 
@@ -88,6 +88,50 @@ def test_one_player_left_is_human():
         {"id": 4, "username": "Player4", "is_alive": False, "role": "thing"},
     ]
     expect_winner_to_be(players, "human")
+
+
+def test_the_thing_declares_victory_with_humans_alive():
+    players = [
+        {"id": 1, "username": "Player1", "is_alive": True, "role": "human"},
+        {"id": 2, "username": "Player2", "is_alive": True, "role": "human"},
+        {"id": 3, "username": "Player3", "is_alive": False, "role": "infected"},
+        {"id": 4, "username": "Player4", "is_alive": True, "role": "thing"},
+    ]
+    create_game_with_custom_players(players)
+
+    room_id = 1
+    with db_session:
+        game = Game.get(id=room_id)
+        response = client.request(
+            "PUT", f"/game/{game.id}/declare-victory", json={"playerID": 4}
+        )
+        assert response.status_code == 200
+
+    with db_session:
+        game = Game.get(id=room_id)
+        assert game.have_humans_won is True
+
+
+def test_the_thing_declares_victory_without_humans_alive():
+    players = [
+        {"id": 1, "username": "Player1", "is_alive": False, "role": "human"},
+        {"id": 2, "username": "Player2", "is_alive": False, "role": "human"},
+        {"id": 3, "username": "Player3", "is_alive": False, "role": "infected"},
+        {"id": 4, "username": "Player4", "is_alive": True, "role": "thing"},
+    ]
+    create_game_with_custom_players(players)
+
+    room_id = 1
+    with db_session:
+        game = Game.get(id=room_id)
+        response = client.request(
+            "PUT", f"/game/{game.id}/declare-victory", json={"playerID": 4}
+        )
+        assert response.status_code == 200
+
+    with db_session:
+        game = Game.get(id=room_id)
+        assert game.have_humans_won is False
 
 
 def test_all_players_leave_game():
