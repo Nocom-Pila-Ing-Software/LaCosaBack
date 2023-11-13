@@ -110,8 +110,6 @@ def test_all_players_leave_game():
         assert WaitingRoom.get(id=room_id) is not None
 
     for player in players:
-        print(player["id"])
-
         mock_leave_request = PlayerID(playerID=player["id"]).model_dump()
         response = client.request(
             "DELETE", f"/game/{room_id}/leave-game", json=mock_leave_request

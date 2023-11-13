@@ -21,7 +21,7 @@ from lacosa.game.utils.card.discarder import discard_card_util
 from lacosa.game.utils.error_responses import error_responses
 from lacosa.game.utils.game.ender import (
     end_game_if_conditions_are_met,
-    the_thing_declares_victory,
+    leave_game_if_conditions_are_met,
 )
 
 game_router = APIRouter()
@@ -129,5 +129,4 @@ async def trade_card(trade_request: GenericCardRequest, room_id: int) -> None:
 async def remove_player_from_game(room_id: int, player_id: PlayerID) -> None:
     """Removes a player from the game"""
     with db_session:
-        end_game_handler = GameStatusHandler(room_id)
-        end_game_handler.leave_game_if_conditions_are_met(player_id.playerID)
+        leave_game_if_conditions_are_met(player_id.playerID, room_id)

@@ -1,6 +1,7 @@
 from models import Game
 from pony.orm import db_session, commit
 from lacosa.utils import find_game
+from lacosa.room.utils.room_operations import delete_room
 
 
 def _is_the_thing_dead(game: Game):
@@ -61,3 +62,27 @@ def end_game_if_conditions_are_met(game: Game, time_before_close=30) -> None:
         _update_game_state(game, winner)
         # await asyncio.sleep(time_before_close)
         # delete_room(game.waiting_room)
+
+
+# eliminar jugador si la partida ya termino y borrarla si no hay mas jugadores
+def leave_game_if_conditions_are_met(player_id: int, game_id: int) -> None:
+    game = find_game(game_id)
+    player = game.players.filter(lambda p: p.id == player_id).first()
+
+    if game.is_game_over:
+        # Delete hands
+        for cardi in player.cards:
+            cardi.delete()
+        player.delete()
+
+        if game.players.count() == 0:
+            delete_if_game_over(game)
+
+
+def delete_if_game_over(game: Game) -> None:
+    if game.is_game_over:
+        # Delete deck
+        for card in game.cards:
+            card.delete()
+
+        delete_room(game.waiting_room)
