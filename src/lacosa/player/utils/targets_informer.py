@@ -9,6 +9,7 @@ from lacosa.player.schemas import (
 from fastapi import status
 from pony.orm import select
 from settings import settings
+from lacosa.game.utils import obstacles
 
 
 class CardTargetsInformer(ResponseInterface):
@@ -59,28 +60,40 @@ class CardTargetsInformer(ResponseInterface):
 
         return targets if targets != "No" else None
 
+    def get_possible_positions(self, total_positions):
+        before_position = self.player.position - 1
+        after_position = self.player.position + 1
+
+        if self.player.position == 1:
+            before_position = total_positions
+        if self.player.position == total_positions:
+            after_position = 1
+        return [after_position, before_position]
+
+    def remove_blocked_positions(self, possible_positions):
+        for position in possible_positions:
+            if obstacles.is_blocked_by_obstacle(self.player.game, self.player.position, position):
+                possible_positions.remove(position)
+
     def get_adjacent_players(self) -> list:
         """
         Returns the adjacent players
         """
-        players = []
-        for player in self.player.game.players.sort_by(lambda p: p.id):
-            if player != self.player:
-                before_position = self.player.position - 1
-                after_position = self.player.position + 1
-                total_positions = len(
-                    select(p for p in self.player.game.players if p.is_alive is True)[:])
-                if self.player.position == 1:
-                    before_position = total_positions
-                if self.player.position == total_positions:
-                    after_position = 1
-                if player.position == before_position or player.position == after_position:
-                    players.append(TargetsInfo(
-                        playerID=player.id,
-                        name=player.username
-                    ))
 
-        return players
+        alive_players = select(
+            p for p in self.player.game.players if p.is_alive is True)
+        total_positions = alive_players.count()
+        possible_positions = self.get_possible_positions(total_positions)
+        self.remove_blocked_positions(possible_positions)
+        players = alive_players.filter(
+            lambda p: p.position in possible_positions).sort_by(lambda p: p.id)
+
+        schemas = [
+            TargetsInfo(playerID=player.id, name=player.username)
+            for player in players
+        ]
+
+        return schemas
 
     def get_global_players(self) -> list:
         """

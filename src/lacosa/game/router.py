@@ -5,7 +5,8 @@ from fastapi import APIRouter, status
 from lacosa import utils
 from pony.orm import db_session
 from lacosa.game.schemas import (
-    GameCreationRequest, GameStatus, GenericCardRequest, PlayCardRequest
+    GameCreationRequest, GameStatus, GenericCardRequest, PlayCardRequest,
+    ShowCardsRequest
 )
 from lacosa.schemas import PlayerID, GameID
 from lacosa.game.utils.game.creator import GameCreator
@@ -14,7 +15,9 @@ from lacosa.game.utils.game.status import GameStatusHandler
 from lacosa.game.utils.card.player import CardPlayer
 from lacosa.game.utils.card.trader import CardTrader
 from lacosa.game.utils.card.defender import CardDefender
+from lacosa.game.utils.revelations import RevelationsHandler
 from lacosa.game.utils.card.discarder import discard_card_util
+from lacosa.game.utils.card.drawer import draw_card_util
 from lacosa.game.utils.error_responses import error_responses
 from lacosa.game.utils.game.ender import end_game_if_conditions_are_met
 
@@ -50,9 +53,7 @@ async def create_game(creation_request: GameCreationRequest) -> GameID:
 async def draw_card(room_id: int, player_id: PlayerID) -> None:
     """Deals a card to a player"""
     with db_session:
-        Deck.draw_card(room_id, player_id.playerID)
-        game = utils.find_game(room_id)
-        game.current_action = "action"
+        draw_card_util(player_id, room_id)
 
 
 @game_router.put(path="/{room_id}/discard-card", status_code=status.HTTP_200_OK,
@@ -96,3 +97,11 @@ async def trade_card(trade_request: GenericCardRequest, room_id: int) -> None:
     with db_session:
         trade_handler = CardTrader(trade_request, room_id)
         trade_handler.execute_action()
+
+
+@game_router.put(path="/{room_id}/revelations", status_code=status.HTTP_200_OK,
+                 responses=error_responses["400&403&404"])
+async def play_revelations(show_request: ShowCardsRequest, room_id: int) -> None:
+    with db_session:
+        rev_handler = RevelationsHandler(show_request, room_id)
+        rev_handler.execute_action()

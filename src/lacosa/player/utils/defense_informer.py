@@ -17,7 +17,7 @@ class CardDefenseInformer(ResponseInterface):
         self.player = utils.find_player(player_id, status.HTTP_404_NOT_FOUND)
         self.card = None
         if card_id != -1:
-            utils.find_card(card_id, status.HTTP_404_NOT_FOUND)
+            self.card = utils.find_card(card_id, status.HTTP_404_NOT_FOUND)
         self.handle_errors()
 
     def get_response(self) -> UsabilityResponse:
@@ -72,10 +72,11 @@ class CardDefenseInformer(ResponseInterface):
     def get_defense_cards(self, card_name: str) -> str:
         with open(settings.DECK_CONFIG_PATH) as config_file:
             config = json.load(config_file)
-        return config["cards"][card_name]["defensible_by"]
+        return config["cards"][card_name]["defensible_by"][0]
 
     def handle_errors(self) -> None:
-        exceptions.validate_player_has_game(self.player, status.HTTP_400_BAD_REQUEST)
+        exceptions.validate_player_has_game(
+            self.player, status.HTTP_400_BAD_REQUEST)
         exceptions.validate_player_alive(self.player)
         if self.card is not None:
             exceptions.validate_correct_type(self.card, "action")

@@ -26,11 +26,18 @@ class Event(db.Entity):
     game = Required("Game")
     type = Required(EventType)
     player1 = Required("Player")
-    player2 = Required("Player")
+    player2 = Optional("Player")
     card1 = Optional("Card")
     card2 = Optional("Card")
     is_completed = Required(bool, default=False)
     is_successful = Required(bool, default=False)
+
+
+class Obstacle(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    game = Required("Game")
+    # position is always at the right side of the player
+    position = Required(int)
 
 
 class Game(db.Entity):
@@ -45,6 +52,7 @@ class Game(db.Entity):
     is_game_over = Required(bool, default=False)
     have_humans_won = Required(bool, default=False)
     events = Set(Event)
+    obstacles = Set(Obstacle)
 
 
 class WaitingRoom(db.Entity):

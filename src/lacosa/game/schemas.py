@@ -1,6 +1,6 @@
 from enum import Enum
 from pydantic import BaseModel
-from typing import List
+from typing import List, Literal
 from lacosa.schemas import PlayerID, CardInfo
 
 
@@ -9,6 +9,7 @@ class Action(str, Enum):
     action = "action"
     defense = "defense"
     trade = "trade"
+    revelations = "revelations"
 
 
 class EventTypes(str, Enum):
@@ -29,6 +30,11 @@ class PlayCardRequest(BaseModel):
     playerID: int
     targetPlayerID: int
     cardID: int
+
+
+class ShowCardsRequest(BaseModel):
+    playerID: int
+    cardsToShow: Literal["all", "none", "infection"]
 
 
 class PublicPlayerInfo(BaseModel):

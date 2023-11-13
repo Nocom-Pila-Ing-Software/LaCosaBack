@@ -4,7 +4,7 @@ from typing import Dict
 from pony.orm import select, commit
 from lacosa.game.utils.card_shower import show_cards_to_players
 from lacosa.game.utils import event_creator, turn_handler
-
+from lacosa.game.schemas import Action
 
 CardEffectFunc = Callable[[Player, Game], None]
 
@@ -45,7 +45,8 @@ def apply_switch_position_cards_effect(
 def apply_anticipate_trade_effect(
     current_player: Player, target_player: Player, game: Game
 ) -> None:
-    event = select(event for event in game.events if event.is_completed is False).get()
+    event = select(
+        event for event in game.events if event.is_completed is False).get()
     event.is_completed = True
     event.is_successful = True
     game.events.create(
@@ -94,7 +95,8 @@ def apply_analysis_effect(
 def apply_aterrador_effect(
     current_player: Player, target_player: Player, game: Game
 ) -> None:
-    event = select(event for event in game.events if event.is_completed is False).get()
+    event = select(
+        event for event in game.events if event.is_completed is False).get()
     event.is_completed = True
     event.is_successful = False
     card_to_show = [event.card1]
@@ -132,12 +134,38 @@ def apply_fallaste_effect(
     game.current_action = "defense"
     game.current_player = next_target_player.id
 
+    
+def apply_puerta_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
+    is_target_at_right = current_player.position < target_player.position
+    obstacle_position = (
+        current_player.position
+        if is_target_at_right
+        else target_player.position
+    )
+    game.obstacles.create(position=obstacle_position)
+
+
+def apply_revelaciones_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
+    # create info event
+    game.events.create(
+        player1=current_player,
+        player2=None,
+        is_completed=True,
+        type=Action.revelations,
+    )
+    game.current_action = Action.revelations
+
 
 def do_nothing(*args, **kwargs) -> None:
     pass
 
 
 def get_card_effect_function(card_name: str) -> CardEffectFunc:
+    # IMPORTANT: panic cards must handle game.current_action!!
     _card_effects: Dict[str, CardEffectFunc] = {
         "Lanzallamas": apply_lanzallamas_effect,
         "Cambio de lugar": apply_switch_position_cards_effect,
@@ -152,6 +180,8 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "Analisis": apply_analysis_effect,
         "Aterrador": apply_aterrador_effect,
         "Fallaste": apply_fallaste_effect,
+        "Puerta Atrancada": apply_puerta_effect,
+        "Revelaciones": apply_revelaciones_effect,
     }
 
     return _card_effects.get(card_name, do_nothing)
