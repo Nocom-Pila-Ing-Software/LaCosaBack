@@ -1,6 +1,15 @@
-from models import Game, WaitingRoom, db
+from main import app
+from fastapi.testclient import TestClient
+from models import Game, WaitingRoom, db, Player, Card
 from pony.orm import db_session
-from lacosa.game.utils.game.ender import _get_winner, _update_game_state, end_game_if_conditions_are_met
+from lacosa.game.utils.game.ender import (
+    _get_winner,
+    _update_game_state,
+    end_game_if_conditions_are_met,
+)
+
+
+client = TestClient(app)
 
 
 def create_game_with_custom_players(custom_players):
@@ -18,11 +27,7 @@ def create_game_with_custom_players(custom_players):
         for player_data in data["players"]:
             room.players.create(**player_data)
 
-        game = Game(
-            waiting_room=room,
-            players=room.players,
-            **data["game"]
-        )
+        game = Game(waiting_room=room, players=room.players, **data["game"])
 
     return game
 
@@ -82,6 +87,39 @@ def test_one_player_left_is_human():
         {"id": 4, "username": "Player4", "is_alive": False, "role": "thing"},
     ]
     expect_winner_to_be(players, "human")
+
+
+def test_all_players_leave_game():
+    players = [
+        {"id": 1, "username": "Player1", "is_alive": True, "role": "human"},
+        {"id": 2, "username": "Player2", "is_alive": True, "role": "human"},
+        {"id": 3, "username": "Player3", "is_alive": True, "role": "infected"},
+        {"id": 4, "username": "Player4", "is_alive": False, "role": "thing"},
+    ]
+    expect_winner_to_be(players, "human")
+
+    # salir con todos los jugadores
+
+    room_id = 1
+
+    with db_session:
+        game = Game.get(id=room_id)
+        _update_game_state(game, "human")
+        assert game is not None
+        assert WaitingRoom.get(id=room_id) is not None
+
+    for player in players:
+        response = client.request(
+            "DELETE", f"/game/{room_id}/leave-game", json={"playerID": player["id"]}
+        )
+        assert response.status_code == 200
+        with db_session:
+            assert Player.get(id=player["id"]) is None
+
+    with db_session:
+        game = Game.get(id=room_id)
+        assert game is None
+        assert WaitingRoom.get(id=room_id) is None
 
 
 # Mock _get_winner, _update_game_state, and asyncio.sleep
