@@ -24,7 +24,8 @@ def get_player_info(player_id: PlayerID) -> PlayerResponse:
         hand=get_schemas_from_cards(player.cards),
         role=player.role,
         is_alive=player.is_alive,
-        shownCards=get_schemas_from_cards(player.shown_cards)
+        shownCards=get_schemas_from_cards(player.shown_cards),
+        playerID=player.id
     )
 
 

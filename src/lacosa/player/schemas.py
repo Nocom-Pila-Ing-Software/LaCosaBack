@@ -9,6 +9,7 @@ class PlayerResponse(BaseModel):
     role: str
     is_alive: bool
     shownCards: List[CardInfo]
+    playerID: int
 
 
 class UsabilityActionInfoCard(BaseModel):
