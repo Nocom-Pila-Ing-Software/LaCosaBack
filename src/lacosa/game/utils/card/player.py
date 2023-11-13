@@ -42,8 +42,6 @@ class CardPlayer(ActionInterface):
 
         Deck.discard_card(self.card, self.player, self.game)
 
-        clear_shown_cards(self.game.players)
-
         check_card_is_defensible = self.check_card_is_defensible(self.card)
         if not check_card_is_defensible:
             execute_card_effect(self.card, self.player,
