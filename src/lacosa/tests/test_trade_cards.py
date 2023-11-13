@@ -242,6 +242,7 @@ def test_unsuccessfull_trade_No_gracias(db_game_creation_with_trade_event):
         assert select_card(card_player_1_id) in cards_player_1
         assert select_card(card_player_1_id) not in cards_player_2
         assert select_card(card_player_2_id) not in cards_player_2
+        sleep(1)  # wait for the event to be completed
         assert len(cards_player_1) == 4
         assert len(cards_player_2) == 4
 
@@ -319,6 +320,7 @@ def test_unsuccessfull_trade_Aterrador(db_game_creation_with_trade_event):
         assert select_card(card_player_1_id) in cards_player_1
         assert select_card(card_player_1_id) not in cards_player_2
         assert select_card(card_player_2_id) not in cards_player_2
+        sleep(1)  # wait for the event to be completed
         assert len(cards_player_1) == 4
         assert len(cards_player_2) == 4
 
