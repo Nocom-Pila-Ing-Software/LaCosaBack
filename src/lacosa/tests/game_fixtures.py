@@ -452,9 +452,9 @@ def get_defend_card_game_creation():
         "cards": [
             [
                 {"id": 1, "name": "Infeccion", "type": "contagio"},
-                {"id": 2, "name": "Nada de Barbacoas", "type": "defense"},
-                {"id": 3, "name": "Nada de Barbacoas", "type": "defense"},
-                {"id": 4, "name": "Nada de Barbacoas", "type": "defense"},
+                {"id": 2, "name": "Nada de barbacoas", "type": "defense"},
+                {"id": 3, "name": "Nada de barbacoas", "type": "defense"},
+                {"id": 4, "name": "Nada de barbacoas", "type": "defense"},
             ],
             [
                 {"id": 5, "name": "Infeccion", "type": "contagio"},
