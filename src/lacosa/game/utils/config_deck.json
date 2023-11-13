@@ -95,7 +95,8 @@
                 "12": 3
             },
             "description": "Enseñales todas tus cartas a los demas jugadores.",
-            "type": "action"
+            "type": "action",
+            "target": "self"
         },
         "Determinacion": {
             "amount_per_player": {
@@ -229,15 +230,15 @@
         },
         "Fallaste": {
             "amount_per_player": {
-                "4": 0,
-                "5": 0,
-                "6": 0,
-                "7": 0,
-                "8": 0,
-                "9": 0,
-                "10": 0,
-                "11": 0,
-                "12": 0
+                "4": 1,
+                "5": 1,
+                "6": 2,
+                "7": 2,
+                "8": 2,
+                "9": 2,
+                "10": 2,
+                "11": 3,
+                "12": 3
             },
             "description": "Puedes jugar esta carta como respuesta a un ofrecimiento de intercambio de cartas para negarte, y ademas, el siguiente jugador en el orden de juego debe realizar el intercambio en lugar de ti. Si el siguiente jugador recibe una carta '¡Infectado!' durante el intercambio, no se infecta, pero sabe que recibio una carta de La Cosa o de un jugador infectado. Si hay obstaculos como 'Puerta atrancada' o 'Cuarentena', no se produce ningun intercambio, y el siguiente turno lo juega el jugador siguiente al que inicio el intercambio.",
             "type": "defense"
@@ -270,7 +271,23 @@
                 "12": 0
             },
             "description": "Puedes jugar esta carta sobre un jugador adyacente. Durante las dos siguientes rondas, el jugador 'en Cuarentena' debe robar, intercambiar y descartar cartas mostrandolas siempre a los demas jugadores. Ademas, no puede eliminar jugadores ni ser objetivo de cartas que permitan un cambio de lugar, a menos que la carta especifique lo contrario.",
-            "type": "obstacle"
+            "target": "adjacent",
+            "type": "action"
+        },
+        "Revelaciones": {
+            "amount_per_player": {
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0,
+                "8": 1,
+                "9": 1,
+                "10": 1,
+                "11": 1,
+                "12": 1
+            },
+            "description": "Empezando por ti y siguiendo el orden de juego, cada jugador elige si revela o no su mano. La ronda de 'Revelaciones' termina cuando un jugador muestre una carta 'Infectado', sin que tenga que revelar el rest de su mano.",
+            "type": "panic"
         },
         "Puerta atrancada": {
             "amount_per_player": {
@@ -285,7 +302,8 @@
                 "12": 3
             },
             "description": "Puedes jugar esta carta sobre la mesa, ubicandola entre ti y un jugador adyacente. Ninguno de los dos jugadores puede realizar actiones que afecten al otro, como jugar cartas, intercambiar cartas o cambiar de lugar. La carta permanece boca arriba entre ambos jugadores. Si los jugadores cambian de lugar debido al efecto de otra carta, la 'Puerta atrancada' permanece en su posicion original en la mesa.",
-            "type": "obstacle"
+            "target": "adjacent",
+            "type": "action"
         }
     }
 }

@@ -26,7 +26,7 @@ class Event(db.Entity):
     game = Required("Game")
     type = Required(EventType)
     player1 = Required("Player")
-    player2 = Required("Player")
+    player2 = Optional("Player")
     card1 = Optional("Card")
     card2 = Optional("Card")
     is_completed = Required(bool, default=False)

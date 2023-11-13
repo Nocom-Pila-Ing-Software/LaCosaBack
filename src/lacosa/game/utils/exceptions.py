@@ -87,7 +87,10 @@ def validate_correct_defense_card(card, event):
         event.type == "action"
         and card.name not in config["cards"][event.card1.name]["defensible_by"]
     ) or (
-        event.type == "trade" and card.name != "No gracias" and card.name != "Aterrador"
+        event.type == "trade"
+        and card.name != "No gracias"
+        and card.name != "Aterrador"
+        and card.name != "Fallaste"
     ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -157,4 +160,11 @@ def validate_free_of_obstacles(game: Game, player: Player, target_player: Player
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Player can't execute this action",
+        )
+
+
+def validate_infection_in_hand(player: Player):
+    if not player.cards.filter(lambda c: c.name == "Infeccion").exists():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Infection not in hand"
         )
