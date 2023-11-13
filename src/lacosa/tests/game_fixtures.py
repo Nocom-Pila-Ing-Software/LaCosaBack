@@ -120,8 +120,7 @@ def db_game_creation_with_cards():
         game.cards.create()
 
         # Add cards to players
-        player1.cards.create(id=4, name="Lanzallamas",
-                             description="Esta que arde")
+        player1.cards.create(id=4, name="Lanzallamas", description="Esta que arde")
         player1.cards.create(
             id=5, name="Cambio de lugar", description="Cambio de lugar"
         )
@@ -138,8 +137,7 @@ def db_game_creation_with_cards():
         player2.cards.create()
         player2.cards.create()
 
-        player3.cards.create(id=60, name="Lanzallamas",
-                             description="Esta que arde")
+        player3.cards.create(id=60, name="Lanzallamas", description="Esta que arde")
 
 
 @pytest.fixture(scope="function")
@@ -184,8 +182,7 @@ def db_game_creation_with_cards_2():
         game.cards.create()
 
         # Add cards to players
-        player1.cards.create(id=4, name="Lanzallamas",
-                             description="Está que arde")
+        player1.cards.create(id=4, name="Lanzallamas", description="Está que arde")
         player1.cards.create(
             id=5, name="Cambio de lugar", description="Cambio de lugar"
         )
@@ -207,12 +204,9 @@ def db_game_creation_with_cards_2():
         player3.cards.create(
             id=10, name="Vigila tus espaldas", description="Vigila tus espaldas"
         )
-        player3.cards.create(id=11, name="Whisky",
-                             description="Whisky", type="action")
-        player3.cards.create(id=60, name="Lanzallamas",
-                             description="Está que arde")
-        player4.cards.create(id=12, name="No gracias",
-                             description="No gracias")
+        player3.cards.create(id=11, name="Whisky", description="Whisky", type="action")
+        player3.cards.create(id=60, name="Lanzallamas", description="Está que arde")
+        player4.cards.create(id=12, name="No gracias", description="No gracias")
 
 
 @pytest.fixture(scope="module")
@@ -282,8 +276,7 @@ def db_game_creation_without_cards():
 
     with db_session:
         room = WaitingRoom(id=0, name="Test room")
-        player = Player(id=1, username="Player", room=room,
-                        is_host=True, position=1)
+        player = Player(id=1, username="Player", room=room, is_host=True, position=1)
         room.players.add(player)
         Game(id=0, waiting_room=room, players=room.players, current_player=1)
 
@@ -330,6 +323,8 @@ def db_game_creation_with_trade_event():
             player = Player(
                 id=i, username="Player" + str(i), room=room, is_host=i == 1, position=i
             )
+            if i == 3:
+                player.role = "thing"
             room.players.add(player)
         game = Game(
             id=1,
@@ -360,7 +355,11 @@ def db_game_creation_with_trade_event():
         for i in range(8):
             for j in range(4):
                 if players_in_game[i] == events_in_game[0].player2:
-                    if j > 2:
+                    if j == 1:
+                        players_in_game[i].cards.create(
+                            name="Fallaste", description="Carta test defensa"
+                        )
+                    elif j == 2:
                         players_in_game[i].cards.create(
                             name="No gracias", description="Carta test defensa"
                         )

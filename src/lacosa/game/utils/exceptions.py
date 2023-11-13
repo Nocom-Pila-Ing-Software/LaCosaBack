@@ -87,7 +87,10 @@ def validate_correct_defense_card(card, event):
         event.type == "action"
         and card.name not in config["cards"][event.card1.name]["defensible_by"]
     ) or (
-        event.type == "trade" and card.name != "No gracias" and card.name != "Aterrador"
+        event.type == "trade"
+        and card.name != "No gracias"
+        and card.name != "Aterrador"
+        and card.name != "Fallaste"
     ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

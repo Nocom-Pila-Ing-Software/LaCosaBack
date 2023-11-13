@@ -230,15 +230,15 @@
         },
         "Fallaste": {
             "amount_per_player": {
-                "4": 0,
-                "5": 0,
-                "6": 0,
-                "7": 0,
-                "8": 0,
-                "9": 0,
-                "10": 0,
-                "11": 0,
-                "12": 0
+                "4": 1,
+                "5": 1,
+                "6": 2,
+                "7": 2,
+                "8": 2,
+                "9": 2,
+                "10": 2,
+                "11": 3,
+                "12": 3
             },
             "description": "Puedes jugar esta carta como respuesta a un ofrecimiento de intercambio de cartas para negarte, y ademas, el siguiente jugador en el orden de juego debe realizar el intercambio en lugar de ti. Si el siguiente jugador recibe una carta '¡Infectado!' durante el intercambio, no se infecta, pero sabe que recibio una carta de La Cosa o de un jugador infectado. Si hay obstaculos como 'Puerta atrancada' o 'Cuarentena', no se produce ningun intercambio, y el siguiente turno lo juega el jugador siguiente al que inicio el intercambio.",
             "type": "defense"

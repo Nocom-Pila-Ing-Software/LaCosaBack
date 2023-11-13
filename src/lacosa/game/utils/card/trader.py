@@ -27,7 +27,11 @@ class CardTrader(ActionInterface):
             self.event.card1 = self.card
             self.game.current_player = self.event.player2.id
             for card in self.event.player2.cards:
-                if card.name == "No gracias" or card.name == "Aterrador":
+                if (
+                    card.name == "No gracias"
+                    or card.name == "Aterrador"
+                    or card.name == "Fallaste"
+                ):
                     self.game.current_action = "defense"
                     break
         else:
@@ -75,10 +79,15 @@ class CardTrader(ActionInterface):
         self.event.player2.cards.add(self.event.card1)
 
     def update_infection_status(self):
-        if self.is_infected(self.event.player1, self.event.card1):
-            self.assign_infection(self.event.player2)
-        elif self.is_infected(self.event.player2, self.event.card2):
-            self.assign_infection(self.event.player1)
+        # si last_played_card es None, significa que es el primer turno y da error
+        if (
+            self.game.last_played_card is None
+            or self.game.last_played_card.name != "Fallaste"
+        ):
+            if self.is_infected(self.event.player1, self.event.card1):
+                self.assign_infection(self.event.player2)
+            elif self.is_infected(self.event.player2, self.event.card2):
+                self.assign_infection(self.event.player1)
 
     def is_infected(self, player, card):
         return player.role == "thing" and card.name == "Infeccion"

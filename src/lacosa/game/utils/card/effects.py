@@ -3,6 +3,7 @@ from collections.abc import Callable
 from typing import Dict
 from pony.orm import select, commit
 from lacosa.game.utils.card_shower import show_cards_to_players
+from lacosa.game.utils import event_creator, turn_handler
 from lacosa.game.schemas import Action
 
 CardEffectFunc = Callable[[Player, Game], None]
@@ -103,6 +104,37 @@ def apply_aterrador_effect(
     show_cards_to_players(card_to_show, player_to_show)
 
 
+def apply_fallaste_effect(
+    current_player: Player, target_player: Player, game: Game
+) -> None:
+    """
+    ¡Fallaste!: Sólo puedes jugar esta carta como respuesta a un ofrecimiento de
+    intercambio de cartas. Niégate a un intercambio de cartas solicitado por un jugador o
+    por el efecto de una carta. El siguiente jugador después de ti (siguiendo el orden de
+    juego) debe intercambiar cartas en lugar de hacerlo tú. Si este jugador recibe una
+    carta “¡Infectado!” durante el intercambio, no queda Infectado, ¡pero sabrá que ha
+    recibido una carta de La Cosa o de un jugador Infectado! Si hay “obstáculos” en el
+    camino, como una “Puerta atrancada” o “Cuarentena”, no se produce ningún
+    intercambio, y el siguiente turno lo jugará el jugador siguiente a aquel que inició el
+    intercambio.
+    """
+    event = select(event for event in game.events if event.is_completed is False).get()
+    event.is_completed = True
+    event.is_successful = False
+    next_target_player = turn_handler.get_next_player(game, target_player.position)
+    game.events.create(
+        player1=current_player.id,
+        player2=next_target_player.id,
+        card1=event.card1,
+        card2=None,
+        is_completed=False,
+        is_successful=False,
+        type="trade",
+    )
+    game.current_action = "defense"
+    game.current_player = next_target_player.id
+
+    
 def apply_puerta_effect(
     current_player: Player, target_player: Player, game: Game
 ) -> None:
@@ -147,6 +179,7 @@ def get_card_effect_function(card_name: str) -> CardEffectFunc:
         "Sospecha": apply_sospecha_effect,
         "Analisis": apply_analysis_effect,
         "Aterrador": apply_aterrador_effect,
+        "Fallaste": apply_fallaste_effect,
         "Puerta Atrancada": apply_puerta_effect,
         "Revelaciones": apply_revelaciones_effect,
     }
