@@ -7,6 +7,8 @@ from lacosa.player.utils.playability_informer import CardUsabilityInformer
 from lacosa.player.utils.defense_informer import CardDefenseInformer
 from lacosa.player.utils.targets_informer import CardTargetsInformer
 from lacosa.player.utils.trade_informer import CardTradeInformer
+from lacosa.game.utils import card_shower
+from lacosa import utils
 
 player_router = APIRouter()
 
@@ -61,3 +63,11 @@ async def get_cards_trade(player_id: int) -> UsabilityResponse:
         card_trade_info_handler = CardTradeInformer(player_id)
         response = card_trade_info_handler.get_response()
     return response
+
+
+@player_router.put(path="/{player_id}/confirm-seen", status_code=status.HTTP_200_OK,
+                        responses=error_responses["403&404"])
+async def confirm_card_lecture(player_id: int) -> None:
+    with db_session:
+        player = utils.find_player(player_id)
+        card_shower.clear_shown_cards([player])
