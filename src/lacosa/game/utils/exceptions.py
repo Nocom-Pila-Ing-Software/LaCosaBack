@@ -169,8 +169,9 @@ def validate_player_is_the_things(game: Game, player: Player):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Player not has permission to execute this action",
+        )
 
-          
+
 def validate_infection_in_hand(player: Player):
     if not player.cards.filter(lambda c: c.name == "Infeccion").exists():
         raise HTTPException(
