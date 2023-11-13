@@ -13,12 +13,9 @@ class GameStatusHandler(ResponseInterface):
         self.last_card = self._get_last_card_info()
 
     def get_defense_text(self, event, result):
-        result.extend([
-            "pero",
-            event.player2.username,
-            "se defendio con",
-            event.card2.name
-        ])
+        result.extend(
+            ["pero", event.player2.username, "se defendio con", event.card2.name]
+        )
 
     def handle_action_event(self, event):
         result = [
@@ -58,9 +55,7 @@ class GameStatusHandler(ResponseInterface):
 
     def get_events(self):
         completed_events = self.game.events.filter(lambda x: x.is_completed)
-        result = [
-            self.get_event_text(event) for event in completed_events
-        ]
+        result = [self.get_event_text(event) for event in completed_events]
         return result
 
     def get_response(self) -> GameStatus:
@@ -88,7 +83,7 @@ class GameStatusHandler(ResponseInterface):
             playerID=player.id,
             username=player.username,
             is_host=player.is_host,
-            is_alive=player.is_alive
+            is_alive=player.is_alive,
         )
 
     def _get_player_info(self):
@@ -110,20 +105,28 @@ class GameStatusHandler(ResponseInterface):
             card_info = {
                 "cardID": last_played_card.id,
                 "name": last_played_card.name,
-                "description": last_played_card.description
+                "description": last_played_card.description,
             }
 
         return CardInfo(**card_info)
+
+    # eliminar jugador si la partida ya termino y borrarla si no hay mas jugadores
+    def leave_game_if_conditions_are_met(self, player_id: int) -> None:
+        player = self.game.players.filter(lambda p: p.id == player_id).first()
+
+        if self.game.is_game_over:
+            # Delete hands
+            for cardi in player.cards:
+                cardi.delete()
+            player.delete()
+
+            if self.game.players.count() == 0:
+                self.delete_if_game_over(self.get_response())
 
     def delete_if_game_over(self, response: GameStatus) -> None:
         if response.result.isGameOver:
             # Delete deck
             for card in self.game.cards:
                 card.delete()
-
-            # Delete hands
-            for player in self.game.players:
-                for cardi in player.cards:
-                    cardi.delete()
 
             delete_room(self.game.waiting_room)

@@ -61,20 +61,3 @@ def end_game_if_conditions_are_met(game: Game, time_before_close=30) -> None:
         _update_game_state(game, winner)
         # await asyncio.sleep(time_before_close)
         # delete_room(game.waiting_room)
-
-
-# eliminar jugador si la partida ya termino y borrarla si no hay mas jugadores
-def leave_game_if_conditions_are_met(room_id: int, player_id: int) -> None:
-    game = find_game(room_id)
-    player = game.players.filter(lambda p: p.id == player_id).first()
-
-    if game.is_game_over:
-        player.delete()
-        commit()
-        if game.players.count() == 0:
-            delete_room(game.waiting_room)
-
-
-def delete_room(room):
-    room.delete()
-    commit()

@@ -7,6 +7,7 @@ from lacosa.game.utils.game.ender import (
     _update_game_state,
     end_game_if_conditions_are_met,
 )
+from lacosa.schemas import PlayerID
 
 
 client = TestClient(app)
@@ -109,8 +110,11 @@ def test_all_players_leave_game():
         assert WaitingRoom.get(id=room_id) is not None
 
     for player in players:
+        print(player["id"])
+
+        mock_leave_request = PlayerID(playerID=player["id"]).model_dump()
         response = client.request(
-            "DELETE", f"/game/{room_id}/leave-game", json={"playerID": player["id"]}
+            "DELETE", f"/game/{room_id}/leave-game", json=mock_leave_request
         )
         assert response.status_code == 200
         with db_session:
