@@ -158,3 +158,10 @@ def validate_free_of_obstacles(game: Game, player: Player, target_player: Player
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Player can't execute this action",
         )
+
+
+def validate_infection_in_hand(player: Player):
+    if not player.cards.filter(lambda c: c.name == "Infeccion").exists():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Infection not in hand"
+        )

@@ -272,6 +272,21 @@
             "description": "Puedes jugar esta carta sobre un jugador adyacente. Durante las dos siguientes rondas, el jugador 'en Cuarentena' debe robar, intercambiar y descartar cartas mostrandolas siempre a los demas jugadores. Ademas, no puede eliminar jugadores ni ser objetivo de cartas que permitan un cambio de lugar, a menos que la carta especifique lo contrario.",
             "type": "obstacle"
         },
+        "Revelaciones": {
+            "amount_per_player": {
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0,
+                "8": 1,
+                "9": 1,
+                "10": 1,
+                "11": 1,
+                "12": 1
+            },
+            "description": "Empezando por ti y siguiendo el orden de juego, cada jugador elige si revela o no su mano. La ronda de 'Revelaciones' termina cuando un jugador muestre una carta 'Infectado', sin que tenga que revelar el rest de su mano.",
+            "type": "panic"
+        },
         "Puerta atrancada": {
             "amount_per_player": {
                 "4": 1,

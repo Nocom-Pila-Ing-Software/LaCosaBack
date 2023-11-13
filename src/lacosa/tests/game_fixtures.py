@@ -738,8 +738,9 @@ def db_game_creation_with_trade_event_3():
                 "id": 3,
                 "username": "Player3",
                 "is_host": False,
-                "position": -1,
+                "position": 0,
                 "role": "infected",
+                "is_alive": False,
             },
             {
                 "id": 4,
@@ -1040,6 +1041,117 @@ def game_with_obstacle_left_order():
         set_db_from_dict(data)
         game = Game.get(id=data["game"]["id"])
         game.obstacles.create(position=1)
+        commit()
+
+    return data
+
+
+@pytest.fixture()
+def revelations_setup():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+    data = {
+        "room": {"id": 1, "name": "Test room"},
+        "players": [
+            {
+                "id": 1,
+                "username": "Player1",
+                "is_host": True,
+                "position": 1,
+                "role": "infected",
+            },
+            {
+                "id": 2,
+                "username": "Player2",
+                "is_host": False,
+                "position": 2,
+                "role": "thing",
+            },
+            {
+                "id": 3,
+                "username": "Player3",
+                "is_host": False,
+                "position": 3,
+                "role": "infected",
+                "is_alive": True,
+            },
+            {
+                "id": 4,
+                "username": "Player4",
+                "is_host": False,
+                "position": 4,
+                "role": "human",
+            },
+        ],
+        "game": {"id": 1, "current_player": 1, "current_action": "trade"},
+        "cards": [
+            [
+                {"id": 1, "name": "Infeccion", "type": "contagio"},
+                {"id": 2, "name": "Infeccion", "type": "contagio"},
+                {"id": 3, "name": "Lanzallamas", "type": "action"},
+                {"id": 4, "name": "Lanzallamas", "type": "action"},
+            ],
+            [
+                {"id": 5, "name": "Infeccion", "type": "contagio"},
+                {"id": 6, "name": "La cosa", "type": "especial"},
+                {"id": 7, "name": "Lanzallamas", "type": "action"},
+                {"id": 8, "name": "No gracias", "type": "defense"},
+            ],
+            [
+                {"id": 9, "name": "Infeccion", "type": "contagio"},
+                {"id": 10, "name": "Aterrador", "type": "defense"},
+                {"id": 11, "name": "Infeccion", "type": "contagio"},
+                {"id": 12, "name": "Cambio de lugar", "type": "action"},
+            ],
+            [
+                {"id": 13, "name": "Carta", "type": "contagio"},
+                {"id": 14, "name": "Aterrador", "type": "defense"},
+                {"id": 15, "name": "Lanzallamas", "type": "action"},
+                {"id": 16, "name": "No gracias", "type": "defense"},
+            ],
+        ],
+    }
+
+    # second half
+    with db_session:
+        set_db_from_dict(data)
+
+    return data
+
+
+@pytest.fixture()
+def deck_with_panic_card():
+    db.drop_all_tables(with_all_data=True)
+    db.create_tables()
+    data = {
+        "room": {"id": 1, "name": "Test room"},
+        "players": [
+            {"id": 1, "username": "Player1", "is_host": True, "position": 1},
+            {"id": 2, "username": "Player2", "is_host": False, "position": 2},
+            {"id": 3, "username": "Player3", "is_host": False, "position": 3},
+        ],
+        "game": {"id": 1, "current_player": 1},
+        "cards": [
+            [
+                {"id": 1, "name": "Lanzallamas", "type": "action"},
+            ],
+            [
+                {"id": 2, "name": "Nada de barbacoas", "type": "action"},
+                {"id": 3, "name": "No gracias", "type": "defense"},
+            ],
+            [
+                {"id": 4, "name": "Nada de barbacoas", "type": "action"},
+                {"id": 5, "name": "No gracias", "type": "defense"},
+            ],
+        ],
+    }
+
+    # second half
+    with db_session:
+        set_db_from_dict(data)
+        game = Game.get(id=data["game"]["id"])
+        game.cards.create(name="Revelaciones", type="panic")
+        game.cards.create()
         commit()
 
     return data
