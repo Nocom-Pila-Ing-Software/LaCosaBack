@@ -34,5 +34,5 @@ class EventCreator(CreatorInterface):
         if self.event_request.type == EventTypes.action:
             self.game.current_action = Action.action
         elif self.event_request.type == EventTypes.trade:
-            self.game.current_action = Action.defense
-            self.game.current_player = self.player2.id
+            self.game.current_action = Action.trade
+            self.game.current_player = self.player1.id
