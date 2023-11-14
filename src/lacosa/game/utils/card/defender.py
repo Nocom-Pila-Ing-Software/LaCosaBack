@@ -68,7 +68,6 @@ class CardDefender(ActionInterface):
             self.event.is_successful = True
 
         self.game.current_action = "trade"
-        self.game.current_player = self.event.player1.id
         self.create_new_event()
 
     def create_new_event(self):
