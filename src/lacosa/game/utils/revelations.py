@@ -4,6 +4,7 @@ from lacosa.game.schemas import ShowCardsRequest
 from lacosa.game.utils import card_shower
 from lacosa.game.utils import turn_handler
 from lacosa.game.utils import exceptions
+from lacosa.game.schemas import EventTypes
 
 
 class RevelationsHandler(ActionInterface):
@@ -38,7 +39,7 @@ class RevelationsHandler(ActionInterface):
         card_shower.show_cards_to_players(cards, list(self.game.players))
 
     def handle_revelations_end(self, ):
-        self.create_info_event("revelations-end")
+        self.create_info_event(EventTypes.revelations_end)
         turn_handler.next_turn(self.game, self.player)
         self.game.current_action = "draw"
 
@@ -52,7 +53,7 @@ class RevelationsHandler(ActionInterface):
             self.show_cards()
         else:
             # player didn't show
-            self.create_info_event("no-show")
+            self.create_info_event(EventTypes.no_show)
 
         turn_handler.next_turn(self.game, self.player)
 

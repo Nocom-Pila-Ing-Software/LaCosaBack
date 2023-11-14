@@ -2,6 +2,7 @@ from models import Player
 from ...schemas import GameStatus, PublicPlayerInfo
 from lacosa.schemas import PlayerID, CardInfo
 from lacosa.room.utils.room_operations import delete_room
+from lacosa.game.utils import event_serializer
 import lacosa.utils as utils
 from lacosa.interfaces import ResponseInterface
 
@@ -12,50 +13,10 @@ class GameStatusHandler(ResponseInterface):
         self.players, self.dead_players = self._get_player_info()
         self.last_card = self._get_last_card_info()
 
-    def get_defense_text(self, event, result):
-        result.extend(
-            ["pero", event.player2.username, "se defendio con", event.card2.name]
-        )
-
-    def handle_action_event(self, event):
-        result = [
-            event.player1.username,
-            "jugó",
-            event.card1.name,
-            "sobre",
-            event.player2.username,
-        ]
-        if not event.is_successful:
-            self.get_defense_text(event, result)
-
-        return " ".join(result)
-
-    def handle_trade_event(self, event):
-        result = [
-            event.player1.username,
-            "realizó",
-            "un intercambio con",
-            event.player2.username,
-        ]
-        if not event.is_successful:
-            REALIZO_POSITION = 1
-            result[REALIZO_POSITION] = "inicio"
-            self.get_defense_text(event, result)
-
-        return " ".join(result)
-
-    def get_event_text(self, event):
-        result = ""
-        if event.type == "action":
-            result = self.handle_action_event(event)
-        elif event.type == "trade":
-            result = self.handle_trade_event(event)
-
-        return result
-
     def get_events(self):
         completed_events = self.game.events.filter(lambda x: x.is_completed)
-        result = [self.get_event_text(event) for event in completed_events]
+        result = [event_serializer.get_event_text(
+            event) for event in completed_events]
         return result
 
     def get_response(self) -> GameStatus:

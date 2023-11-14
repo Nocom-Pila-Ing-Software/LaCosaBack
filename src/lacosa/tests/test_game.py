@@ -417,7 +417,8 @@ def test_play_seduccion(db_game_creation_with_cards_2):
     # Check event was creTated
     with db_session:
         game_record = select(g for g in Game if g.id == 5).get()
-        event_record = select(e for e in game_record.events if e.type == "action").get()
+        event_record = select(
+            e for e in game_record.events if e.type == "action").get()
         assert event_record.player1.id == 2
         assert event_record.player2.id == 1
         assert event_record.card1.id == 9
@@ -425,7 +426,8 @@ def test_play_seduccion(db_game_creation_with_cards_2):
         assert event_record.is_completed is True
         assert event_record.is_successful is True
 
-        event_trade = select(e for e in game_record.events if e.type == "trade").get()
+        event_trade = select(
+            e for e in game_record.events if e.type == "trade").get()
 
         assert event_trade.player1.id == 2
         assert event_trade.player2.id == 1
@@ -684,6 +686,7 @@ def test_play_sospecha(game_with_suspicious_card):
     assert len(json["shownCards"]) == 1
     assert json["shownCards"][0]["name"] in p2_card_names
 
+
 def test_play_analysis(game_with_analysis_card):
     data = game_with_analysis_card
     game_id = data["game"]["id"]
@@ -706,6 +709,7 @@ def test_play_analysis(game_with_analysis_card):
     assert json["shownCards"][2]["name"] == "Lanzallamas"
     assert json["shownCards"][3]["name"] == "No gracias"
 
+
 def test_event_logs(game_with_events):
     response = client.get("/game/1")
     json = response.json()
@@ -713,7 +717,6 @@ def test_event_logs(game_with_events):
     assert json["events"] == [
         'Player1 realizó un intercambio con Player2',
         'Player1 inicio un intercambio con Player2 pero Player2 se defendio con No gracias',
-        'Player1 jugó Lanzallamas sobre Player2',
-        'Player1 jugó Lanzallamas sobre Player2 pero Player2 se defendio con Nada de barbacoas',
+        "Player1 jugó 'Lanzallamas' sobre Player2",
+        "Player1 jugó 'Lanzallamas' sobre Player2 pero Player2 se defendio con Nada de barbacoas",
     ]
-
