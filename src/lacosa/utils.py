@@ -127,8 +127,7 @@ def find_target_in_trade_event(
     event = select(
         e
         for e in Event
-        if (e.player1.id == player_id)
-        or (e.player2.id == player_id)
+        if ((e.player1.id == player_id) or (e.player2.id == player_id))
         and e.is_completed is False
     ).first()
     if event is None:

@@ -9,6 +9,7 @@ class CardTradeInformer(ResponseInterface):
     def __init__(self, player_id: int):
         self.player = utils.find_player(player_id, status.HTTP_404_NOT_FOUND)
         self.target = utils.find_target_in_trade_event(player_id)
+        self.event = utils.find_partial_event(player_id)
         self.handle_errors()
 
     def get_response(self) -> UsabilityResponse:
@@ -29,33 +30,55 @@ class CardTradeInformer(ResponseInterface):
         list: The cards information
         """
 
+        if self.event.card1 is None:
+            player = self.event.player1
+            target = self.event.player2
+        else:
+            player = self.event.player2
+            target = self.event.player1
+
         amount_Infeccion_cards_in_hand = 0
-        for cardi in self.player.cards:
+        for cardi in player.cards:
             if cardi.name == "Infeccion":
                 amount_Infeccion_cards_in_hand += 1
 
         cards_info = []
-        for card in self.player.cards:
+        for card in player.cards:
             usable = True
+
             if card.name == "La cosa":
                 usable = False
-            if card.name == "Infeccion" and amount_Infeccion_cards_in_hand == 1 and self.player.role == "infected":
+            if (
+                card.name == "Infeccion"
+                and amount_Infeccion_cards_in_hand == 1
+                and player.role == "infected"
+            ):
                 usable = False
-            if card.name == "Infeccion" and self.target.role == "infected":
+            if card.name == "Infeccion" and target.role == "infected":
                 usable = False
-            if card.name == "Infeccion" and self.target.role != "human" and self.player.role == "thing":
+            if (
+                card.name == "Infeccion"
+                and target.role != "human"
+                and player.role == "thing"
+            ):
                 usable = False
-            if card.name == "Infeccion" and self.target.role != "thing" and self.player.role == "infected":
+            if (
+                card.name == "Infeccion"
+                and target.role != "thing"
+                and player.role == "infected"
+            ):
                 usable = False
-            if card.name == "Infeccion" and self.player.role == "human":
+            if card.name == "Infeccion" and player.role == "human":
                 usable = False
 
-            cards_info.append(UsabilityInfoCard(
-                cardID=card.id,
-                name=card.name,
-                description=card.description,
-                usable=usable
-            ))
+            cards_info.append(
+                UsabilityInfoCard(
+                    cardID=card.id,
+                    name=card.name,
+                    description=card.description,
+                    usable=usable,
+                )
+            )
 
         return cards_info
 
@@ -64,9 +87,7 @@ class CardTradeInformer(ResponseInterface):
         Checks for errors and raises HTTPException if needed
         """
 
-        exceptions.validate_player_has_game(
-            self.player, status.HTTP_400_BAD_REQUEST)
-        exceptions.validate_player_has_game(
-            self.target, status.HTTP_400_BAD_REQUEST)
+        exceptions.validate_player_has_game(self.player, status.HTTP_400_BAD_REQUEST)
+        exceptions.validate_player_has_game(self.target, status.HTTP_400_BAD_REQUEST)
         exceptions.validate_player_alive(self.player)
         exceptions.validate_player_alive(self.target)
