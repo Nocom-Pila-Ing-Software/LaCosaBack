@@ -10,12 +10,13 @@ def draw_card_util(player_id: PlayerID, room_id: int):
     player = utils.find_player(player_id.playerID)
     card = Deck.get_card_from_deck(game, player)
     if card.type == "panic":
-        effects.execute_card_effect(card, player, None, game)
         game.events.create(
             player1=player,
+            card1=card,
             type=EventTypes.play_panic,
             is_completed=True
         )
+        effects.execute_card_effect(card, player, None, game)
     else:
         game.cards.remove(card)
         player.cards.add(card)
