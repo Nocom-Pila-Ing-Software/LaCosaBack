@@ -51,11 +51,11 @@ def serialize_revelations_start(event):
 
 
 def serialize_revelations_end(event):
-    return f"La ronda de revelaciones ha finalizado gracias a {event.player1}"
+    return f"La ronda de revelaciones ha finalizado gracias a {event.player1.username}"
 
 
 def serialize_play_panic(event):
-    return f"{event.player1.username} ha sacado la carta de panico '{event.card1}'"
+    return f"{event.player1.username} ha sacado la carta de panico '{event.card1.name}'"
 
 
 def serialize_draw_card(event):
@@ -92,6 +92,10 @@ def serialize_switch_place(event):
     return f"{event.player1.username} cambia de lugar con {event.player2.username}"
 
 
+def serialize_no_show(event):
+    return f"{event.player1.username} ha decidido no mostrar sus cartas"
+
+
 _FUNCS: Dict[str, Callable[[Event], str]] = {
     EventTypes.action: serialize_action,
     EventTypes.trade: serialize_trade,
@@ -105,11 +109,12 @@ _FUNCS: Dict[str, Callable[[Event], str]] = {
     EventTypes.show_hand: serialize_show_hand,
     EventTypes.show_card: serialize_show_card,
     EventTypes.switch_place: serialize_switch_place,
+    EventTypes.no_show: serialize_no_show,
 }
 
 
 def get_serialization_func(type_: str) -> Callable[[Event], str]:
-    return _FUNCS.get(type_)
+    return _FUNCS.get(type_, do_nothing)
 
 
 def get_event_text(event):

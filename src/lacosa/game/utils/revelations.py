@@ -36,7 +36,9 @@ class RevelationsHandler(ActionInterface):
 
     def show_cards(self):
         cards = self.get_cards_to_show()
-        card_shower.show_cards_to_players(cards, list(self.game.players))
+        other_players = list(self.game.players.filter(
+            lambda p: p.id != self.player.id))
+        card_shower.show_cards_to_players(cards, other_players)
 
     def handle_revelations_end(self, ):
         self.create_info_event(EventTypes.revelations_end)
